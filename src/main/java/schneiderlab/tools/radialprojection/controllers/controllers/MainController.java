@@ -521,7 +521,7 @@ public class MainController {
                 // Create copy of cellulose using cursors
                 ImagePlus cellulose = RadialProjectionUtils.copyAndConvertRandomAccessIntervalToImagePlus(
                         vesselsSegmentationModel.getCellulose(), "Non Smoothed Hybrid Stack");
-                PolarProjectionWorker polarProjection = new PolarProjectionWorker(
+                RadialProjectionWorker polarProjection = new RadialProjectionWorker(
                         impFloat,
                         cellulose,
                         lignin,
@@ -538,12 +538,14 @@ public class MainController {
                                 evt.getNewValue() == SwingWorker.StateValue.DONE){
                             mainView.getTextFieldStatusRadialProjection().setText("Radial Projection Complete");
                             mainView.getProgressBarRadialProjection().setValue(100);
-                            ArrayList<ImagePlus> vesselRadialProjectionList = polarProjection.getVesselPolarProjectionArrayList();
-                            //TODO: the line below should not be placed here, the transfer of references from one model to another need to be handled universal not only when the radial projection is performed
+//                            ArrayList<ImagePlus> vesselRadialProjectionList = polarProjection.getVesselPolarProjectionArrayList();
+                            //TODO: the line below should not be placed here, the transfer of references from one model to another need to be handled gracefully not only when the radial projection is performed
                             radialProjectionModel.setVesselArrayList(vesselsSegmentationModel.getVesselArrayList()); // transfer the vesselArrayList to from segmentation Model to radialProjectionModel
                             // show the results to users
-                            for(ImagePlus radialProjectedImage : vesselRadialProjectionList){
-                                radialProjectedImage.show();
+                            for (int i = 0; i < radialProjectionModel.getVesselArrayList().size(); i++) {
+                                radialProjectionModel.getVesselArrayList().get(i).getRadialProjectionCellulose().duplicate().show();
+                                radialProjectionModel.getVesselArrayList().get(i).getRadialProjectionHybrid().duplicate().show();
+                                radialProjectionModel.getVesselArrayList().get(i).getRadialProjectionLignin().duplicate().show();
                             }
                         }
                     }
@@ -584,10 +586,12 @@ public class MainController {
                                 evt.getNewValue() == SwingWorker.StateValue.DONE){
                             mainView.getTextFieldStatusRadialProjection().setText("Unrolling Complete");
                             mainView.getProgressBarRadialProjection().setValue(100);
-                            ArrayList<ImagePlus> vesselUnrolledList = unrollVesselWorker.getVesselPolarProjectionArrayList();
                             // show the results to the users
-                            for(ImagePlus unrolledImage : vesselUnrolledList){
-                                unrolledImage.show();
+                            for (int i = 0; i < radialProjectionModel.getVesselArrayList().size(); i++) {
+                                radialProjectionModel.getVesselArrayList().get(i).getUnrolledVesselCellulose().duplicate().show();
+                                radialProjectionModel.getVesselArrayList().get(i).getUnrolledVesselHybrid().duplicate().show();
+                                radialProjectionModel.getVesselArrayList().get(i).getUnrolledVesselLignin().duplicate().show();
+                                radialProjectionModel.getVesselArrayList().get(i).getContour().duplicate().show();
                             }
                         }
                     }
@@ -612,7 +616,11 @@ public class MainController {
                                 evt.getNewValue()==SwingWorker.StateValue.DONE){
                             ImageProcessor imageWithOnlyScanBand = randomLineScanWorker.getImageWithOnlyScanBand();
                             ImagePlus imageWithOnlyScanBandImagePlus = new ImagePlus("Random Line Scan", imageWithOnlyScanBand);
+//                            ImageProcessor binary = imageWithOnlyScanBandImagePlus.getProcessor().duplicate();
+//                            binary.setThreshold(1,binary.getMax(),ImageProcessor.BLACK_AND_WHITE_LUT);
+//                            ImagePlus binaryImagePlus = new ImagePlus("binary band scan",binary);
                             imageWithOnlyScanBandImagePlus.show();
+//                            binaryImagePlus.show();
                         }
                     }
                 });
