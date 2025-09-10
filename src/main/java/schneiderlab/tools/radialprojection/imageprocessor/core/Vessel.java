@@ -8,14 +8,15 @@ import java.util.ArrayList;
 public class Vessel {
     private final ArrayList<VesselSliceData>  vesselSliceDataArrayList;
     private final ArrayList<Point> centroidArrayList ;
+    // radial Projection
     private ImagePlus radialProjectionHybrid;
     private ImagePlus radialProjectionCellulose;
     private ImagePlus radialProjectionLignin;
-//    private ImagePlus unrolledVessel;
+    //Unrolled
     private ImagePlus unrolledVesselHybrid;
     private ImagePlus unrolledVesselCellulose;
     private ImagePlus unrolledVesselLignin;
-
+    private ImagePlus contour;
 
     public Vessel(int numberOfSliceInStack) {
         this.vesselSliceDataArrayList= new ArrayList<>(numberOfSliceInStack);
@@ -102,7 +103,15 @@ public class Vessel {
         this.unrolledVesselLignin = unrolledVesselLignin;
     }
 
-//    public ImagePlus getUnrolledVessel() {
+    public ImagePlus getContour() {
+        return contour;
+    }
+
+    public void setContour(ImagePlus contour) {
+        this.contour = contour;
+    }
+
+    //    public ImagePlus getUnrolledVessel() {
 //        return unrolledVessel;
 //    }
 //
