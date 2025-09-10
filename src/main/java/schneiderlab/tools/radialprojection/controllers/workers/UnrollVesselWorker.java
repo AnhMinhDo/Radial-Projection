@@ -1,7 +1,9 @@
 package schneiderlab.tools.radialprojection.controllers.workers;
 
 import ij.ImagePlus;
+import ij.process.ByteProcessor;
 import schneiderlab.tools.radialprojection.imageprocessor.core.Vessel;
+import schneiderlab.tools.radialprojection.imageprocessor.core.unrolling.ContourDetection;
 import schneiderlab.tools.radialprojection.imageprocessor.core.unrolling.UnrollSingleVessel;
 
 import javax.swing.*;
@@ -15,7 +17,7 @@ public class UnrollVesselWorker extends SwingWorker<Void, Void> {
     private final ImagePlus celluloseStack;
     private final ImagePlus edgeBinaryMaskEdge;
     private final ArrayList<Vessel> vesselArrayList;
-    private ArrayList<ImagePlus> vesselUnrolledArrayList;
+//    private ArrayList<ImagePlus> vesselUnrolledArrayList;
 
     public UnrollVesselWorker(ImagePlus hybridStack,
                               ImagePlus celluloseStack,
@@ -29,13 +31,13 @@ public class UnrollVesselWorker extends SwingWorker<Void, Void> {
         this.vesselArrayList= vesselArrayList;
     }
 
-    public ArrayList<ImagePlus> getVesselPolarProjectionArrayList() {
-        return vesselUnrolledArrayList;
-    }
+//    public ArrayList<ImagePlus> getVesselPolarProjectionArrayList() {
+//        return vesselUnrolledArrayList;
+//    }
 
     @Override
     protected Void doInBackground() {
-        vesselUnrolledArrayList = new ArrayList<>(vesselArrayList.size()*3); // 3 for lignin channel, cellulose channel, hybrid
+//        vesselUnrolledArrayList = new ArrayList<>(vesselArrayList.size()*3); // 3 for lignin channel, cellulose channel, hybrid
         int currentProgress = 0;
         int increment = (int) 100.0/(vesselArrayList.size()*3);
         setProgress(currentProgress);
@@ -72,15 +74,23 @@ public class UnrollVesselWorker extends SwingWorker<Void, Void> {
             vesselUnrolledHybrid.setTitle(imageTitleHybrid);
             vesselUnrolledLignin.setTitle(imageTitleLignin);
             vesselUnrolledCellulose.setTitle(imageTitleCellulose);
-            vesselUnrolledArrayList.add(vesselUnrolledHybrid);
-            vesselUnrolledArrayList.add(vesselUnrolledLignin);
-            vesselUnrolledArrayList.add(vesselUnrolledCellulose);
-            vesselArrayList.get(i).setUnrolledVesselHybrid(vesselUnrolledHybrid.duplicate());
-            vesselArrayList.get(i).setUnrolledVesselLignin(vesselUnrolledLignin.duplicate());
-            vesselArrayList.get(i).setUnrolledVesselCellulose(vesselUnrolledCellulose.duplicate());
+//            vesselUnrolledArrayList.add(vesselUnrolledHybrid);
+//            vesselUnrolledArrayList.add(vesselUnrolledLignin);
+//            vesselUnrolledArrayList.add(vesselUnrolledCellulose);
+            vesselArrayList.get(i).setUnrolledVesselHybrid(vesselUnrolledHybrid);
+            vesselArrayList.get(i).setUnrolledVesselLignin(vesselUnrolledLignin);
+            vesselArrayList.get(i).setUnrolledVesselCellulose(vesselUnrolledCellulose);
         }
-
-
+        // Contour tracing hybrid channel
+        for (int i = 0; i < vesselArrayList.size(); i++){
+            // get the hybrid
+            ImagePlus hybridImagePlus = vesselArrayList.get(i).getUnrolledVesselHybrid();
+            ContourDetection contourDetection = new ContourDetection(hybridImagePlus.getProcessor());
+            ByteProcessor contour = contourDetection.process();
+            String title = "Contour Vessel " + (i + 1) + " Hybrid";
+            ImagePlus contourImagePlus = new ImagePlus(title,contour);
+            vesselArrayList.get(i).setContour(contourImagePlus);
+        }
         return null;
     }
 }
