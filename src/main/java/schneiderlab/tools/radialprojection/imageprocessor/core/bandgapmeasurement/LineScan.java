@@ -60,11 +60,11 @@ public class LineScan {
             if ((peakMaskArray[i] & 0xFF) == 255) { // check if this is the peak
                 result[i] = (byte)255;
                 double currentProminence = prominenceArray[i];
-                int baseline = (int)Math.round(currentProminence/2);
+                double baseline = (pixelIntensityArray[i]-Math.round(currentProminence/2));
                 int leftEdgeIndex= i-1;
                 int rightEdgeIndex=i+1;
                 for (int leftPointer = i-1; leftPointer >= 0; leftPointer--) { // walk to the left, from i-1 to 0
-                    if(pixelIntensityArray[leftPointer] > baseline){
+                    if(pixelIntensityArray[leftPointer] >= baseline){
                         result[leftPointer] = (byte)255;
                         leftEdgeIndex = leftPointer;
                     } else {

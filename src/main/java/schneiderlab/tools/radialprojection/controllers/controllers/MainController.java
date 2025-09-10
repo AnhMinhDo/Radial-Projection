@@ -616,11 +616,11 @@ public class MainController {
                                 evt.getNewValue()==SwingWorker.StateValue.DONE){
                             ImageProcessor imageWithOnlyScanBand = randomLineScanWorker.getImageWithOnlyScanBand();
                             ImagePlus imageWithOnlyScanBandImagePlus = new ImagePlus("Random Line Scan", imageWithOnlyScanBand);
-//                            ImageProcessor binary = imageWithOnlyScanBandImagePlus.getProcessor().duplicate();
-//                            binary.setThreshold(1,binary.getMax(),ImageProcessor.BLACK_AND_WHITE_LUT);
-//                            ImagePlus binaryImagePlus = new ImagePlus("binary band scan",binary);
+                            ImageProcessor binary = imageWithOnlyScanBandImagePlus.getProcessor().duplicate();
+                            binary.setThreshold(1,binary.getMax(),ImageProcessor.BLACK_AND_WHITE_LUT);
+                            ImagePlus binaryImagePlus = new ImagePlus("binary band scan",binary);
                             imageWithOnlyScanBandImagePlus.show();
-//                            binaryImagePlus.show();
+                            binaryImagePlus.show();
                         }
                     }
                 });
