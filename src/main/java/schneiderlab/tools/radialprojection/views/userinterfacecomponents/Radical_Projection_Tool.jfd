@@ -374,12 +374,14 @@ new FormModel {
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "buttonRunRadialProjection"
 						"text": "Radial Projection"
+						"enabled": false
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 0 1 2 1"
 					} )
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "buttonUnrollVessel"
 						"text": "Unrolling Vessel"
+						"enabled": false
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 0 2 2 1"
 					} )
@@ -411,7 +413,7 @@ new FormModel {
 				} ) {
 					name: "panel4Analysis"
 					add( new FormContainer( "javax.swing.JTabbedPane", new FormLayoutManager( class javax.swing.JTabbedPane ) ) {
-						name: "tabbedPane1"
+						name: "tabbedPaneAnalysis"
 						add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 							"$layoutConstraints": "hidemode 3,align center top"
 							"$columnConstraints": "[fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill]"
@@ -452,39 +454,45 @@ new FormModel {
 							"$columnConstraints": "[fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill]"
 							"$rowConstraints": "[][][][][]"
 						} ) {
-							name: "panel2"
+							name: "bandsAndGapsPanel"
 							add( new FormComponent( "javax.swing.JLabel" ) {
 								name: "labelLegacyBandMeasurement"
-								"text": "<html> Legacy <br> Bands and Gaps <br> measurement</html>"
+								"text": "<html>Bands and Gaps <br> measurement</html>"
 							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 								"value": "cell 0 0 2 1"
 							} )
 							add( new FormComponent( "javax.swing.JButton" ) {
 								name: "buttonLegacyBandMeasurement"
 								"text": "Measure"
+								"enabled": false
 							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 								"value": "cell 2 0 2 1"
 							} )
 							add( new FormComponent( "javax.swing.JLabel" ) {
 								name: "labelBandsSegmentationBySplittingImage"
 								"text": "<html>Band Segmentation <br> by Splitting Image</html>"
+								"visible": false
 							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 								"value": "cell 0 1 2 1"
 							} )
 							add( new FormComponent( "javax.swing.JButton" ) {
 								name: "buttonSegmentationBySplitting"
 								"text": "Segment & Skeletonize"
+								"enabled": false
+								"visible": false
 							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 								"value": "cell 2 1 2 1"
 							} )
 							add( new FormComponent( "javax.swing.JSpinner" ) {
 								name: "spinnerPercentageForSplitting"
 								"model": new javax.swing.SpinnerNumberModel( 10, 1, 100, 1 )
+								"visible": false
 							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 								"value": "cell 4 1 2 1"
 							} )
 							add( new FormComponent( "javax.swing.JComboBox" ) {
 								name: "comboBoxAutoThresholdingMethod"
+								"visible": false
 								auxiliary() {
 									"JavaCodeGenerator.customCreateCode": "new JComboBox<>(AutoThresholder.Method.values());"
 								}
@@ -494,12 +502,15 @@ new FormModel {
 							add( new FormComponent( "javax.swing.JLabel" ) {
 								name: "labelCustomSkeletonizeAlgorithm"
 								"text": "Custom Skeletonize Method"
+								"visible": false
 							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 								"value": "cell 0 2 2 1"
 							} )
 							add( new FormComponent( "javax.swing.JButton" ) {
 								name: "buttonCustomSkeletonize"
 								"text": "Custom Skeletonize"
+								"enabled": false
+								"visible": false
 							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 								"value": "cell 2 2 2 1"
 							} )

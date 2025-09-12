@@ -253,8 +253,11 @@ public class Radical_Projection_Tool extends JFrame {
 
 	public JProgressBar getProgressBarRadialProjection(){return progressBarRadialProjection;}
 
+	public JButton getButtonMoveToAnalysis() {return buttonMoveToAnalysis;}
 
+	public JTabbedPane getTabbedPaneAnalysis() { return  tabbedPaneAnalysis;}
 
+	public JPanel getBandsAndGapsPanel() {return  bandsAndGapsPanel;}
 
 
 
@@ -321,14 +324,14 @@ public class Radical_Projection_Tool extends JFrame {
 		textFieldStatusRadialProjection = new JTextField();
 		progressBarRadialProjection = new JProgressBar();
 		panel4Analysis = new JPanel();
-		tabbedPane1 = new JTabbedPane();
+		tabbedPaneAnalysis = new JTabbedPane();
 		panel1 = new JPanel();
 		button11 = new JButton();
 		button12 = new JButton();
 		button13 = new JButton();
 		scrollPane3 = new JScrollPane();
 		table3 = new JTable();
-		panel2 = new JPanel();
+		bandsAndGapsPanel = new JPanel();
 		labelLegacyBandMeasurement = new JLabel();
 		buttonLegacyBandMeasurement = new JButton();
 		labelBandsSegmentationBySplittingImage = new JLabel();
@@ -682,10 +685,12 @@ public class Radical_Projection_Tool extends JFrame {
 
 				//---- buttonRunRadialProjection ----
 				buttonRunRadialProjection.setText("Radial Projection");
+				buttonRunRadialProjection.setEnabled(false);
 				panel3RadialProjection.add(buttonRunRadialProjection, "cell 0 1 2 1");
 
 				//---- buttonUnrollVessel ----
 				buttonUnrollVessel.setText("Unrolling Vessel");
+				buttonUnrollVessel.setEnabled(false);
 				panel3RadialProjection.add(buttonUnrollVessel, "cell 0 2 2 1");
 
 				//---- buttonMoveToAnalysis ----
@@ -737,7 +742,7 @@ public class Radical_Projection_Tool extends JFrame {
 					"[]" +
 					"[]"));
 
-				//======== tabbedPane1 ========
+				//======== tabbedPaneAnalysis ========
 				{
 
 					//======== panel1 ========
@@ -782,11 +787,11 @@ public class Radical_Projection_Tool extends JFrame {
 						}
 						panel1.add(scrollPane3, "cell 0 1 3 4");
 					}
-					tabbedPane1.addTab("Image", panel1);
+					tabbedPaneAnalysis.addTab("Image", panel1);
 
-					//======== panel2 ========
+					//======== bandsAndGapsPanel ========
 					{
-						panel2.setLayout(new MigLayout(
+						bandsAndGapsPanel.setLayout(new MigLayout(
 							"hidemode 3,align center top",
 							// columns
 							"[fill]" +
@@ -812,35 +817,46 @@ public class Radical_Projection_Tool extends JFrame {
 							"[]"));
 
 						//---- labelLegacyBandMeasurement ----
-						labelLegacyBandMeasurement.setText("<html> Legacy <br> Bands and Gaps <br> measurement</html>");
-						panel2.add(labelLegacyBandMeasurement, "cell 0 0 2 1");
+						labelLegacyBandMeasurement.setText("<html>Bands and Gaps <br> measurement</html>");
+						bandsAndGapsPanel.add(labelLegacyBandMeasurement, "cell 0 0 2 1");
 
 						//---- buttonLegacyBandMeasurement ----
 						buttonLegacyBandMeasurement.setText("Measure");
-						panel2.add(buttonLegacyBandMeasurement, "cell 2 0 2 1");
+						buttonLegacyBandMeasurement.setEnabled(false);
+						bandsAndGapsPanel.add(buttonLegacyBandMeasurement, "cell 2 0 2 1");
 
 						//---- labelBandsSegmentationBySplittingImage ----
 						labelBandsSegmentationBySplittingImage.setText("<html>Band Segmentation <br> by Splitting Image</html>");
-						panel2.add(labelBandsSegmentationBySplittingImage, "cell 0 1 2 1");
+						labelBandsSegmentationBySplittingImage.setVisible(false);
+						bandsAndGapsPanel.add(labelBandsSegmentationBySplittingImage, "cell 0 1 2 1");
 
 						//---- buttonSegmentationBySplitting ----
 						buttonSegmentationBySplitting.setText("Segment & Skeletonize");
-						panel2.add(buttonSegmentationBySplitting, "cell 2 1 2 1");
+						buttonSegmentationBySplitting.setEnabled(false);
+						buttonSegmentationBySplitting.setVisible(false);
+						bandsAndGapsPanel.add(buttonSegmentationBySplitting, "cell 2 1 2 1");
 
 						//---- spinnerPercentageForSplitting ----
 						spinnerPercentageForSplitting.setModel(new SpinnerNumberModel(10, 1, 100, 1));
-						panel2.add(spinnerPercentageForSplitting, "cell 4 1 2 1");
-						panel2.add(comboBoxAutoThresholdingMethod, "cell 6 1");
+						spinnerPercentageForSplitting.setVisible(false);
+						bandsAndGapsPanel.add(spinnerPercentageForSplitting, "cell 4 1 2 1");
+
+						//---- comboBoxAutoThresholdingMethod ----
+						comboBoxAutoThresholdingMethod.setVisible(false);
+						bandsAndGapsPanel.add(comboBoxAutoThresholdingMethod, "cell 6 1");
 
 						//---- labelCustomSkeletonizeAlgorithm ----
 						labelCustomSkeletonizeAlgorithm.setText("Custom Skeletonize Method");
-						panel2.add(labelCustomSkeletonizeAlgorithm, "cell 0 2 2 1");
+						labelCustomSkeletonizeAlgorithm.setVisible(false);
+						bandsAndGapsPanel.add(labelCustomSkeletonizeAlgorithm, "cell 0 2 2 1");
 
 						//---- buttonCustomSkeletonize ----
 						buttonCustomSkeletonize.setText("Custom Skeletonize");
-						panel2.add(buttonCustomSkeletonize, "cell 2 2 2 1");
+						buttonCustomSkeletonize.setEnabled(false);
+						buttonCustomSkeletonize.setVisible(false);
+						bandsAndGapsPanel.add(buttonCustomSkeletonize, "cell 2 2 2 1");
 					}
-					tabbedPane1.addTab("Bands & Gaps", panel2);
+					tabbedPaneAnalysis.addTab("Bands & Gaps", bandsAndGapsPanel);
 
 					//======== panel8 ========
 					{
@@ -874,9 +890,9 @@ public class Radical_Projection_Tool extends JFrame {
 						checkBox2.setText("use this parameter");
 						panel8.add(checkBox2, "cell 0 0");
 					}
-					tabbedPane1.addTab("Parameter_2", panel8);
+					tabbedPaneAnalysis.addTab("Parameter_2", panel8);
 				}
-				panel4Analysis.add(tabbedPane1, "cell 0 1");
+				panel4Analysis.add(tabbedPaneAnalysis, "cell 0 1");
 			}
 			tabbedPaneMainPane.addTab("3. Analysis", panel4Analysis);
 		}
@@ -948,14 +964,14 @@ public class Radical_Projection_Tool extends JFrame {
 	private JTextField textFieldStatusRadialProjection;
 	private JProgressBar progressBarRadialProjection;
 	private JPanel panel4Analysis;
-	private JTabbedPane tabbedPane1;
+	private JTabbedPane tabbedPaneAnalysis;
 	private JPanel panel1;
 	private JButton button11;
 	private JButton button12;
 	private JButton button13;
 	private JScrollPane scrollPane3;
 	private JTable table3;
-	private JPanel panel2;
+	private JPanel bandsAndGapsPanel;
 	private JLabel labelLegacyBandMeasurement;
 	private JButton buttonLegacyBandMeasurement;
 	private JLabel labelBandsSegmentationBySplittingImage;
