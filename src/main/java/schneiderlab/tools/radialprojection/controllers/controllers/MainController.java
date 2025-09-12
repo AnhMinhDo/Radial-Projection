@@ -492,7 +492,9 @@ public class MainController {
                 mainView.getTableAddedFileVesselSegmentation(),
                 mainView.getTextFieldRadialProjection(),
                 mainView.getTabbedPaneMainPane(),
-                mainView.getPanel3RadialProjection()));
+                mainView.getPanel3RadialProjection(),
+                mainView.getButtonRunRadialProjection(),
+                mainView.getButtonUnrollVessel()));
 
         // add the values from the vesselSegmentation model to the view
         mainView.getSpinnerXYPixelSizeCreateSideView().setValue(vesselsSegmentationModel.getXyPixelSize());
@@ -547,6 +549,7 @@ public class MainController {
                                 radialProjectionModel.getVesselArrayList().get(i).getRadialProjectionHybrid().duplicate().show();
                                 radialProjectionModel.getVesselArrayList().get(i).getRadialProjectionLignin().duplicate().show();
                             }
+                            mainView.getButtonMoveToAnalysis().setEnabled(true);
                         }
                     }
                 });
@@ -599,32 +602,64 @@ public class MainController {
                 unrollVesselWorker.execute();
             }
         });
+
+        mainView.getButtonMoveToAnalysis().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mainView.getButtonLegacyBandMeasurement().setEnabled(true);
+                mainView.getButtonSegmentationBySplitting().setEnabled(true);
+                mainView.getButtonCustomSkeletonize().setEnabled(true);
+                mainView.getTabbedPaneAnalysis().setSelectedComponent(mainView.getBandsAndGapsPanel());
+            }
+        });
         //-------------------Analysis----------------------------------------------
         mainView.getButtonLegacyBandMeasurement().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ImagePlus vessel1LigninRadialProjection = radialProjectionModel.getVesselArrayList().get(0).getRadialProjectionLignin();
-                ShortProcessor vessel1LigninRadialProjectionImageProcessor = (ShortProcessor) vessel1LigninRadialProjection.getProcessor();
-                RandomLineScanWorker randomLineScanWorker = new RandomLineScanWorker(100,
+                ImagePlus vessel1HybridRadialProjection = radialProjectionModel.getVesselArrayList().get(0).getRadialProjectionHybrid();
+                ImagePlus vessel2HybridRadialProjection = radialProjectionModel.getVesselArrayList().get(1).getRadialProjectionHybrid();
+                ShortProcessor vessel1HybridRadialProjectionImageProcessor = (ShortProcessor) vessel1HybridRadialProjection.getProcessor();
+                ShortProcessor vessel2HybridRadialProjectionImageProcessor = (ShortProcessor) vessel2HybridRadialProjection.getProcessor();
+                RandomLineScanWorker randomLineScanVessel1Worker = new RandomLineScanWorker(100,
                         25,
                         200,
-                        vessel1LigninRadialProjectionImageProcessor);
-                randomLineScanWorker.addPropertyChangeListener(new PropertyChangeListener() {
+                        vessel1HybridRadialProjectionImageProcessor);
+                RandomLineScanWorker randomLineScanVessel2Worker = new RandomLineScanWorker(100,
+                        25,
+                        200,
+                        vessel2HybridRadialProjectionImageProcessor);
+                randomLineScanVessel1Worker.addPropertyChangeListener(new PropertyChangeListener() {
                     @Override
                     public void propertyChange(PropertyChangeEvent evt) {
                         if("state".equals(evt.getPropertyName())&&
                                 evt.getNewValue()==SwingWorker.StateValue.DONE){
-                            ImageProcessor imageWithOnlyScanBand = randomLineScanWorker.getImageWithOnlyScanBand();
-                            ImagePlus imageWithOnlyScanBandImagePlus = new ImagePlus("Random Line Scan", imageWithOnlyScanBand);
+                            ImageProcessor imageWithOnlyScanBand = randomLineScanVessel1Worker.getImageWithOnlyScanBand();
+                            ImagePlus imageWithOnlyScanBandImagePlus = new ImagePlus("Random Line Scan vessel 1", imageWithOnlyScanBand);
                             ImageProcessor binary = imageWithOnlyScanBandImagePlus.getProcessor().duplicate();
                             binary.setThreshold(1,binary.getMax(),ImageProcessor.BLACK_AND_WHITE_LUT);
-                            ImagePlus binaryImagePlus = new ImagePlus("binary band scan",binary);
+                            ImagePlus binaryImagePlus = new ImagePlus("binary band scan vessel 1",binary);
                             imageWithOnlyScanBandImagePlus.show();
                             binaryImagePlus.show();
                         }
                     }
                 });
-                randomLineScanWorker.execute();
+                randomLineScanVessel2Worker.addPropertyChangeListener(new PropertyChangeListener() {
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        if("state".equals(evt.getPropertyName())&&
+                                evt.getNewValue()==SwingWorker.StateValue.DONE){
+                            ImageProcessor imageWithOnlyScanBand = randomLineScanVessel2Worker.getImageWithOnlyScanBand();
+                            ImagePlus imageWithOnlyScanBandImagePlus = new ImagePlus("Random Line Scan vessel 2", imageWithOnlyScanBand);
+                            ImageProcessor binary = imageWithOnlyScanBandImagePlus.getProcessor().duplicate();
+                            binary.setThreshold(1,binary.getMax(),ImageProcessor.BLACK_AND_WHITE_LUT);
+                            ImagePlus binaryImagePlus = new ImagePlus("binary band scan vessel 2",binary);
+                            imageWithOnlyScanBandImagePlus.show();
+                            binaryImagePlus.show();
+                        }
+                    }
+                });
+                randomLineScanVessel1Worker.execute();
+                randomLineScanVessel2Worker.execute();
             }
         });
 
