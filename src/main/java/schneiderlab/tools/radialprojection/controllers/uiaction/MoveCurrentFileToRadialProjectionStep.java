@@ -10,15 +10,21 @@ public class MoveCurrentFileToRadialProjectionStep implements ActionListener {
     private final JTextField textField;
     private final JTabbedPane tabbedMainPane;
     private final JPanel radialProjectionPanel;
+    private final JButton radialProjectionButton;
+    private final JButton unrollingButton;
 
     public MoveCurrentFileToRadialProjectionStep(JTable table,
                                                  JTextField textField,
                                                  JTabbedPane tabbedMainPane,
-                                                 JPanel radialProjectionPanel) {
+                                                 JPanel radialProjectionPanel,
+                                                 JButton radialProjectionButton,
+                                                 JButton unrollingButton) {
         this.table = table;
         this.textField = textField;
         this.tabbedMainPane = tabbedMainPane;
         this.radialProjectionPanel = radialProjectionPanel;
+        this.radialProjectionButton = radialProjectionButton;
+        this.unrollingButton = unrollingButton;
     }
 
     @Override
@@ -30,5 +36,8 @@ public class MoveCurrentFileToRadialProjectionStep implements ActionListener {
             model.removeRow(0);
         }
         tabbedMainPane.setSelectedComponent(radialProjectionPanel);
+        radialProjectionButton.setEnabled(true);
+        unrollingButton.setEnabled(true);
+
     }
 }
