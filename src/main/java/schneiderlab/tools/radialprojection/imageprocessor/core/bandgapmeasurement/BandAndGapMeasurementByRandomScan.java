@@ -19,6 +19,11 @@ public class BandAndGapMeasurementByRandomScan {
     private final short[] inputImagePixelArray;
     private List<LineScan> lineScanList;
     private ShortProcessor imageWithOnlyScannedBands;
+    private List<Band> bandList;
+    private double meanBandLength;
+    private double stdBandLength;
+    private int totalNumberOfBand;
+
 
 
     public BandAndGapMeasurementByRandomScan(ShortProcessor inputImageProcessor,
@@ -45,6 +50,18 @@ public class BandAndGapMeasurementByRandomScan {
         }
     }
 
+    public double getMeanBandLength() {
+        return meanBandLength;
+    }
+
+    public double getStdBandLength() {
+        return stdBandLength;
+    }
+
+    public int getTotalNumberOfBand() {
+        return totalNumberOfBand;
+    }
+
     public void process(){
         this.lineScanList = generateRandomLineScan(numberOfRandomLineScan,
                 lineScanLengthInPixel,
@@ -52,6 +69,53 @@ public class BandAndGapMeasurementByRandomScan {
                 inputImage.getHeight(),
                 inputImage);
         this.imageWithOnlyScannedBands = imageWithOnlyDetectedBand();
+        totalNumberOfBand = totalNumberOfBand();// identify the number of bands in total
+        List<Band> allBandList = combineAllBandObject(totalNumberOfBand, this.lineScanList);// create new ArrayList to hold all the band object
+        int sum = totalBandLengthSum(allBandList);
+        meanBandLength = (double) sum/totalNumberOfBand;
+        stdBandLength = calculateStdBandList(allBandList,sum);
+    }
+
+    private double calculateStdBandList(List<Band> bandList){
+        int allBandLengthSum = totalBandLengthSum(bandList);
+        return calculateStdBandList(bandList,allBandLengthSum);
+    }
+
+    private double calculateStdBandList(List<Band> bandList, double sumLength){
+        double allBandLengthSum = sumLength;
+        int totalNumber = bandList.size();
+        if(totalNumber >=1){
+            double mean =  (double) allBandLengthSum /totalNumber;
+            double result = 0;
+            for (Band band: bandList){
+                result+=Math.pow(band.getLength()-mean,2);
+            }
+            return Math.sqrt(result/(totalNumber-1)); // return the standard deviation of the band length
+        } else {
+            return 0.0;
+        }
+    }
+
+    private int totalBandLengthSum(List<Band> bandList){
+        int result = 0;
+        for (Band band: bandList){
+            result+= band.getLength();
+        }
+        return result;
+    }
+    private List<Band> combineAllBandObject(int totalNumber, List<LineScan> lineScanList){
+        List<Band> result = new ArrayList<>(totalNumber);
+        for(LineScan lineScan: lineScanList){
+            result.addAll(lineScan.getBandList());
+        }
+        return result;
+    }
+    private int totalNumberOfBand(){
+        int result = 0;
+        for (LineScan lineScan : this.lineScanList){
+            result += lineScan.getBandList().size();
+        }
+        return result;
     }
 
     private ShortProcessor imageWithOnlyDetectedBand(){
