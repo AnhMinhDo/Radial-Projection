@@ -44,6 +44,7 @@ import java.beans.PropertyChangeListener;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainController {
     private final Radical_Projection_Tool mainView;
@@ -621,12 +622,12 @@ public class MainController {
                 ShortProcessor vessel1HybridRadialProjectionImageProcessor = (ShortProcessor) vessel1HybridRadialProjection.getProcessor();
                 ShortProcessor vessel2HybridRadialProjectionImageProcessor = (ShortProcessor) vessel2HybridRadialProjection.getProcessor();
                 RandomLineScanWorker randomLineScanVessel1Worker = new RandomLineScanWorker(100,
-                        25,
-                        200,
+                        (int) mainView.getSpinnerLineScanLength().getValue(),
+                        vesselsSegmentationModel.getXyPixelSize(),
                         vessel1HybridRadialProjectionImageProcessor);
                 RandomLineScanWorker randomLineScanVessel2Worker = new RandomLineScanWorker(100,
-                        25,
-                        200,
+                        (int) mainView.getSpinnerLineScanLength().getValue(),
+                        vesselsSegmentationModel.getXyPixelSize(),
                         vessel2HybridRadialProjectionImageProcessor);
                 randomLineScanVessel1Worker.addPropertyChangeListener(new PropertyChangeListener() {
                     @Override
@@ -640,6 +641,8 @@ public class MainController {
                             ImagePlus binaryImagePlus = new ImagePlus("binary band scan vessel 1",binary);
                             imageWithOnlyScanBandImagePlus.show();
                             binaryImagePlus.show();
+                            System.err.println("Mean of vessel 1 in micrometer: " + String.format("%.2f",randomLineScanVessel1Worker.getMeanBandLength()*(vesselsSegmentationModel.getXyPixelSize()/1000)));
+                            System.err.println("Mean of vessel 2 in micrometer: " + String.format("%.2f",randomLineScanVessel2Worker.getMeanBandLength()*(vesselsSegmentationModel.getXyPixelSize()/1000)));
                         }
                     }
                 });

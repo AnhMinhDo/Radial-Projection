@@ -11,14 +11,15 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.real.FloatType;
 
-import java.awt.*;
+import java.awt.Point;
 import java.util.ArrayList;
+import java.util.List;
 
 import static schneiderlab.tools.radialprojection.imageprocessor.core.utils.RadialProjectionUtils.deepCopyPoints;
 
 public class SegmentationExtendMinimaWaterShed {
     private final RandomAccessibleInterval<FloatType> inputSlice;
-    private ArrayList<Point> clickCoordinate;
+    private List<Point> clickCoordinate;
     private final int width;
     private final int height;
     private final Point pointForBackground;
@@ -26,7 +27,7 @@ public class SegmentationExtendMinimaWaterShed {
     private final int pixelScaleInNanometer;
     private ImagePlus inputSliceImagePlus;
 
-    public SegmentationExtendMinimaWaterShed( ArrayList<Point> clickCoordinate,
+    public SegmentationExtendMinimaWaterShed( List<Point> clickCoordinate,
                                               RandomAccessibleInterval<FloatType> inputSlice,
                                               int width,
                                               int height,
@@ -47,7 +48,7 @@ public class SegmentationExtendMinimaWaterShed {
 
     public ImagePlus performSegmentation (){
         // add Point for background
-        ArrayList<Point> clickPoints = deepCopyPoints(clickCoordinate);
+        List<Point> clickPoints = deepCopyPoints(clickCoordinate);
         clickPoints.add(pointForBackground);
 //        if(debugMode){ System.err.println(coordinatesOutside);}
         // Create innit mask

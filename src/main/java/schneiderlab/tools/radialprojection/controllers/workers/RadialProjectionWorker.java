@@ -13,7 +13,6 @@ public class RadialProjectionWorker extends SwingWorker<Void, Void> {
     private final ImagePlus ligninStack;
     private final ImagePlus edgeBinaryMaskEdge;
     private final ArrayList<Vessel> vesselArrayList;
-//    private ArrayList<ImagePlus> vesselPolarProjectionArrayList;
 
     public RadialProjectionWorker(ImagePlus hybridStack,
                                   ImagePlus celluloseStack,

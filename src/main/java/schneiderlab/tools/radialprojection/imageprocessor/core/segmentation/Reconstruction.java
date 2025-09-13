@@ -18,34 +18,35 @@ import net.imglib2.view.Views;
 import schneiderlab.tools.radialprojection.imageprocessor.core.Vessel;
 import schneiderlab.tools.radialprojection.imageprocessor.core.utils.RadialProjectionUtils;
 
-import java.awt.*;
+import java.awt.Point;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.util.*;
+
 import java.util.stream.Collectors;
 
 import static ij.IJ.debugMode;
 
 public class Reconstruction {
-    private final ArrayList<Point> coordinatesOutside;
+    private final List<Point> coordinatesOutside;
     private final int width;
     private final int height;
     private final double radius;
     private final RandomAccessibleInterval<FloatType> smoothedStack;
     private final Point pointForBackground;
     private final int slideForTuning;
-    private HashMap<Integer, ArrayList<Point>> centroidHashMap;
+    private HashMap<Integer, List<Point>> centroidHashMap;
     private final int pixelScaleInNanometer;
     private ImagePlus edgeBinaryMaskImagePlus;
     private ImagePlus edgeCentroidMaskImgPlus;
-    private ArrayList<Vessel> vesselsArray;
+    private List<Vessel> vesselsArray;
 
     public Reconstruction(RandomAccessibleInterval<FloatType> smoothedStack,
                           int width,
                           int height,
                           double radius,
-                          ArrayList<Point> coordinates,
+                          List<Point> coordinates,
                           int slideForTuning,
                           int pixelScaleInNanometer) {
         this.smoothedStack = smoothedStack;
@@ -80,7 +81,7 @@ public class Reconstruction {
         this.pcs.firePropertyChange("currentSlice", previousSlice, currentSliceProcess);
     }
 
-    public HashMap<Integer, ArrayList<Point>> getCentroidHashMap() {
+    public HashMap<Integer, List<Point>> getCentroidHashMap() {
         if(centroidHashMap.isEmpty()){
             generateCentroidHashMap();
             return centroidHashMap;
@@ -88,7 +89,7 @@ public class Reconstruction {
             return centroidHashMap;
         }
     }
-    public ArrayList<Vessel> getVesselsArray(){
+    public List<Vessel> getVesselsArray(){
         return vesselsArray;
     }
 
@@ -140,7 +141,7 @@ public class Reconstruction {
         ImageStack edgesStack = new ImageStack(width, height);
         ImageStack edgesCentroidStack = new ImageStack(width, height);
         int numberOfSlicesInStack = (int)smoothedStack.dimension(2); // 2 is the z axis
-        ArrayList<Point> startingClick = RadialProjectionUtils.deepCopyPoints(coordinatesOutside);
+        List<Point> startingClick = RadialProjectionUtils.deepCopyPoints(coordinatesOutside);
         // rearrange the user click points to follow imagej scan order
         Comparator<Point> scanOrderComparator = (p1, p2) -> {
             // First sort by Y (top-to-bottom)
@@ -160,7 +161,7 @@ public class Reconstruction {
         }
         for (int currentSlice = 0; currentSlice < smoothedStack.dimension(2); currentSlice++) { // 2 is the z channel
             this.setNewCurrentSlice(currentSlice);// this is used for update the currentProgress of this method for outer class who calls this class. Used for updating progressBar.
-            ArrayList<Point> currentClick = prepareCurrentList(currentSlice,
+            List<Point> currentClick = prepareCurrentList(currentSlice,
                                                                 vesselsArray,
                                                                 startingClick,
                                                                 pointForBackground);
@@ -177,7 +178,7 @@ public class Reconstruction {
             // add the image to the stack
             finalStack.addSlice(segmentedImage.getProcessor());
             // identify the centroid with current segmentation
-            ArrayList<Point> allSegmentedCentroids = centroidsCoordinatesGivenSegmentedImage(
+            List<Point> allSegmentedCentroids = centroidsCoordinatesGivenSegmentedImage(
                     segmentedImage);
             ByteProcessor combinedEdgeMask = new ByteProcessor(segmentedImage.getWidth(),
                                                                 segmentedImage.getHeight());
@@ -192,6 +193,7 @@ public class Reconstruction {
                 ByteProcessor edgeBinaryMask= getEdgeBinaryMask(finalStack,
                         vessel.getTrueSliceIndex(currentSlice),
                         vessel.getTrueLabel(currentSlice));
+                //TODO: scan all the pixel to get the contour of the object; multiple with the scale for real life measurement
                 combinedEdgeMask.copyBits(edgeBinaryMask,0,0,Blitter.OR);
             }
             edgesStack.addSlice(combinedEdgeMask);
@@ -212,7 +214,7 @@ public class Reconstruction {
         return new ImagePlus("Segmentation Stack", finalStack);
     }
 
-    private ArrayList<Point> centroidsCoordinatesGivenSegmentedImage(ImagePlus segmentedImg) {
+    private List<Point> centroidsCoordinatesGivenSegmentedImage(ImagePlus segmentedImg) {
         // array of labels; 1 is not included because in this class, it is corresponding to background
         int[] labels = LabelImages.findAllLabels(segmentedImg);
         // extract the centroid of the newly segmented
@@ -221,7 +223,7 @@ public class Reconstruction {
             IJ.log(Arrays.deepToString(centroids));
         }
         // Container for results
-        ArrayList<Point> result = new ArrayList<>();
+        List<Point> result = new ArrayList<>();
         // round the centroid values, convert to int and Points
         for (int row = 0; row < centroids.length; row++) {
             // Skip invalid centroids (NaN or out of bounds)
@@ -234,8 +236,8 @@ public class Reconstruction {
         return result;
     }
 
-    public static ArrayList<Point> deepCopyPoints(ArrayList<Point> points) {
-        ArrayList<Point> copy = new ArrayList<>();
+    public static List<Point> deepCopyPoints(List<Point> points) {
+        List<Point> copy = new ArrayList<>();
         for (Point p : points) {
             copy.add(new Point(p.x, p.y));
         }
@@ -250,8 +252,8 @@ public class Reconstruction {
      * @param centroidCaptured A list of newly captured centroids (Points) for the current frame.
      * @return A HashMap mapping each object ID to the closest captured centroid based on Manhattan distance.
      */
-    public static HashMap<Integer, Point> mapCentroidToIDs(HashMap<Integer, ArrayList<Point>> centroidsHashMap,
-                                                           ArrayList<Point> centroidCaptured) {
+    public static HashMap<Integer, Point> mapCentroidToIDs(HashMap<Integer, List<Point>> centroidsHashMap,
+                                                           List<Point> centroidCaptured) {
         HashMap<Integer, Point> result = new HashMap<>();
         // Handle edge cases
         if (centroidsHashMap == null || centroidCaptured == null || centroidCaptured.isEmpty()) {
@@ -259,7 +261,7 @@ public class Reconstruction {
         }
 
         for (Integer id : centroidsHashMap.keySet()) {
-            ArrayList<Point> recordedCentroids = centroidsHashMap.get(id);
+            List<Point> recordedCentroids = centroidsHashMap.get(id);
             if (recordedCentroids == null || recordedCentroids.isEmpty()) { // if this arrayList of Points is empty, skip it
                 continue;  // Skip IDs with no centroids
             }
@@ -346,19 +348,19 @@ public class Reconstruction {
 
 
     private static void addTrueLabelToHashMap(HashMap<Integer, Integer> currentTrueLabelHashMap,
-                                              HashMap<Integer, ArrayList<Integer[]>> wholeStackTrueLabelHashMap,
+                                              HashMap<Integer, List<Integer[]>> wholeStackTrueLabelHashMap,
                                               int currentSlice) {
         for (Integer id : wholeStackTrueLabelHashMap.keySet()) {
-            ArrayList<Integer[]> arrayListTrueLabel = wholeStackTrueLabelHashMap.get(id);
+            List<Integer[]> arrayListTrueLabel = wholeStackTrueLabelHashMap.get(id);
             arrayListTrueLabel.add(new Integer[]{currentSlice, currentTrueLabelHashMap.get(id)});
         }
     }
 
-    private static void replaceNullWithNewValueInTrueLabelHashMap(HashMap<Integer, ArrayList<Integer[]>> wholeStackTrueLabelHashMap,
+    private static void replaceNullWithNewValueInTrueLabelHashMap(HashMap<Integer, List<Integer[]>> wholeStackTrueLabelHashMap,
                                                                   Integer id,
                                                                   int label,
                                                                   int trueSlice) {
-        ArrayList<Integer[]> arrayList = wholeStackTrueLabelHashMap.get(id);
+        List<Integer[]> arrayList = wholeStackTrueLabelHashMap.get(id);
         arrayList.get(arrayList.size() - 1)[0] = trueSlice;
         arrayList.get(arrayList.size() - 1)[1] = label;
     }
@@ -374,20 +376,20 @@ public class Reconstruction {
         return edgeCentroidMaskProcessor;
     }
 
-    private static void updateCentroidMap(HashMap<Integer, Point> thisSliceCentroidMap, HashMap<Integer, ArrayList<Point>> wholeStackCentroidMap){
+    private static void updateCentroidMap(HashMap<Integer, Point> thisSliceCentroidMap, HashMap<Integer, List<Point>> wholeStackCentroidMap){
         for (Integer key : thisSliceCentroidMap.keySet()) {
             wholeStackCentroidMap.get(key).add(thisSliceCentroidMap.get(key));
         }
     }
 
-    private static void updateClickMap(HashMap<Integer, Point> thisSliceCentroidMap, HashMap<Integer, ArrayList<Point>> wholeStackClickMap){
+    private static void updateClickMap(HashMap<Integer, Point> thisSliceCentroidMap, HashMap<Integer, List<Point>> wholeStackClickMap){
         for (Integer key : thisSliceCentroidMap.keySet()) {
             wholeStackClickMap.get(key).add(thisSliceCentroidMap.get(key));
         }
     }
 
     // function given the labeled image and the initial click, return the desired label
-    private static int[] process1SliceDesiredLabel (ImageProcessor labeledImageProcessor, ArrayList<Point> initialClicks){
+    private static int[] process1SliceDesiredLabel (ImageProcessor labeledImageProcessor, List<Point> initialClicks){
         int[] result = new int[initialClicks.size()];
         for (int i = 0; i < initialClicks.size(); i++) {
             Point point = initialClicks.get(i);
@@ -398,19 +400,19 @@ public class Reconstruction {
     }
 
     // function to prepare new click
-    private static ArrayList<Point> prepareCurrentList(int currentSlice,
-                                                       ArrayList<Vessel> vesselsArray,
-                                                       ArrayList<Point> startingClick,
+    private static List<Point> prepareCurrentList(int currentSlice,
+                                                       List<Vessel> vesselsArray,
+                                                       List<Point> startingClick,
                                                        Point pointForBackground){
         // the below if-else is to prepare the "clicks" for this slice
         if (currentSlice == 0) {
             // for the first iteration, we use the input from user
-            ArrayList<Point> currentClick = deepCopyPoints(startingClick);
+            List<Point> currentClick = deepCopyPoints(startingClick);
             currentClick.add(pointForBackground);
             return  currentClick;
         } else {
             // not the first iteration, use previous centroid as the starting click
-            ArrayList<Point> currentClick = new ArrayList<>(vesselsArray.size());
+            List<Point> currentClick = new ArrayList<>(vesselsArray.size());
             // get the click for this vessel from the previous Centroid of the VesselSliceData
             for (int i = 0; i < vesselsArray.size(); i++) {
                 Vessel vessel = vesselsArray.get(i);
@@ -427,7 +429,7 @@ public class Reconstruction {
                                         ImageProcessor currentSegmentedImageProcessor,
                                         int currentSlice,
                                         Point currentClick,
-                                        ArrayList<Point> centroidCapturedList){
+                                        List<Point> centroidCapturedList){
         // compare the click with segmented centroid, choose the closest
         Point closestCentroid = null;
         // calculate the max value based on the previous Points
@@ -475,6 +477,18 @@ public class Reconstruction {
         ByteProcessor eroded = (ByteProcessor) Morphology.erosion(regionMask, strel);
         // perform original - erosion to get edge
         return (ByteProcessor) ImageCalculator.combineImages(regionBinaryMask, eroded, ImageCalculator.Operation.MINUS);
+    }
+
+    private int perimeterSizeInPixelOfSingleContour(ByteProcessor input){
+        // the binary image should only contain the contour of 1 object and nothing else
+        byte[] bytePixelArray = (byte[]) input.getPixels();
+        int result = 0;
+        for (int i = 0; i < bytePixelArray.length; i++) {
+            if ((bytePixelArray[i]& 0xFF) == 255){
+                result++;
+            }
+        }
+        return result;
     }
 
 }

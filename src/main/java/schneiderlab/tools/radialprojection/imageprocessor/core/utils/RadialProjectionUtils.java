@@ -9,13 +9,14 @@ import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
 
-import java.awt.*;
+import java.awt.Point;
 import java.util.ArrayList;
+import java.util.List;
 
 public class RadialProjectionUtils {
 
-    public static ArrayList<Point> deepCopyPoints(ArrayList<Point> points) {
-        ArrayList<Point> copy = new ArrayList<>(points.size());
+    public static List<Point> deepCopyPoints(List<Point> points) {
+        List<Point> copy = new ArrayList<>(points.size());
         for (Point p : points) {
             copy.add(new Point(p.x, p.y));
         }

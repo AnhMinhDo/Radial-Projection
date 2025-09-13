@@ -9,13 +9,14 @@ import ij.process.ShortProcessor;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PolarProjection {
     private final ImagePlus hybridStack;
     private final ImageStack hybridStackImageStack;
     private final ImagePlus binaryMaskEdge;
     private final ImageStack binaryMaskEdgeImageStack;
-    private final ArrayList<Point> centroidList;
+    private final List<Point> centroidList;
     private final int angleStep;
     private final int angleCount;
     private final int maxRadius;
@@ -25,7 +26,7 @@ public class PolarProjection {
 
     public PolarProjection(ImagePlus hybridStack,
                            ImagePlus binaryMaskEdge,
-                           ArrayList<Point> centroidList1Vessel,
+                           List<Point> centroidList1Vessel,
                            int angleStep) {
         this.hybridStack = hybridStack;
         this.hybridStackImageStack = hybridStack.getImageStack();

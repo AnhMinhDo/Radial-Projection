@@ -4,17 +4,18 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
 
-import java.awt.*;
+import java.awt.Point;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CreateMask {
-    private final ArrayList<Point> coordinates;
+    private final List<Point> coordinates;
     private final int width;
     private final int height;
     private final double diameter;
     private final double radius;
 
-    public CreateMask(ArrayList<Point> coordinates,
+    public CreateMask(List<Point> coordinates,
                       int width,
                       int height,
                       double radius){
