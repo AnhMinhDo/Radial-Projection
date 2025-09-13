@@ -469,6 +469,36 @@ new FormModel {
 								"value": "cell 2 0 2 1"
 							} )
 							add( new FormComponent( "javax.swing.JLabel" ) {
+								name: "labelNumberOfLineScan"
+								"text": "<html>Number of <br> line scan  </html>"
+							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+								"value": "cell 4 0"
+							} )
+							add( new FormComponent( "javax.swing.JSpinner" ) {
+								name: "spinnerNumberOfLineScan"
+								"model": new javax.swing.SpinnerNumberModel {
+									minimum: 1
+									value: 100
+								}
+							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+								"value": "cell 5 0"
+							} )
+							add( new FormComponent( "javax.swing.JLabel" ) {
+								name: "labelLineScanLength"
+								"text": "<html>Line Scan Length</html>"
+							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+								"value": "cell 6 0"
+							} )
+							add( new FormComponent( "javax.swing.JSpinner" ) {
+								name: "spinnerLineScanLength"
+								"model": new javax.swing.SpinnerNumberModel {
+									minimum: 1
+									value: 25
+								}
+							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+								"value": "cell 7 0"
+							} )
+							add( new FormComponent( "javax.swing.JLabel" ) {
 								name: "labelBandsSegmentationBySplittingImage"
 								"text": "<html>Band Segmentation <br> by Splitting Image</html>"
 								"visible": false

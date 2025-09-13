@@ -259,6 +259,9 @@ public class Radical_Projection_Tool extends JFrame {
 
 	public JPanel getBandsAndGapsPanel() {return  bandsAndGapsPanel;}
 
+	public JSpinner getSpinnerNumberOfLineScan() {return  spinnerNumberOfLineScan;}
+	public JSpinner getSpinnerLineScanLength() {return  spinnerLineScanLength;}
+
 
 
 	private void initComponents() {
@@ -334,6 +337,10 @@ public class Radical_Projection_Tool extends JFrame {
 		bandsAndGapsPanel = new JPanel();
 		labelLegacyBandMeasurement = new JLabel();
 		buttonLegacyBandMeasurement = new JButton();
+		labelNumberOfLineScan = new JLabel();
+		spinnerNumberOfLineScan = new JSpinner();
+		labelLineScanLength = new JLabel();
+		spinnerLineScanLength = new JSpinner();
 		labelBandsSegmentationBySplittingImage = new JLabel();
 		buttonSegmentationBySplitting = new JButton();
 		spinnerPercentageForSplitting = new JSpinner();
@@ -825,6 +832,22 @@ public class Radical_Projection_Tool extends JFrame {
 						buttonLegacyBandMeasurement.setEnabled(false);
 						bandsAndGapsPanel.add(buttonLegacyBandMeasurement, "cell 2 0 2 1");
 
+						//---- labelNumberOfLineScan ----
+						labelNumberOfLineScan.setText("<html>Number of <br> line scan  </html>");
+						bandsAndGapsPanel.add(labelNumberOfLineScan, "cell 4 0");
+
+						//---- spinnerNumberOfLineScan ----
+						spinnerNumberOfLineScan.setModel(new SpinnerNumberModel(100, 1, null, 1));
+						bandsAndGapsPanel.add(spinnerNumberOfLineScan, "cell 5 0");
+
+						//---- labelLineScanLength ----
+						labelLineScanLength.setText("<html>Line Scan Length</html>");
+						bandsAndGapsPanel.add(labelLineScanLength, "cell 6 0");
+
+						//---- spinnerLineScanLength ----
+						spinnerLineScanLength.setModel(new SpinnerNumberModel(25, 1, null, 1));
+						bandsAndGapsPanel.add(spinnerLineScanLength, "cell 7 0");
+
 						//---- labelBandsSegmentationBySplittingImage ----
 						labelBandsSegmentationBySplittingImage.setText("<html>Band Segmentation <br> by Splitting Image</html>");
 						labelBandsSegmentationBySplittingImage.setVisible(false);
@@ -974,6 +997,10 @@ public class Radical_Projection_Tool extends JFrame {
 	private JPanel bandsAndGapsPanel;
 	private JLabel labelLegacyBandMeasurement;
 	private JButton buttonLegacyBandMeasurement;
+	private JLabel labelNumberOfLineScan;
+	private JSpinner spinnerNumberOfLineScan;
+	private JLabel labelLineScanLength;
+	private JSpinner spinnerLineScanLength;
 	private JLabel labelBandsSegmentationBySplittingImage;
 	private JButton buttonSegmentationBySplitting;
 	private JSpinner spinnerPercentageForSplitting;
