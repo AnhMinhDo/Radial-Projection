@@ -7,17 +7,22 @@ import java.awt.*;
 public class Band {
     private final Point peak;
     private final double peakIntensity;
-    private final int width;
+    private final int length;
     private final Point leftEdge;
     private final Point rightEdge;
     private final double prominence;
 
-    public Band(Point peak, Point leftEdge, Point rightEdge, double peakIntensity, int width, double prominence) {
+    public Band(Point peak,
+                Point leftEdge,
+                Point rightEdge,
+                double peakIntensity,
+                int length,
+                double prominence) {
         this.peak = peak;
         this.leftEdge=leftEdge;
         this.rightEdge=rightEdge;
         this.peakIntensity = peakIntensity;
-        this.width = width;
+        this.length = length;
         this.prominence = prominence;
     }
 
@@ -37,8 +42,8 @@ public class Band {
         return peakIntensity;
     }
 
-    public int getWidth() {
-        return width;
+    public int getLength() {
+        return length;
     }
 
     public double getProminence() {
