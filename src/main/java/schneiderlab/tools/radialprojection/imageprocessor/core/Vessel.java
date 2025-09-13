@@ -2,12 +2,16 @@ package schneiderlab.tools.radialprojection.imageprocessor.core;
 
 import ij.ImagePlus;
 
-import java.awt.*;
+import java.awt.Point;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Vessel {
-    private final ArrayList<VesselSliceData>  vesselSliceDataArrayList;
-    private final ArrayList<Point> centroidArrayList ;
+    private final List<VesselSliceData> vesselSliceDataArrayList;
+    private final List<Point> centroidArrayList ;
+    private final List<Integer> perimeterSizeInPixelList ;
+    private final List<Double> averageDiameterList;
+    private final List<Double> circularityList;
     // radial Projection
     private ImagePlus radialProjectionHybrid;
     private ImagePlus radialProjectionCellulose;
@@ -21,6 +25,9 @@ public class Vessel {
     public Vessel(int numberOfSliceInStack) {
         this.vesselSliceDataArrayList= new ArrayList<>(numberOfSliceInStack);
         this.centroidArrayList = new ArrayList<>(numberOfSliceInStack);
+        this.perimeterSizeInPixelList = new ArrayList<>(numberOfSliceInStack);
+        this.averageDiameterList = new ArrayList<>(numberOfSliceInStack);
+        this.circularityList = new ArrayList<>(numberOfSliceInStack);
     }
 
     public void addVesselSliceData(Point clickPoint, Point centroid, int trueSliceIndex, int trueLabel){
@@ -40,7 +47,7 @@ public class Vessel {
         return vesselSliceDataArrayList.get(index).getTrueLabel();
     }
 
-    public ArrayList<Point> getCentroidArrayList(){
+    public List<Point> getCentroidArrayList(){
         if (centroidArrayList.isEmpty()){
             generateCentroidArrayList();
             return this.centroidArrayList;
