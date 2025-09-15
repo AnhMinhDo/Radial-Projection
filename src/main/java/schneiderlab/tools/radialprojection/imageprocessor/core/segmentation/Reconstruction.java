@@ -165,7 +165,6 @@ public class Reconstruction {
                                                                 vesselsArray,
                                                                 startingClick,
                                                                 pointForBackground);
-
             // perform segmentation
             RandomAccessibleInterval<FloatType> slice2D = Views.hyperSlice(smoothedStack, 2, currentSlice); // dimension 2 is Z
             SegmentationExtendMinimaWaterShed semws = new SegmentationExtendMinimaWaterShed(currentClick,
@@ -195,6 +194,7 @@ public class Reconstruction {
                         vessel.getTrueLabel(currentSlice));
                 //TODO: scan all the pixel to get the contour of the object; multiple with the scale for real life measurement
                 combinedEdgeMask.copyBits(edgeBinaryMask,0,0,Blitter.OR);
+                updateMeasurement(vessel,finalStack,vessel.getTrueSliceIndex(currentSlice), vessel.getTrueLabel(currentSlice));
             }
             edgesStack.addSlice(combinedEdgeMask);
             // create binary of both edge and centroid
@@ -479,16 +479,30 @@ public class Reconstruction {
         return (ByteProcessor) ImageCalculator.combineImages(regionBinaryMask, eroded, ImageCalculator.Operation.MINUS);
     }
 
-    private int perimeterSizeInPixelOfSingleContour(ByteProcessor input){
-        // the binary image should only contain the contour of 1 object and nothing else
-        byte[] bytePixelArray = (byte[]) input.getPixels();
-        int result = 0;
-        for (int i = 0; i < bytePixelArray.length; i++) {
-            if ((bytePixelArray[i]& 0xFF) == 255){
-                result++;
-            }
-        }
-        return result;
-    }
+     private void updateMeasurement(Vessel vessel,
+                                           ImageStack segmentedStack,
+                                           int sliceIndex,
+                                           int labelValue){
+         ImageProcessor trueSliceIP = segmentedStack.getProcessor(sliceIndex+1);
+         Measure measure = new Measure(trueSliceIP,labelValue);
+         measure.process();
+         double area = measure.getAreaInPixel();
+         double circularity = measure.getCircularityInPixel();
+         double perimeter = measure.getPerimeterInPixel();
+         vessel.getCircularityList().add(circularity);
+         vessel.getPerimeterSizeInPixelList().add(perimeter);
+     }
+
+//    private int perimeterSizeInPixelOfSingleContour(ByteProcessor input){
+//        // the binary image should only contain the contour of 1 object and nothing else
+//        byte[] bytePixelArray = (byte[]) input.getPixels();
+//        int result = 0;
+//        for (int i = 0; i < bytePixelArray.length; i++) {
+//            if ((bytePixelArray[i]& 0xFF) == 255){
+//                result++;
+//            }
+//        }
+//        return result;
+//    }
 
 }
