@@ -6,19 +6,20 @@ import schneiderlab.tools.radialprojection.imageprocessor.core.polarprojection.P
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class RadialProjectionWorker extends SwingWorker<Void, Void> {
     private final ImagePlus hybridStack;
     private final ImagePlus celluloseStack;
     private final ImagePlus ligninStack;
     private final ImagePlus edgeBinaryMaskEdge;
-    private final ArrayList<Vessel> vesselArrayList;
+    private final List<Vessel> vesselArrayList;
 
     public RadialProjectionWorker(ImagePlus hybridStack,
                                   ImagePlus celluloseStack,
                                   ImagePlus ligninStack,
                                   ImagePlus edgeBinaryMaskEdge,
-                                  ArrayList<Vessel> vesselArrayList) {
+                                  List<Vessel> vesselArrayList) {
         this.hybridStack = hybridStack;
         this.celluloseStack = celluloseStack;
         this.ligninStack = ligninStack;

@@ -8,33 +8,34 @@ import schneiderlab.tools.radialprojection.imageprocessor.core.Vessel;
 import schneiderlab.tools.radialprojection.imageprocessor.core.segmentation.Reconstruction;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.Point;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class SegmentWholeStackWorker extends SwingWorker<Void, Void> {
     private RandomAccessibleInterval<FloatType> hybridStackSmoothed;
     private int hybridStackSmoothedWidth;
     private int hybridStackSmoothedHeight;
     private double vesselRadius;
-    private ArrayList<Point> coordinatesBatch;
+    private List<Point> coordinatesBatch;
     private int slideForTuning;
     private int pixelScaleINNanometer;
     private Reconstruction recon;
     private ImagePlus finalSegmentation;
     private ImagePlus edgeBinaryMaskImagePlus;
-    private HashMap<Integer, ArrayList<Point>> centroidHashMap;
+    private HashMap<Integer, List<Point>> centroidHashMap;
     private ImagePlus edgeCentroidImagePlus;
-    private ArrayList<Vessel> vesselArrayList;
+    private List<Vessel> vesselArrayList;
 
 
     public SegmentWholeStackWorker(RandomAccessibleInterval<FloatType> hybridStackSmoothed,
                                    int hybridStackSmoothedWidth,
                                    int hybridStackSmoothedHeight,
                                    double vesselRadius,
-                                   ArrayList<Point> coordinatesBatch,
+                                   List<Point> coordinatesBatch,
                                    int slideForTuning,
                                    int pixelScaleINNanometer) {
         this.hybridStackSmoothed = hybridStackSmoothed;
@@ -57,8 +58,8 @@ public class SegmentWholeStackWorker extends SwingWorker<Void, Void> {
     public ImagePlus getEdgeCentroidMaskImagePlus() {
         return edgeCentroidImagePlus;
     }
-    public ArrayList<Vessel> getVesselArrayList(){return vesselArrayList;}
-    public HashMap<Integer, ArrayList<Point>> getCentroidHashMap() {
+    public List<Vessel> getVesselArrayList(){return vesselArrayList;}
+    public HashMap<Integer, List<Point>> getCentroidHashMap() {
         return centroidHashMap;
     }
 

@@ -4,12 +4,13 @@ import ij.ImagePlus;
 import schneiderlab.tools.radialprojection.imageprocessor.core.Vessel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RadialProjectionModel {
     private ImagePlus lignin;
     private ImagePlus hybrid;
     private ImagePlus cellulose;
-    private ArrayList<Vessel> vesselArrayList;
+    private List<Vessel> vesselArrayList;
 
     public RadialProjectionModel() {
     }
@@ -38,11 +39,11 @@ public class RadialProjectionModel {
         this.cellulose = cellulose;
     }
 
-    public ArrayList<Vessel> getVesselArrayList() {
+    public List<Vessel> getVesselArrayList() {
         return vesselArrayList;
     }
 
-    public void setVesselArrayList(ArrayList<Vessel> vesselArrayList) {
+    public void setVesselArrayList(List<Vessel> vesselArrayList) {
         this.vesselArrayList = vesselArrayList;
     }
 }

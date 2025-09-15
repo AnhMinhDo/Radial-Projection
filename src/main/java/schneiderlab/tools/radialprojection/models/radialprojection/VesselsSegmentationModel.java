@@ -9,11 +9,12 @@ import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.FloatType;
 import schneiderlab.tools.radialprojection.imageprocessor.core.Vessel;
 
-import java.awt.*;
+import java.awt.Point;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 
 public class VesselsSegmentationModel {
@@ -34,10 +35,10 @@ public class VesselsSegmentationModel {
     private ImagePlus edgeBinaryMaskImagePlus;
     private Overlay overlaySegmentation;
     private ImagePlus impInByte;
-    private final ArrayList<Point> coordinates = new ArrayList<>() ;
-    private final ArrayList<Point> coordinatesBatch = new ArrayList<>() ;
-    private HashMap<Integer, ArrayList<Point>> centroidHashMap;
-    private ArrayList<Vessel> vesselArrayList;
+    private final List<Point> coordinates = new ArrayList<>() ;
+    private final List<Point> coordinatesBatch = new ArrayList<>() ;
+    private HashMap<Integer, List<Point>> centroidHashMap;
+    private List<Vessel> vesselArrayList;
 
     public VesselsSegmentationModel() {
     }
@@ -153,27 +154,27 @@ public class VesselsSegmentationModel {
         this.impInByte = impInByte;
     }
 
-    public ArrayList<Point> getCoordinates() {
+    public List<Point> getCoordinates() {
         return coordinates;
     }
 
-    public ArrayList<Point> getCoordinatesBatch() {
+    public List<Point> getCoordinatesBatch() {
         return coordinatesBatch;
     }
 
-    public HashMap<Integer, ArrayList<Point>> getCentroidHashMap() {
+    public HashMap<Integer, List<Point>> getCentroidHashMap() {
         return centroidHashMap;
     }
 
-    public void setCentroidHashMap(HashMap<Integer, ArrayList<Point>> centroidHashMap) {
+    public void setCentroidHashMap(HashMap<Integer, List<Point>> centroidHashMap) {
         this.centroidHashMap = centroidHashMap;
     }
 
-    public ArrayList<Vessel> getVesselArrayList() {
+    public List<Vessel> getVesselArrayList() {
         return vesselArrayList;
     }
 
-    public void setVesselArrayList(ArrayList<Vessel> vesselArrayList) {
+    public void setVesselArrayList(List<Vessel> vesselArrayList) {
         this.vesselArrayList = vesselArrayList;
     }
 

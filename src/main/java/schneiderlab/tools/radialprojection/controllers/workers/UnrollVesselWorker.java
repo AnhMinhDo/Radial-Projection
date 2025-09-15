@@ -7,8 +7,8 @@ import schneiderlab.tools.radialprojection.imageprocessor.core.unrolling.Contour
 import schneiderlab.tools.radialprojection.imageprocessor.core.unrolling.UnrollSingleVessel;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 
 public class UnrollVesselWorker extends SwingWorker<Void, Void> {
@@ -16,14 +16,14 @@ public class UnrollVesselWorker extends SwingWorker<Void, Void> {
     private final ImagePlus ligninStack;
     private final ImagePlus celluloseStack;
     private final ImagePlus edgeBinaryMaskEdge;
-    private final ArrayList<Vessel> vesselArrayList;
+    private final List<Vessel> vesselArrayList;
 //    private ArrayList<ImagePlus> vesselUnrolledArrayList;
 
     public UnrollVesselWorker(ImagePlus hybridStack,
                               ImagePlus celluloseStack,
                               ImagePlus ligninStack,
                                  ImagePlus edgeBinaryMaskEdge,
-                                 ArrayList<Vessel> vesselArrayList) {
+                                 List<Vessel> vesselArrayList) {
         this.hybridStack = hybridStack;
         this.ligninStack = ligninStack;
         this.celluloseStack = celluloseStack;

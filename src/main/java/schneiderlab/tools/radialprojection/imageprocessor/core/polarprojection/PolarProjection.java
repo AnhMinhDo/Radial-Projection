@@ -7,7 +7,7 @@ import ij.gui.ProfilePlot;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 
-import java.awt.*;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 

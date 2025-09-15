@@ -9,7 +9,7 @@ import java.util.List;
 public class Vessel {
     private final List<VesselSliceData> vesselSliceDataArrayList;
     private final List<Point> centroidArrayList ;
-    private final List<Integer> perimeterSizeInPixelList ;
+    private final List<Double> perimeterSizeInPixelList ;
     private final List<Double> averageDiameterList;
     private final List<Double> circularityList;
     // radial Projection
@@ -54,6 +54,18 @@ public class Vessel {
         } else {
             return this.centroidArrayList;
         }
+    }
+
+    public List<Double> getPerimeterSizeInPixelList() {
+        return perimeterSizeInPixelList;
+    }
+
+    public List<Double> getAverageDiameterList() {
+        return averageDiameterList;
+    }
+
+    public List<Double> getCircularityList() {
+        return circularityList;
     }
 
     public void generateCentroidArrayList(){
