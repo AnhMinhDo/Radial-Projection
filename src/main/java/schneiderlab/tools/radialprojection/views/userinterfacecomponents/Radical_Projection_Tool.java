@@ -838,10 +838,11 @@ public class Radical_Projection_Tool extends JFrame {
 
 						//---- spinnerNumberOfLineScan ----
 						spinnerNumberOfLineScan.setModel(new SpinnerNumberModel(100, 1, null, 1));
+						spinnerNumberOfLineScan.setPreferredSize(new Dimension(105, 43));
 						bandsAndGapsPanel.add(spinnerNumberOfLineScan, "cell 5 0");
 
 						//---- labelLineScanLength ----
-						labelLineScanLength.setText("<html>Line Scan Length</html>");
+						labelLineScanLength.setText("<html>Line Scan Length (\u00b5m)</html>");
 						bandsAndGapsPanel.add(labelLineScanLength, "cell 6 0");
 
 						//---- spinnerLineScanLength ----

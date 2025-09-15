@@ -480,12 +480,13 @@ new FormModel {
 									minimum: 1
 									value: 100
 								}
+								"preferredSize": new java.awt.Dimension( 105, 43 )
 							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 								"value": "cell 5 0"
 							} )
 							add( new FormComponent( "javax.swing.JLabel" ) {
 								name: "labelLineScanLength"
-								"text": "<html>Line Scan Length</html>"
+								"text": "<html>Line Scan Length (µm)</html>"
 							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 								"value": "cell 6 0"
 							} )
