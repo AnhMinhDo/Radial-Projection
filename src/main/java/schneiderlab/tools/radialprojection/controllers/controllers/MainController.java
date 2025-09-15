@@ -48,7 +48,7 @@ import java.util.List;
 
 public class MainController {
     private final Radical_Projection_Tool mainView;
-    private ArrayList<Path> processedFileInCreateSideView;
+    private List<Path> processedFileInCreateSideView;
     private final Context context;
     private ImagePlus finalSegmentation;
 
@@ -481,6 +481,15 @@ public class MainController {
                             mainView.getProgressBarVesselSegmentation().setToolTipText(100+"%");
                             batchSegmentationWorker.getFinalSegmentation().show();
                             batchSegmentationWorker.getEdgeCentroidMaskImagePlus().show();
+                            // show the results to users
+                            for (int i = 0; i < vesselsSegmentationModel.getVesselArrayList().size(); i++) {
+                                List<Double> perimeterList = vesselsSegmentationModel.getVesselArrayList().get(i).getPerimeterSizeInPixelList();
+                                List<Double> areaList = vesselsSegmentationModel.getVesselArrayList().get(i).getCircularityList();
+                                for (int j = 0; j < perimeterList.size(); j++) {
+                                    System.err.println(String.format("Z: %d perimeter: %.10f",(j+1),(perimeterList.get(i)*vesselsSegmentationModel.getXyPixelSize()/1000)));
+                                    System.err.println(String.format("Z: %d circularity: %.5f",(j+1),areaList.get(i)));
+                                }
+                            }
                         }
                     }
                 });
@@ -541,7 +550,7 @@ public class MainController {
                                 evt.getNewValue() == SwingWorker.StateValue.DONE){
                             mainView.getTextFieldStatusRadialProjection().setText("Radial Projection Complete");
                             mainView.getProgressBarRadialProjection().setValue(100);
-//                            ArrayList<ImagePlus> vesselRadialProjectionList = polarProjection.getVesselPolarProjectionArrayList();
+//                            List<ImagePlus> vesselRadialProjectionList = polarProjection.getVesselPolarProjectionArrayList();
                             //TODO: the line below should not be placed here, the transfer of references from one model to another need to be handled gracefully not only when the radial projection is performed
                             radialProjectionModel.setVesselArrayList(vesselsSegmentationModel.getVesselArrayList()); // transfer the vesselArrayList to from segmentation Model to radialProjectionModel
                             // show the results to users
@@ -621,11 +630,11 @@ public class MainController {
                 ImagePlus vessel2HybridRadialProjection = radialProjectionModel.getVesselArrayList().get(1).getRadialProjectionHybrid();
                 ShortProcessor vessel1HybridRadialProjectionImageProcessor = (ShortProcessor) vessel1HybridRadialProjection.getProcessor();
                 ShortProcessor vessel2HybridRadialProjectionImageProcessor = (ShortProcessor) vessel2HybridRadialProjection.getProcessor();
-                RandomLineScanWorker randomLineScanVessel1Worker = new RandomLineScanWorker(100,
+                RandomLineScanWorker randomLineScanVessel1Worker = new RandomLineScanWorker((Integer) mainView.getSpinnerNumberOfLineScan().getValue(),
                         (int) mainView.getSpinnerLineScanLength().getValue(),
                         vesselsSegmentationModel.getXyPixelSize(),
                         vessel1HybridRadialProjectionImageProcessor);
-                RandomLineScanWorker randomLineScanVessel2Worker = new RandomLineScanWorker(100,
+                RandomLineScanWorker randomLineScanVessel2Worker = new RandomLineScanWorker((Integer) mainView.getSpinnerNumberOfLineScan().getValue(),
                         (int) mainView.getSpinnerLineScanLength().getValue(),
                         vesselsSegmentationModel.getXyPixelSize(),
                         vessel2HybridRadialProjectionImageProcessor);
@@ -641,8 +650,8 @@ public class MainController {
                             ImagePlus binaryImagePlus = new ImagePlus("binary band scan vessel 1",binary);
                             imageWithOnlyScanBandImagePlus.show();
                             binaryImagePlus.show();
-                            System.err.println("Mean of vessel 1 in micrometer: " + String.format("%.2f",randomLineScanVessel1Worker.getMeanBandLength()*(vesselsSegmentationModel.getXyPixelSize()/1000)));
-                            System.err.println("Mean of vessel 2 in micrometer: " + String.format("%.2f",randomLineScanVessel2Worker.getMeanBandLength()*(vesselsSegmentationModel.getXyPixelSize()/1000)));
+                            System.err.println("Mean of vessel 1 in micrometer: " + String.format("%.2f",randomLineScanVessel1Worker.getMeanBandLength()*((double)mainView.getSpinnerZPixelSizeCreateSideView().getValue()/1000)));
+                            System.err.println("Mean of vessel 2 in micrometer: " + String.format("%.2f",randomLineScanVessel2Worker.getMeanBandLength()*((double)mainView.getSpinnerZPixelSizeCreateSideView().getValue()/1000)));
                         }
                     }
                 });
@@ -669,11 +678,11 @@ public class MainController {
         mainView.getButtonSegmentationBySplitting().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ArrayList<Vessel> vesselArrayList = vesselsSegmentationModel.getVesselArrayList();
+                List<Vessel> vesselArrayList = vesselsSegmentationModel.getVesselArrayList();
                 Vessel vessel1 = vesselArrayList.get(0);
                 ImagePlus vessel1Img = vessel1.getRadialProjectionLignin();
                 int percentageForSplitting = (int)mainView.getSpinnerPercentageForSplitting().getValue();
-                ArrayList<Tile> tileArrayList = Tile.divideIntoEqualSize(vessel1Img.getWidth(),
+                List<Tile> tileArrayList = Tile.divideIntoEqualSize(vessel1Img.getWidth(),
                                                                     vessel1Img.getHeight(),
                                                                             percentageForSplitting);
                 Tile.splitImage(vessel1Img,tileArrayList);
@@ -693,7 +702,7 @@ public class MainController {
         mainView.getButtonCustomSkeletonize().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ArrayList<Vessel> vesselArrayList = vesselsSegmentationModel.getVesselArrayList();
+                List<Vessel> vesselArrayList = vesselsSegmentationModel.getVesselArrayList();
                 Vessel vessel1 = vesselArrayList.get(0);
                 ImagePlus vessel1Img = vessel1.getRadialProjectionLignin();
                 // apply custom bandPath detect function
