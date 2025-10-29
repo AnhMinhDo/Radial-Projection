@@ -36,4 +36,9 @@ public class RadialProjectionUtils {
         impFloat.resetDisplayRange();
         return impFloat;
     }
+
+    public static String filenameWithoutExtension(String filenameWithExtension){
+        int idx = filenameWithExtension.lastIndexOf(".");
+        return filenameWithExtension.substring(0,idx);
+    }
 }
