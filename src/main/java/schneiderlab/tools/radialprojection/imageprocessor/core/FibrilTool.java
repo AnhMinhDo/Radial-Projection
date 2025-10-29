@@ -60,7 +60,12 @@ public class FibrilTool {
         double yy = nYY.getStatistics().mean;
         double xy = nXY.getStatistics().mean;
         DirectionAndScoreResult directionAndScore = calculateStructureTensor(xx,yy,xy);
-        this.orientation = directionAndScore.directionInDegree;
+        if(directionAndScore.directionInDegree < 0){
+            this.orientation = directionAndScore.directionInDegree + 180; // convert to 0-180 instead of from -90 to 90
+        } else {
+            this.orientation = directionAndScore.directionInDegree;
+        }
+
         this.anisotropy = directionAndScore.score;
     }
 
@@ -119,7 +124,6 @@ public class FibrilTool {
         double scoren = Math.abs((v1 - v2) / (v1 + v2));
         return new DirectionAndScoreResult(tn,scoren);
     }
-
 
     private double euclideanDistance(int x1,int y1,int x2,int y2){
         int dx = x1 - x2;
