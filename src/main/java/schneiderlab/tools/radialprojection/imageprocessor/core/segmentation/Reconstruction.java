@@ -21,10 +21,7 @@ import schneiderlab.tools.radialprojection.imageprocessor.core.utils.RadialProje
 import java.awt.Point;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.IOException;
 import java.util.*;
-
-import java.util.stream.Collectors;
 
 import static ij.IJ.debugMode;
 
@@ -487,7 +484,7 @@ public class Reconstruction {
          Measure measure = new Measure(trueSliceIP,labelValue);
          measure.process();
          double area = measure.getAreaInPixel();
-         double circularity = measure.getCircularityInPixel();
+         double circularity = measure.getCircularity();
          double perimeter = measure.getPerimeterInPixel();
          vessel.getCircularityList().add(circularity);
          vessel.getPerimeterSizeInPixelList().add(perimeter);
