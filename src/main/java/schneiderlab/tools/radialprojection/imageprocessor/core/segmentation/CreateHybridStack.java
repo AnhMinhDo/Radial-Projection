@@ -30,7 +30,8 @@ public class CreateHybridStack {
     private RandomAccessibleInterval<FloatType> hybridNonSmoothedStack;
     private RandomAccessibleInterval<FloatType> hybridSmoothedStack;
     private int smoothedStackWidth;
-    private int getSmoothedStackHeight;
+    private int smoothedStackHeight;
+    private int smoothedStackSlicesNumber;
     private int currentProgress;
     private RandomAccessibleInterval<FloatType> lignin;
     RandomAccessibleInterval<FloatType> cellulose;
@@ -82,7 +83,8 @@ public class CreateHybridStack {
 
     public int getSmoothedStackWidth() {return smoothedStackWidth;}
 
-    public int getGetSmoothedStackHeight() {return getSmoothedStackHeight;}
+    public int getSmoothedStackHeight() {return smoothedStackHeight;}
+    public int getSmoothedStackSlicesNumber() {return smoothedStackSlicesNumber;}
 
     public RandomAccessibleInterval<FloatType> getLignin() { return lignin;}
 
@@ -175,7 +177,8 @@ public class CreateHybridStack {
         ops.filter().gauss(smoothedStack,projectedStack,sigmaValueForGaussianFilter);
         // assign to instance variable
         this.smoothedStackWidth = (int) width;
-        this.getSmoothedStackHeight = (int) height;
+        this.smoothedStackHeight = (int) height;
+        this.smoothedStackSlicesNumber = (int) depth ;
 //        cellulose = null; lignin = null; celluloseMultiplied = null; ligninMultiplied = null;
         hybridSmoothedStack=smoothedStack;
         return smoothedStack;
