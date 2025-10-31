@@ -46,9 +46,9 @@ public class CreateSideViewWorker extends SwingWorker<ImgPlus<UnsignedShortType>
         sideViewImg = createSideView.process();
         ImgPlus<UnsignedShortType> sideView = new ImgPlus<>(sideViewImg);
         // Add meta data
-        sideView.setAxis(new DefaultLinearAxis(Axes.X, "µm",targetXYpixelSize*0.001),0);
-        sideView.setAxis(new DefaultLinearAxis(Axes.Y, "µm",targetXYpixelSize*0.001),1);
-        sideView.setAxis(new DefaultLinearAxis(Axes.Z, "µm",targetZpixelSize*0.001),3);
+        sideView.setAxis(new DefaultLinearAxis(Axes.X, "micron",targetXYpixelSize*0.001),0);
+        sideView.setAxis(new DefaultLinearAxis(Axes.Y, "micron",targetXYpixelSize*0.001),1);
+        sideView.setAxis(new DefaultLinearAxis(Axes.Z, "micron",targetZpixelSize*0.001),3);
         sideView.setAxis(new DefaultLinearAxis(Axes.CHANNEL, "",1.0),2);
         return sideView;
     }
