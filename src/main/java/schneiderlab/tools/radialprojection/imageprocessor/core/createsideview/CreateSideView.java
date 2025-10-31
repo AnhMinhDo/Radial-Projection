@@ -211,11 +211,6 @@ public class CreateSideView {
         copyToChannel(rai1,outputImgPlus,0);
         copyToChannel(rai2,outputImgPlus,1);
 
-//        // save the new Image to tif file
-//        ImgSaver saver = new ImgSaver(context);
-//        saver.saveImg(newOutputFilePath.toString(), outputImgPlus);
-//        IJ.showStatus("Finish file: "+filePath.getFileName().toString());
-//        if (debugMode) IJ.log("Saved side view image: " + newOutputFilePath);
         setNewProgressValue((int)(10*(100/totalNumberOfSteps))); // update ProgressBar
         return outputImgPlus;
     }
