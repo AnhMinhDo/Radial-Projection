@@ -8,13 +8,11 @@ import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class UnrollSingleVessel {
-    private final ImagePlus hybridStack;
-    private final ImageStack hybridStackImageStack;
-    private final ImagePlus binaryMaskEdge;
+    private final ImageStack rawImageStack;
+    private final ImageStack hybridSmoothedStack;
     private final ImageStack binaryMaskEdgeImageStack;
     private final List<Point> centroidList;
     private final int angleStep;
@@ -24,19 +22,19 @@ public class UnrollSingleVessel {
     private final int outputWidth;
     private ShortProcessor hybridWallProcessor;
 
-    public UnrollSingleVessel(ImagePlus hybridStack,
+    public UnrollSingleVessel(ImagePlus hybridSmoothedStack,
+                            ImagePlus rawStack,
                            ImagePlus binaryMaskEdge,
                            List<Point> centroidList1Vessel,
                            int angleStep) {
-        this.hybridStack = hybridStack;
-        this.hybridStackImageStack = hybridStack.getImageStack();
-        this.binaryMaskEdge = binaryMaskEdge;
+        this.rawImageStack = rawStack.getImageStack();
+        this.hybridSmoothedStack = hybridSmoothedStack.getImageStack();
         this.binaryMaskEdgeImageStack = binaryMaskEdge.getImageStack();
         this.angleStep = angleStep;
         this.angleCount = (int) Math.ceil(360.0 / angleStep); // 360 degree of a circle
         this.centroidList = centroidList1Vessel;
         this.outputHeight = (int)Math.ceil((double)Math.min(binaryMaskEdge.getHeight(), binaryMaskEdge.getWidth())*3.14); // the vessel must be enclosed inside the image of each slice, which means its diameter cannot be larger than the height(or width depend on which one is smaller) of that image, therefore, the circumference of the vessel cannot excess image_height*3.14
-        this.outputWidth = hybridStackImageStack.size();
+        this.outputWidth = rawImageStack.size();
         this.maxRadius = (int)Math.min(binaryMaskEdge.getHeight(),binaryMaskEdge.getWidth())/4;
     }
 
@@ -59,7 +57,8 @@ public class UnrollSingleVessel {
                     maxRadius,
                     intermediateResult,
                     i-1,
-                    hybridStackImageStack.getProcessor(i),
+                    rawImageStack.getProcessor(i),
+                    hybridSmoothedStack.getProcessor(i),
                     angleStep,
                     angleCount);
 //            System.err.println("after unrolling1Vessel1Slide");
@@ -78,12 +77,13 @@ public class UnrollSingleVessel {
 
     }
 
-    public static void unrolling1Vessel1Slide(ImageProcessor binaryMask,
+    public void unrolling1Vessel1Slide(ImageProcessor binaryMask,
                                                    int cx, int cy,
                                                    int maxRadius,
                                                    short[][] output2DArray,
                                                    int currentSliceIdx,
-                                                   ImageProcessor originalProcessor,
+                                                   ImageProcessor rawSliceProcessor,
+                                                   ImageProcessor hybridSliceProcessor,
                                                    int angleStep,
                                                    int angleCount) {
         Point previousIntersection= new Point(cx,cy);
@@ -100,13 +100,18 @@ public class UnrollSingleVessel {
                 // Get profile (pixel values along line)
                 ImagePlus binaryMaskWithROI = new ImagePlus("binary mask with ROI", binaryMask);
                 binaryMaskWithROI.setRoi(line);
-                ProfilePlot profile = new ProfilePlot(binaryMaskWithROI);
-                double[] values = profile.getProfile();
-                for (int j = 0; j < values.length; j++) { // traverse each of the pixel on the line
-                    if(values[j] > 0){ // find the signal of the mask
-                        output2DArray[0][currentSliceIdx] = selectBestSignal(cx,cy,rad,j,originalProcessor);
-                        previousIntersection = new Point((int)(cx + (j+1) * Math.cos(rad)),(int)(cy - (j+1) * Math.sin(rad)));
-                        firstIntersection = new Point((int)(cx + (j+1) * Math.cos(rad)),(int)(cy - (j+1) * Math.sin(rad)));
+                ProfilePlot binaryMaskWithROIprofile = new ProfilePlot(binaryMaskWithROI);
+                double[] profileBinaryMaskValues = binaryMaskWithROIprofile.getProfile();
+                ImagePlus hybridSmoothedWithLineScan = new ImagePlus("Hybrid smoothed with line scan", hybridSliceProcessor);
+                hybridSmoothedWithLineScan.setRoi(line);
+                ProfilePlot hybridSmoothedWithLineScanProfile = new ProfilePlot(hybridSmoothedWithLineScan);
+                double[] profileHybridSmoothedValues = hybridSmoothedWithLineScanProfile.getProfile();
+                for (int j = 0; j < profileBinaryMaskValues.length; j++) { // traverse each of the pixel on the line
+                    if(profileBinaryMaskValues[j] > 0){ // find the signal of the mask
+                        Result result = selectBestSignal3(cx,cy,rad,j,profileHybridSmoothedValues,rawSliceProcessor);
+                        output2DArray[0][currentSliceIdx] = result.getIntensityValueOnTheOriginalImage();
+                        previousIntersection = new Point(result.getxCoordinate(), result.getyCoordinate());
+                        firstIntersection = new Point(result.getxCoordinate(), result.getyCoordinate());
                         break;
                     }
                 }
@@ -120,15 +125,20 @@ public class UnrollSingleVessel {
                 // Get profile (pixel values along line)
                 ImagePlus binaryMaskWithROI = new ImagePlus("binary mask with ROI", binaryMask);
                 binaryMaskWithROI.setRoi(line);
-                ProfilePlot profile = new ProfilePlot(binaryMaskWithROI);
-                double[] values = profile.getProfile();
-                for (int j = 0; j < values.length; j++) { // traverse each of the pixel on the line
-                    if(values[j] > 0){ // find the signal of the mask
+                ProfilePlot binaryMaskWithROIprofile = new ProfilePlot(binaryMaskWithROI);
+                double[] profileBinaryMaskValues = binaryMaskWithROIprofile.getProfile();
+                ImagePlus hybridSmoothedWithLineScan = new ImagePlus("Hybrid smoothed with line scan", hybridSliceProcessor);
+                hybridSmoothedWithLineScan.setRoi(line);
+                ProfilePlot hybridSmoothedWithLineScanProfile = new ProfilePlot(hybridSmoothedWithLineScan);
+                double[] profileHybridSmoothedValues = hybridSmoothedWithLineScanProfile.getProfile();
+                for (int j = 0; j < profileBinaryMaskValues.length; j++) { // traverse each of the pixel on the line
+                    if(profileBinaryMaskValues[j] > 0){ // find the signal of the mask
 //                        System.err.println("found intersection");
                         // get the pixel intensity at the intersection
-                        short pixelIntensityAtIntersection = selectBestSignal(cx,cy,rad,j,originalProcessor);
+                        Result result = selectBestSignal3(cx,cy,rad,j,profileHybridSmoothedValues,rawSliceProcessor);
+                        short pixelIntensityAtIntersection = result.getIntensityValueOnTheOriginalImage();
                         // calculate intersect point
-                        Point intersectPoint = new Point((int)(cx + (j+1) * Math.cos(rad)),(int)(cy - (j+1) * Math.sin(rad)));
+                        Point intersectPoint = new Point(result.getxCoordinate(), result.getyCoordinate());
 //                        System.err.println("Intersect point: " + intersectPoint);
                         // get the Line from previous point to current intersect point
                         Line connectLine = new Line(previousIntersection.getX(),
@@ -140,7 +150,7 @@ public class UnrollSingleVessel {
 //                        System.err.println("get allPointsArray with length: " + allPointsArray.length);
                         for (int k = 1; k < allPointsArray.length; k++) { // start from 1 to skip the first point(this point intensity has been assigned to output from the previous loop)
                             Point checkedPoint = allPointsArray[k];
-                            float intensity = originalProcessor.getf(checkedPoint.x,checkedPoint.y);
+                            float intensity = rawSliceProcessor.getf(checkedPoint.x,checkedPoint.y);
                             output2DArray[previousIntersectionIdx+k][currentSliceIdx] = (short)intensity;
                         }
 //                        System.err.println("complete for loop to assign points to the outputArray");
@@ -168,6 +178,21 @@ public class UnrollSingleVessel {
                 Math.max(imageProcessor.getf(px_b,py_b),imageProcessor.getf(px_a,py_a))); // select the highest signal out of the 3 points to ensure the best projection quality
     }
 
+    private Result selectBestSignal3(int cx, int cy, double rad, int currentIndex, double[] profileHybridSmoothedSlice, ImageProcessor rawSliceProcessor){
+        double max = profileHybridSmoothedSlice[currentIndex-1];
+        int idxMax = currentIndex-1;
+        int range = currentIndex/2; // TODO: range value is still not optimal, should come up with better threshold
+        for (int i = currentIndex; i <Math.min(currentIndex+range,profileHybridSmoothedSlice.length-currentIndex); i++) {
+            if (profileHybridSmoothedSlice[i] > max){
+                max = profileHybridSmoothedSlice[i];
+                idxMax = i;
+            }
+        }
+        int px = (int)(cx + idxMax * Math.cos(rad));
+        int py = (int)(cy - idxMax * Math.sin(rad));
+        return new Result(idxMax,(short) rawSliceProcessor.getf(px, py),px, py);
+    }
+
     private static int findLastRowContainingSignal(short[][] array2D){
         int newRowCount = array2D.length; // initially, all rows are considered containing signal
         for (int i = array2D.length-1; i >= 0; i--) { // iterate each row from bottom to top
@@ -185,6 +210,36 @@ public class UnrollSingleVessel {
             }
         }
         return newRowCount;
+    }
+
+    private class Result{
+        private int indexOnTheProfile;
+        private short intensityValueOnTheOriginalImage;
+        private int xCoordinate;
+        private int yCoordinate;
+
+        public Result(int indexOnTheProfile, short intensityValueOnTheOriginalImage, int xCoordinate, int yCoordinate) {
+            this.indexOnTheProfile = indexOnTheProfile;
+            this.intensityValueOnTheOriginalImage = intensityValueOnTheOriginalImage;
+            this.xCoordinate = xCoordinate;
+            this.yCoordinate = yCoordinate;
+        }
+
+        public int getIndexOnTheProfile() {
+            return indexOnTheProfile;
+        }
+
+        public short getIntensityValueOnTheOriginalImage() {
+            return intensityValueOnTheOriginalImage;
+        }
+
+        public int getxCoordinate() {
+            return xCoordinate;
+        }
+
+        public int getyCoordinate() {
+            return yCoordinate;
+        }
     }
 
 }
