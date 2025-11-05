@@ -1,6 +1,9 @@
 package schneiderlab.tools.radialprojection.imageprocessor.core.createsideview;
 
 import ij.IJ;
+import ij.ImagePlus;
+import ij.io.FileSaver;
+import io.scif.formats.tiff.TiffSaver;
 import io.scif.services.DatasetIOService;
 import net.imagej.Dataset;
 import net.imagej.ImgPlus;
@@ -14,20 +17,25 @@ import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.interpolation.randomaccess.NLinearInterpolatorFactory;
 import net.imglib2.realtransform.AffineTransform3D;
 import net.imglib2.realtransform.RealViews;
+import net.imglib2.type.numeric.RealType;
+import net.imglib2.type.numeric.integer.ByteType;
+import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 import org.scijava.Context;
+import schneiderlab.tools.radialprojection.imageprocessor.core.utils.RadialProjectionUtils;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import net.imglib2.type.numeric.RealType;
 
 import static ij.IJ.debugMode;
 
-public class CreateSideView {
+public class CreateSideView <T extends RealType<T>>{
     private final Path filePath;
     private final Context context;
     private final int targetXYpixelSize;
@@ -75,14 +83,21 @@ public class CreateSideView {
         Dataset img = ioService.open(filePath.toString());
         IJ.showStatus("checking image type ....");
         // open file with file path, pre-condition: the input image is 16-bit
-        ImgPlus<?> genericImgPlus = img.getImgPlus();
+        ImgPlus<T> genericImgPlus = (ImgPlus<T>) img.getImgPlus();
         setNewProgressValue((int)(2*(100/totalNumberOfSteps))); // update ProgressBar
-        // Verify the type
-        if (!(genericImgPlus.firstElement() instanceof UnsignedShortType)) {
-            throw new IllegalArgumentException("Expected ShortType(16-bit) image");
-        }
+//        // Verify the type
+//        if (!(genericImgPlus.firstElement() instanceof UnsignedShortType)) {
+//            ImagePlus imagePlusGeneralType = IJ.openImage(filePath.toString());
+//            imagePlusGeneralType.getProcessor().convertToShortProcessor(true);
+//            FileSaver fileSaver = new FileSaver(imagePlusGeneralType);
+//            String name8 = RadialProjectionUtils.filenameWithoutExtension(filePath.toString());
+//            String name16 = name8+"16bit.tif";
+//            fileSaver.saveAsTiff(name16);
+//            img = ioService.open(name16);
+//            genericImgPlus = img.getImgPlus();
+//        }
         setNewProgressValue((int)(3*(100/totalNumberOfSteps))); // update ProgressBar
-        ImgPlus<UnsignedShortType> imgPlus = (ImgPlus<UnsignedShortType>) genericImgPlus;
+        ImgPlus<T> imgPlus = genericImgPlus;
 
         // split the channels
         int channelDim = imgPlus.dimensionIndex(Axes.CHANNEL);
