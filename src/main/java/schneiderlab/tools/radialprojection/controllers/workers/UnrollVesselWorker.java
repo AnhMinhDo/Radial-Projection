@@ -13,22 +13,28 @@ import java.util.HashMap;
 
 public class UnrollVesselWorker extends SwingWorker<Void, Void> {
     private final ImagePlus hybridStack;
+    private final ImagePlus hybridSmoothedStack;
     private final ImagePlus ligninStack;
     private final ImagePlus celluloseStack;
     private final ImagePlus edgeBinaryMaskEdge;
     private final List<Vessel> vesselArrayList;
+    private final boolean isFlipHorizontally;
 //    private ArrayList<ImagePlus> vesselUnrolledArrayList;
 
-    public UnrollVesselWorker(ImagePlus hybridStack,
+    public UnrollVesselWorker(ImagePlus hybridSmoothedStack,
+            ImagePlus hybridStack,
                               ImagePlus celluloseStack,
                               ImagePlus ligninStack,
                                  ImagePlus edgeBinaryMaskEdge,
-                                 List<Vessel> vesselArrayList) {
+                                 List<Vessel> vesselArrayList,
+                              boolean isFlipHorizontally) {
         this.hybridStack = hybridStack;
+        this.hybridSmoothedStack = hybridSmoothedStack;
         this.ligninStack = ligninStack;
         this.celluloseStack = celluloseStack;
         this.edgeBinaryMaskEdge =edgeBinaryMaskEdge;
         this.vesselArrayList= vesselArrayList;
+        this.isFlipHorizontally= isFlipHorizontally;
     }
 
 //    public ArrayList<ImagePlus> getVesselPolarProjectionArrayList() {
@@ -43,17 +49,20 @@ public class UnrollVesselWorker extends SwingWorker<Void, Void> {
         setProgress(currentProgress);
         for (int i = 0; i < vesselArrayList.size(); i++) {
             // create objects for Unrolling class
-            UnrollSingleVessel unrolledLignin = new UnrollSingleVessel(ligninStack,
+            UnrollSingleVessel unrolledLignin = new UnrollSingleVessel(hybridSmoothedStack,
+                    ligninStack,
                     edgeBinaryMaskEdge,
                     vesselArrayList.get(i).getCentroidArrayList(),
                     5 // 5 degree is considered adequately small angle
             );
-            UnrollSingleVessel unrolledCellulose = new UnrollSingleVessel(celluloseStack,
+            UnrollSingleVessel unrolledCellulose = new UnrollSingleVessel(hybridSmoothedStack,
+                    celluloseStack,
                     edgeBinaryMaskEdge,
                     vesselArrayList.get(i).getCentroidArrayList(),
                     5 // 5 degree is considered adequately small angle
             );
-            UnrollSingleVessel unrolledHybrid = new UnrollSingleVessel(hybridStack,
+            UnrollSingleVessel unrolledHybrid = new UnrollSingleVessel(hybridSmoothedStack,
+                    hybridStack,
                     edgeBinaryMaskEdge,
                     vesselArrayList.get(i).getCentroidArrayList(),
                     5 // 5 degree is considered adequately small angle
@@ -77,6 +86,11 @@ public class UnrollVesselWorker extends SwingWorker<Void, Void> {
 //            vesselUnrolledArrayList.add(vesselUnrolledHybrid);
 //            vesselUnrolledArrayList.add(vesselUnrolledLignin);
 //            vesselUnrolledArrayList.add(vesselUnrolledCellulose);
+            if (isFlipHorizontally){ // Flip the radial projection if required
+                vesselUnrolledHybrid.getProcessor().flipHorizontal();
+                vesselUnrolledLignin.getProcessor().flipHorizontal();
+                vesselUnrolledCellulose.getProcessor().flipHorizontal();
+            }
             vesselArrayList.get(i).setUnrolledVesselHybrid(vesselUnrolledHybrid);
             vesselArrayList.get(i).setUnrolledVesselLignin(vesselUnrolledLignin);
             vesselArrayList.get(i).setUnrolledVesselCellulose(vesselUnrolledCellulose);
