@@ -7,17 +7,25 @@ import net.imagej.ImgPlus;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.FloatType;
+import schneiderlab.tools.radialprojection.imageprocessor.core.ImageData;
 import schneiderlab.tools.radialprojection.imageprocessor.core.Vessel;
-
-import java.awt.Point;
+import schneiderlab.tools.radialprojection.imageprocessor.core.utils.RadialProjectionUtils;
+import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
 public class VesselsSegmentationModel {
+    // Current Image with its object
+    private ImageData<UnsignedShortType,FloatType> imageData;
+    // overall Info of the file
+    private Path filePath;
+    private Path directoryPath;
+    // UI info of the vessel segmentation step
     private int xyPixelSize;
     private int zPixelSize;
     private int analysisWindow;
@@ -25,24 +33,37 @@ public class VesselsSegmentationModel {
     private int sliceIndexForTuning;
     private double innerVesselRadius;
     private int CelluloseToLigninRatio;
+    // TODO: the state of the button, which is enable, disable
+    // output from the vessel Segmentation step
+    // output-create side view
     private ImgPlus<UnsignedShortType> sideView;
+    private ImagePlus sideViewDisplay;
     private RandomAccessibleInterval<FloatType> lignin;
+    private ImagePlus ligninImagePlus;
     private RandomAccessibleInterval<FloatType> cellulose;
+    private ImagePlus celluloseImagePlus;
     private RandomAccessibleInterval<FloatType> hybridStackNonSmoothed;
+    private ImagePlus hybridStackNonSmoothedImagePlus;
+    // output-projection and smoothing
     private RandomAccessibleInterval<FloatType> hybridStackSmoothed;
+    private ImagePlus hybridStackSmoothedImagePlus;
+    private ImagePlus hybridStackSmoothedDisplay;
+    private ImagePlus hybridStackNonSmoothedDisplay;
     private int hybridStackSmoothedWidth;
     private int hybridStackSmoothedHeight;
+    private int hybridStackSmoothedSlicesNumber;
+    // output-process whole stack
+    private ImagePlus RawSegmentation;
     private ImagePlus edgeBinaryMaskImagePlus;
+    private ImagePlus EdgeCentroidMaskImagePlus;
     private Overlay overlaySegmentation;
     private ImagePlus impInByte;
     private final List<Point> coordinates = new ArrayList<>() ;
     private final List<Point> coordinatesBatch = new ArrayList<>() ;
     private HashMap<Integer, List<Point>> centroidHashMap;
     private List<Vessel> vesselArrayList;
-
     public VesselsSegmentationModel() {
     }
-
     public void initValues(String propertiesFile){
         // load initial values for cziToTifModel from properties file
         Properties props = new Properties();
@@ -74,6 +95,26 @@ public class VesselsSegmentationModel {
         }
     }
 
+    public ImageData<UnsignedShortType, FloatType> getImageData() {
+        return imageData;
+    }
+
+    public void setImageData(ImageData<UnsignedShortType, FloatType> imageData) {
+        this.imageData = imageData;
+    }
+
+    public Path getFilePath(){
+        return filePath;
+    }
+
+    public void  setFilePath(Path filePath){
+        this.filePath=filePath;
+    }
+
+    public Path getDirPath(){
+        return directoryPath;
+    }
+
     public ImgPlus<UnsignedShortType> getSideView() {
         return sideView;
     }
@@ -82,10 +123,27 @@ public class VesselsSegmentationModel {
         this.sideView = sideView;
     }
 
+    public ImagePlus getSideViewDisplay() {
+        return sideViewDisplay;
+    }
+
+    public void setSideViewDisplay(ImagePlus sideViewDisplay) {
+        this.sideViewDisplay = sideViewDisplay;
+    }
+
     public RandomAccessibleInterval<FloatType> getHybridStackNonSmoothed() {
         return hybridStackNonSmoothed;
     }
 
+    public ImagePlus getHybridStackNonSmoothedImagePlus(){
+        if(hybridStackNonSmoothedImagePlus!= null){
+            return hybridStackNonSmoothedImagePlus;
+        } else{
+            hybridStackNonSmoothedImagePlus = RadialProjectionUtils.copyAndConvertRandomAccessIntervalToImagePlus(
+                    hybridStackNonSmoothed, "Non Smoothed hybrid Stack");
+            return hybridStackNonSmoothedImagePlus;
+        }
+    }
     public void setHybridStackNonSmoothed(RandomAccessibleInterval<FloatType> hybridStackNonSmoothed) {
         this.hybridStackNonSmoothed = hybridStackNonSmoothed;
     }
@@ -96,6 +154,22 @@ public class VesselsSegmentationModel {
 
     public void setHybridStackSmoothed(RandomAccessibleInterval<FloatType> hybridStackSmoothed) {
         this.hybridStackSmoothed = hybridStackSmoothed;
+    }
+
+    public ImagePlus getHybridStackSmoothedDisplay() {
+        return hybridStackSmoothedDisplay;
+    }
+
+    public void setHybridStackSmoothedDisplay(ImagePlus hybridStackSmoothedDisplay) {
+        this.hybridStackSmoothedDisplay = hybridStackSmoothedDisplay;
+    }
+
+    public ImagePlus getHybridStackNonSmoothedDisplay() {
+        return hybridStackNonSmoothedDisplay;
+    }
+
+    public void setHybridStackNonSmoothedDisplay(ImagePlus hybridStackNonSmoothedDisplay) {
+        this.hybridStackNonSmoothedDisplay = hybridStackNonSmoothedDisplay;
     }
 
     public int getHybridStackSmoothedWidth() {
@@ -114,6 +188,20 @@ public class VesselsSegmentationModel {
         this.hybridStackSmoothedHeight = hybridStackSmoothedHeight;
     }
 
+    public int getHybridStackSmoothedSlicesNumber() { return hybridStackSmoothedSlicesNumber;}
+
+    public void setHybridStackSmoothedSlicesNumber(int hybridStackSmoothedSlicesNumber) {
+        this.hybridStackSmoothedSlicesNumber = hybridStackSmoothedSlicesNumber;
+    }
+
+    public ImagePlus getRawSegmentation() {
+        return RawSegmentation;
+    }
+
+    public void setRawSegmentation(ImagePlus rawSegmentation) {
+        RawSegmentation = rawSegmentation;
+    }
+
     public ImagePlus getEdgeBinaryMaskImagePlus() {
         return edgeBinaryMaskImagePlus;
     }
@@ -122,8 +210,26 @@ public class VesselsSegmentationModel {
         this.edgeBinaryMaskImagePlus = edgeBinaryMaskImagePlus;
     }
 
+    public ImagePlus getEdgeCentroidMaskImagePlus() {
+        return EdgeCentroidMaskImagePlus;
+    }
+
+    public void setEdgeCentroidMaskImagePlus(ImagePlus edgeCentroidMaskImagePlus) {
+        EdgeCentroidMaskImagePlus = edgeCentroidMaskImagePlus;
+    }
+
     public RandomAccessibleInterval<FloatType> getLignin() {
         return lignin;
+    }
+
+    public ImagePlus getLigninImagePlus(){
+        if(ligninImagePlus!= null){
+            return ligninImagePlus;
+        } else{
+            ligninImagePlus = RadialProjectionUtils.copyAndConvertRandomAccessIntervalToImagePlus(
+                    lignin, "Non Smoothed Lignin Stack");
+            return ligninImagePlus;
+        }
     }
 
     public void setLignin(RandomAccessibleInterval<FloatType> lignin) {
@@ -134,8 +240,32 @@ public class VesselsSegmentationModel {
         return cellulose;
     }
 
+    public ImagePlus getCelluloseImagePlus(){
+        if(celluloseImagePlus!= null){
+            return celluloseImagePlus;
+        } else{
+            celluloseImagePlus = RadialProjectionUtils.copyAndConvertRandomAccessIntervalToImagePlus(
+                    cellulose, "Non Smoothed cellulose Stack");
+            return celluloseImagePlus;
+        }
+    }
+
     public void setCellulose(RandomAccessibleInterval<FloatType> cellulose) {
         this.cellulose = cellulose;
+    }
+
+    public ImagePlus getHybridStackSmoothedImagePlus() {
+        if(this.hybridStackSmoothedImagePlus!=null){
+            return hybridStackSmoothedImagePlus;
+        } else {
+            hybridStackSmoothedImagePlus = RadialProjectionUtils.copyAndConvertRandomAccessIntervalToImagePlus(
+                    hybridStackSmoothed, "Smoothed hybrid Stack");
+            return hybridStackSmoothedImagePlus;
+        }
+    }
+
+    public void setHybridStackSmoothedImagePlus(ImagePlus hybridStackSmoothedImagePlus) {
+        this.hybridStackSmoothedImagePlus = hybridStackSmoothedImagePlus;
     }
 
     public Overlay getOverlaySegmentation() {
