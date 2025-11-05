@@ -11,7 +11,7 @@ public class Measure {
     private final ImageProcessor input;
     private double areaInPixel;
     private double perimeterInPixel;
-    private double circularityInPixel;
+    private double circularity;
     private ResultsTable rt;
     private int trueLabel;
 
@@ -28,8 +28,8 @@ public class Measure {
         return perimeterInPixel;
     }
 
-    public double getCircularityInPixel() {
-        return circularityInPixel;
+    public double getCircularity() {
+        return circularity;
     }
 
     public void process(){
@@ -50,6 +50,6 @@ public class Measure {
         this.areaInPixel = rt.getValue("Area", 0);
         // Access results directly, no window
         this.perimeterInPixel = rt.getValue("Perim.", 0);
-        this.circularityInPixel = rt.getValue("Circ.", 0);
+        this.circularity = rt.getValue("Round", 0);
     }
 }
