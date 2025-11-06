@@ -1,52 +1,75 @@
 package schneiderlab.tools.radialprojection.controllers.workers;
 
+import ij.ImagePlus;
+import ij.process.ByteProcessor;
+import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
+import schneiderlab.tools.radialprojection.imageprocessor.core.Vessel;
 import schneiderlab.tools.radialprojection.imageprocessor.core.bandgapmeasurement.BandAndGapMeasurementByRandomScan;
 import schneiderlab.tools.radialprojection.imageprocessor.core.bandgapmeasurement.LineScan;
 
 import javax.swing.*;
 import java.util.List;
 
-public class RandomLineScanWorker extends SwingWorker {
-    private final int numberOfRandomLineScan;
-    private final int lineScanLengthInMicroMeter;
-    private final int pixelSizeInNm;
-    private final ShortProcessor inputImage;
-    private final short[] inputImagePixelArray;
-    private List<LineScan> lineScanList;
-    private ShortProcessor imageWithOnlyScanBand;
-    private double meanBandLength;
-    private double stdBandLength;
+public class RandomLineScanWorker extends SwingWorker<Void, Void> {
+    private int numberOfRandomLineScan;
+    private int lineScanLengthInMicroMeter;
+    private int pixelSizeInNm;
+    private List<Vessel> vesselList;
 
     public RandomLineScanWorker(int numberOfRandomLineScan,
                                 int lineScanLengthInMicroMeter,
                                 int pixelSizeInNm,
-                                ShortProcessor inputImage) {
+                                List<Vessel> vesselList) {
         this.numberOfRandomLineScan = numberOfRandomLineScan;
         this.lineScanLengthInMicroMeter = lineScanLengthInMicroMeter;
         this.pixelSizeInNm=pixelSizeInNm;
-        this.inputImage = inputImage;
-        this.inputImagePixelArray = (short[]) inputImage.getPixels();
+        this.vesselList = vesselList;
     }
-
-    public ShortProcessor getImageWithOnlyScanBand() {
-        return imageWithOnlyScanBand;
-    }
-
-    public double getMeanBandLength() {return meanBandLength;}
-
-    public double getStdBandLength() {return stdBandLength;}
 
     @Override
-    protected Object doInBackground() throws Exception {
-        BandAndGapMeasurementByRandomScan bagmbrs = new BandAndGapMeasurementByRandomScan(inputImage,
-                numberOfRandomLineScan,
-                lineScanLengthInMicroMeter,
-                pixelSizeInNm);
-        bagmbrs.process();
-        imageWithOnlyScanBand=bagmbrs.getImageWithOnlyScannedBands();
-        meanBandLength=bagmbrs.getMeanBandLength();
-        stdBandLength=bagmbrs.getStdBandLength();
+    protected Void doInBackground() throws Exception {
+        int idx = 0;
+        for(Vessel vessel : vesselList){
+            idx+=1;
+            ImagePlus hybrid =vessel.getRadialProjectionHybrid();
+            ShortProcessor  hybridShortProcessor = (ShortProcessor) hybrid.getProcessor();
+            BandAndGapMeasurementByRandomScan bagmbrs = new BandAndGapMeasurementByRandomScan(
+                    hybridShortProcessor,
+                    numberOfRandomLineScan,
+                    lineScanLengthInMicroMeter,
+                    pixelSizeInNm);
+            bagmbrs.process();
+            ShortProcessor imageWithOnlyScanBand=bagmbrs.getImageWithOnlyScannedBands();
+            ImagePlus imageWithOnlyScanBandImagePlus = new ImagePlus("Detected Bands in vessel "+idx,imageWithOnlyScanBand);
+            vessel.setBandHybridImagePlus(imageWithOnlyScanBandImagePlus);
+            // get the mask of bands
+            ImageProcessor imageWithOnlyScanBandProcessor = imageWithOnlyScanBandImagePlus.getProcessor();
+            //            binary.setThreshold(1,binary.getMax(),ImageProcessor.BLACK_AND_WHITE_LUT);
+            short[] imageWithOnlyScanBandPixels = (short[]) imageWithOnlyScanBandProcessor.getPixels();
+            byte[] binaryByteArray = new byte[imageWithOnlyScanBandPixels.length];
+            for (int i = 0; i < imageWithOnlyScanBandPixels.length; i++) {
+                if(imageWithOnlyScanBandPixels[i] != 0){
+                    binaryByteArray[i] = (byte)255;
+                }
+            }
+            ByteProcessor binaryBandOnlyProcessor = new ByteProcessor(imageWithOnlyScanBandProcessor.getWidth(),
+                    imageWithOnlyScanBandProcessor.getHeight(),
+                    binaryByteArray);
+            ImagePlus binaryImagePlus = new ImagePlus("binary of detected bands in vessel "+idx,binaryBandOnlyProcessor);
+            vessel.setBandHybridMaskImagePlus(binaryImagePlus);
+            // set parameters
+            vessel.setNoOfBands((double) bagmbrs.getTotalNumberOfBand());
+            vessel.setMeanBandWidth(bagmbrs.getMeanBandLength());
+            vessel.setSdBandWidth(bagmbrs.getStdBandLength());
+            vessel.setNoOfGaps((double)bagmbrs.getTotalNumberOfGap());
+            vessel.setMeanGapWidth(bagmbrs.getMeanGapLength());
+            vessel.setSdGapWidth(bagmbrs.getStdGapLength());
+            vessel.setNoOfRandomLineScan(numberOfRandomLineScan);
+            vessel.setLengthOfLineScan(lineScanLengthInMicroMeter);
+
+        }
+
         return null;
     }
 }
