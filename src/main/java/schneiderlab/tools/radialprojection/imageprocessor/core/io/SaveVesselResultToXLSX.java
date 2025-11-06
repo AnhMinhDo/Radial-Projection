@@ -2,8 +2,10 @@ package schneiderlab.tools.radialprojection.imageprocessor.core.io;
 
 import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.FloatType;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.*;
+//import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import schneiderlab.tools.radialprojection.imageprocessor.core.ImageData;
 import schneiderlab.tools.radialprojection.imageprocessor.core.Vessel;
 import schneiderlab.tools.radialprojection.imageprocessor.core.utils.RadialProjectionUtils;
@@ -61,7 +63,7 @@ public class SaveVesselResultToXLSX {
                     row.createCell(col++).setCellValue(i + 1);
                     row.createCell(col++).setCellValue(vessel.getMeanDiameter());
                     row.createCell(col++).setCellValue(vessel.getSdDiameter());
-                    row.createCell(col++).setCellValue(vessel.getCentroidArrayList().size());
+                    row.createCell(col++).setCellValue(vessel.getNoOfSlice());
                     row.createCell(col++).setCellValue(vessel.getMeanCircularity());
                     row.createCell(col++).setCellValue(vessel.getSdCircularity());
                     row.createCell(col++).setCellValue(vessel.getNoOfRandomLineScan());
@@ -115,7 +117,7 @@ public class SaveVesselResultToXLSX {
                     row.createCell(col++).setCellValue(i + 1);
                     row.createCell(col++).setCellValue(vessel.getMeanDiameter());
                     row.createCell(col++).setCellValue(vessel.getSdDiameter());
-                    row.createCell(col++).setCellValue(vessel.getCentroidArrayList().size());
+                    row.createCell(col++).setCellValue(vessel.getNoOfSlice());
                     row.createCell(col++).setCellValue(vessel.getMeanCircularity());
                     row.createCell(col++).setCellValue(vessel.getSdCircularity());
                     row.createCell(col++).setCellValue(vessel.getNoOfRandomLineScan());

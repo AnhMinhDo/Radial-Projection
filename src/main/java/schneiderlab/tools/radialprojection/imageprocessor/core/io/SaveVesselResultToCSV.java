@@ -63,7 +63,7 @@ public class SaveVesselResultToCSV {
                                 i + 1, // vessel index
                                 vessel.getMeanDiameter(),
                                 vessel.getSdDiameter(),
-                                vessel.getCentroidArrayList().size(),
+                                vessel.getNoOfSlice(),
                                 vessel.getMeanCircularity(),
                                 vessel.getSdCircularity(),
                                 vessel.getNoOfRandomLineScan(),// number of random linescan
@@ -109,7 +109,7 @@ public class SaveVesselResultToCSV {
                                 i + 1,
                                 vessel.getMeanDiameter(),
                                 vessel.getSdDiameter(),
-                                vessel.getCentroidArrayList().size(),
+                                vessel.getNoOfSlice(),
                                 vessel.getMeanCircularity(),
                                 vessel.getSdCircularity(),
                                 vessel.getNoOfRandomLineScan(),
