@@ -134,6 +134,16 @@ public class Vessel {
         }
     }
 
+    public List<Point> getCentroidArrayListWithoutCropping(){
+        if (centroidArrayList.isEmpty()){
+            generateCentroidArrayList();
+            return this.centroidArrayList;
+
+        } else {
+            return this.centroidArrayList;
+        }
+    }
+
     public List<Double> getPerimeterSizeInPixelList() {
         return perimeterSizeInPixelList;
     }
