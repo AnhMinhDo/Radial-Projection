@@ -18,21 +18,30 @@ public class AverageDiameter {
     private final int angleStep;
     private final int numberOfAngles;
     private final int maxRadius;
+    private final double pixelScale;
 
     public AverageDiameter(ImagePlus binaryMaskEdge,
                            List<Point> centroidList1Vessel){
-        this(binaryMaskEdge,centroidList1Vessel,5);
+        this(binaryMaskEdge,centroidList1Vessel,5,1);
     }
 
     public AverageDiameter(ImagePlus binaryMaskEdge,
                            List<Point> centroidList1Vessel,
-                           int angleStep) {
+                           double pixelScale){
+        this(binaryMaskEdge,centroidList1Vessel,5,pixelScale);
+    }
+
+    public AverageDiameter(ImagePlus binaryMaskEdge,
+                           List<Point> centroidList1Vessel,
+                           int angleStep,
+                           double pixelScale) {
         this.binaryMaskEdge = binaryMaskEdge;
         this.binaryMaskEdgeImageStack = binaryMaskEdge.getImageStack();
         this.angleStep = angleStep;
         this.numberOfAngles = (int) Math.ceil(360.0 / angleStep); // 360 degree of a circle
         this.centroidList = centroidList1Vessel;
         this.maxRadius = (int)Math.min(binaryMaskEdge.getHeight(),binaryMaskEdge.getWidth())/4;
+        this.pixelScale = pixelScale;
     }
 
     public List<Double> process(){
