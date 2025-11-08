@@ -5,6 +5,7 @@ import ij.gui.Line;
 import ij.gui.ProfilePlot;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -20,9 +21,14 @@ public class BandAndGapMeasurementByRandomScan {
     private List<LineScan> lineScanList;
     private ShortProcessor imageWithOnlyScannedBands;
     private List<Band> bandList;
+    private List<Gap> gapList;
     private double meanBandLength;
     private double stdBandLength;
-    private int totalNumberOfBand;
+    private int totalNumberOfBands;
+    private double meanGapLength;
+    private double stdGapLength;
+    private int totalNumberOfGaps;
+    private double pixelSizeInMicroMeter;
 
 
 
@@ -33,6 +39,7 @@ public class BandAndGapMeasurementByRandomScan {
         this.numberOfRandomLineScan = numberOfRandomLineScan;
         this.inputImage = inputImageProcessor;
         this.inputImagePixelArray = (short[]) inputImage.getPixels();
+        this.pixelSizeInMicroMeter = (double) pixelSizeInNm / 1000;
         int inputLineScanLengthInPixel = lineScanLengthInMicroMeter*1000/pixelSizeInNm;
         if(inputLineScanLengthInPixel <= inputImageProcessor.getWidth()){
             lineScanLengthInPixel = inputLineScanLengthInPixel;
@@ -59,50 +66,76 @@ public class BandAndGapMeasurementByRandomScan {
     }
 
     public int getTotalNumberOfBand() {
-        return totalNumberOfBand;
+        return totalNumberOfBands;
+    }
+
+    public double getMeanGapLength() {
+        return meanGapLength;
+    }
+
+    public double getStdGapLength() {
+        return stdGapLength;
+    }
+
+    public int getTotalNumberOfGap() {
+        return totalNumberOfGaps;
     }
 
     public void process(){
+        inputImage.blurGaussian(2.0);
         this.lineScanList = generateRandomLineScan(numberOfRandomLineScan,
                 lineScanLengthInPixel,
                 inputImage.getWidth(),
                 inputImage.getHeight(),
                 inputImage);
         this.imageWithOnlyScannedBands = imageWithOnlyDetectedBand();
-        totalNumberOfBand = totalNumberOfBand();// identify the number of bands in total
-        List<Band> allBandList = combineAllBandObject(totalNumberOfBand, this.lineScanList);// create new ArrayList to hold all the band object
-        int sum = totalBandLengthSum(allBandList);
-        meanBandLength = (double) sum/totalNumberOfBand;
-        stdBandLength = calculateStdBandList(allBandList,sum);
-    }
-
-    private double calculateStdBandList(List<Band> bandList){
-        int allBandLengthSum = totalBandLengthSum(bandList);
-        return calculateStdBandList(bandList,allBandLengthSum);
-    }
-
-    private double calculateStdBandList(List<Band> bandList, double sumLength){
-        double allBandLengthSum = sumLength;
-        int totalNumber = bandList.size();
-        if(totalNumber >=1){
-            double mean =  (double) allBandLengthSum /totalNumber;
-            double result = 0;
-            for (Band band: bandList){
-                result+=Math.pow(band.getLength()-mean,2);
-            }
-            return Math.sqrt(result/(totalNumber-1)); // return the standard deviation of the band length
-        } else {
-            return 0.0;
+        totalNumberOfBands = totalNumberOfBand();// the total number of bands in all LineScan
+        totalNumberOfGaps = totalNumberOfGap();// the total number of gaps in all LineScan
+        List<Band> allBandList = combineAllBandObject(totalNumberOfBands, this.lineScanList);// create new ArrayList to hold all the band object
+        List<Gap> allGapList = combineAllGapObject(totalNumberOfGaps, this.lineScanList);// create new ArrayList to hold all the band object
+        DescriptiveStatistics statisticsBandWidthList = new DescriptiveStatistics();
+        for(Band band : allBandList){
+            statisticsBandWidthList.addValue(band.getLength()*pixelSizeInMicroMeter);
         }
+        DescriptiveStatistics statisticsGapWidthList = new DescriptiveStatistics();
+        for(Gap gap : allGapList){
+            statisticsGapWidthList.addValue(gap.getLength()*pixelSizeInMicroMeter);
+        }
+        meanBandLength = statisticsBandWidthList.getMean();
+        stdBandLength = statisticsBandWidthList.getStandardDeviation();
+        meanGapLength = statisticsGapWidthList.getMean();
+        stdGapLength = statisticsGapWidthList.getStandardDeviation();
+//        int sum = totalBandLengthSum(allBandList);
     }
 
-    private int totalBandLengthSum(List<Band> bandList){
-        int result = 0;
-        for (Band band: bandList){
-            result+= band.getLength();
-        }
-        return result;
-    }
+
+//    private double calculateStdBandList(List<Band> bandList){
+//        int allBandLengthSum = totalBandLengthSum(bandList);
+//        return calculateStdBandList(bandList,allBandLengthSum);
+//    }
+//
+//    private double calculateStdBandList(List<Band> bandList, double sumLength){
+//        double allBandLengthSum = sumLength;
+//        int totalNumber = bandList.size();
+//        if(totalNumber >=1){
+//            double mean =  (double) allBandLengthSum /totalNumber;
+//            double result = 0;
+//            for (Band band: bandList){
+//                result+=Math.pow(band.getLength()-mean,2);
+//            }
+//            return Math.sqrt(result/(totalNumber-1)); // return the standard deviation of the band length
+//        } else {
+//            return 0.0;
+//        }
+//    }
+//
+//    private int totalBandLengthSum(List<Band> bandList){
+//        int result = 0;
+//        for (Band band: bandList){
+//            result+= band.getLength();
+//        }
+//        return result;
+//    }
     private List<Band> combineAllBandObject(int totalNumber, List<LineScan> lineScanList){
         List<Band> result = new ArrayList<>(totalNumber);
         for(LineScan lineScan: lineScanList){
@@ -110,10 +143,25 @@ public class BandAndGapMeasurementByRandomScan {
         }
         return result;
     }
+    private List<Gap> combineAllGapObject(int totalNumber, List<LineScan> lineScanList){
+        List<Gap> result = new ArrayList<>(totalNumber);
+        for(LineScan lineScan: lineScanList){
+            result.addAll(lineScan.getGapList());
+        }
+        return result;
+    }
     private int totalNumberOfBand(){
         int result = 0;
         for (LineScan lineScan : this.lineScanList){
             result += lineScan.getBandList().size();
+        }
+        return result;
+    }
+
+    private int totalNumberOfGap(){
+        int result = 0;
+        for (LineScan lineScan : this.lineScanList){
+            result += lineScan.getGapList().size();
         }
         return result;
     }
