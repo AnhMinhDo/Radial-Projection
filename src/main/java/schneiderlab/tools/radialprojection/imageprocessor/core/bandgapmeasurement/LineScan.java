@@ -9,6 +9,7 @@ import java.util.List;
 
 public class LineScan {
     private List<Band> bandList;
+    private List<Gap> gapList;
     private final Point leftEdge;
     private final Point rightEdge;
     private final double[] pixelArray;
@@ -22,6 +23,10 @@ public class LineScan {
 
     public List<Band> getBandList() {
         return bandList;
+    }
+
+    public List<Gap> getGapList() {
+        return gapList;
     }
 
     public Point getLeftEdge() {
@@ -49,6 +54,7 @@ public class LineScan {
                 prominence,
                 leftEdge.x,
                 leftEdge.y);
+        gapList = gapListFrombandList(bandList);
     }
 
     private ArrayList<Band> bandsDetection(double[] pixelIntensityArray, byte[] peakMaskArray, double[] prominenceArray, int lineLeftEdgeX, int lineLeftEdgeY){
@@ -178,5 +184,19 @@ public class LineScan {
             result[index] = (byte)255;
         }
         return result;
+    }
+
+    private static List<Gap> gapListFrombandList(List<Band> bandList){
+        List<Gap> gapList = new ArrayList<>(bandList.size()-1);
+        for (int i = 0; i < bandList.size()-1; i++) {
+            Band band1 = bandList.get(i);
+            Band band2 = bandList.get(i+1);
+            Point gapLeftEdge = band1.getRightEdge();
+            Point gapRightEdge = band2.getLeftEdge();
+            int gapLength = (int)Math.ceil(gapLeftEdge.distance(gapRightEdge));
+            Gap gap = new Gap(gapLength,gapLeftEdge,gapRightEdge);
+            gapList.add(gap);
+        }
+        return gapList;
     }
 }
