@@ -80,7 +80,7 @@ public class ImageWindowForCropping extends ImageWindow {
                 imagePlus.setRoi(updatedRoi);
                 imagePlus.updateAndDraw();
             }
-            vessel.setSliceCroppedRange((int)xbase,(int)(xbase+roiWidth));
+            vessel.setSliceCroppedRange((int)xbase,(int)(xbase+roiWidth-1));
         }
 
         private void addCroppedImageToVessel(ImagePlus imagePlus,
