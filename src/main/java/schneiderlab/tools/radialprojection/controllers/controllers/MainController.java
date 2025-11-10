@@ -6,29 +6,39 @@ import ij.gui.*;
 import ij.plugin.filter.BackgroundSubtracter;
 import ij.process.AutoThresholder;
 import ij.process.ByteProcessor;
-import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
+import net.imagej.DatasetService;
+import net.imagej.ImgPlus;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
 import org.scijava.Context;
+import org.scijava.log.LogService;
+import org.scijava.ui.UIService;
 import schneiderlab.tools.radialprojection.controllers.uiaction.*;
 import schneiderlab.tools.radialprojection.controllers.uiaction.czitotif.BrowseButtonCZIToTif;
 import schneiderlab.tools.radialprojection.controllers.uiaction.mainwindow.AddSavingActionWhenMainWindowClosed;
 import schneiderlab.tools.radialprojection.controllers.workers.*;
+import schneiderlab.tools.radialprojection.imageprocessor.core.ImageData;
 import schneiderlab.tools.radialprojection.imageprocessor.core.Vessel;
 import schneiderlab.tools.radialprojection.imageprocessor.core.bandgapmeasurement.Tile;
 import schneiderlab.tools.radialprojection.imageprocessor.core.bandgapmeasurement.Utils;
 import schneiderlab.tools.radialprojection.imageprocessor.core.convertczitotif.RotateDirection;
+import schneiderlab.tools.radialprojection.imageprocessor.core.io.SaveVesselResultToCSV;
+import schneiderlab.tools.radialprojection.imageprocessor.core.io.SaveVesselResultToXLSX;
 import schneiderlab.tools.radialprojection.imageprocessor.core.segmentation.Reconstruction;
 import schneiderlab.tools.radialprojection.imageprocessor.core.utils.RadialProjectionUtils;
 import schneiderlab.tools.radialprojection.models.czitotifmodel.CziToTifModel;
+import schneiderlab.tools.radialprojection.models.radialprojection.AnalysisModel;
 import schneiderlab.tools.radialprojection.models.radialprojection.RadialProjectionModel;
 import schneiderlab.tools.radialprojection.models.radialprojection.VesselsSegmentationModel;
+import schneiderlab.tools.radialprojection.views.userinterfacecomponents.ImageWindowForCropping;
+import schneiderlab.tools.radialprojection.views.userinterfacecomponents.ImageWindowGroupController;
 import schneiderlab.tools.radialprojection.views.userinterfacecomponents.Radical_Projection_Tool;
 
 import javax.swing.*;
@@ -41,9 +51,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainController {
@@ -51,15 +64,31 @@ public class MainController {
     private List<Path> processedFileInCreateSideView;
     private final Context context;
     private ImagePlus finalSegmentation;
+    private LogService logService;
+    private DatasetService datasetService;
+    private UIService uiService;
 
     public MainController(Radical_Projection_Tool mainView,
                           Context context) {
         this.mainView = mainView;
         this.context= context;
+        logService = context.getService(LogService.class);
+        datasetService = context.getService(DatasetService.class);
+        uiService = context.getService(UIService.class);
 
-        //-----------1.CZI to TIF converting Steps-------------------------------
+        //----------Create the Model each step in pipeline--------------------
         // create an instance of the czi to TIF model
         CziToTifModel cziToTifModel = new CziToTifModel();
+        // create an instance of the Vessel segmentation model
+        VesselsSegmentationModel vesselsSegmentationModel = new VesselsSegmentationModel();
+        // initial the model for radial projection step
+        RadialProjectionModel radialProjectionModel = new RadialProjectionModel();
+        // initial the model for Analysis step
+        AnalysisModel analysisModel = new AnalysisModel();
+        mainView.getTableAnalysisInputImage().setModel(new DefaultTableModel(new String[]{"Image Path"}, 0));
+
+        //-----------0.CZI to TIF converting Steps-------------------------------
+
         // get initial values from properties file
         cziToTifModel.initValues("/properties_files/initValues.properties");
         // Action for Browse button in Converting step
@@ -131,11 +160,11 @@ public class MainController {
                 }
         );
         // add the values from the czitotif model to the view
-        mainView.getTextFieldConvertCzi2Tif().setText(cziToTifModel.getDirPath());// only when the application is started
-        mainView.getCheckBoxBgSubConvertCzi2Tif().setSelected(cziToTifModel.isBgSub());// only when the application is started
-        mainView.getSpinnerRollingConvertCzi2Tif().setValue(cziToTifModel.getRollingValue());// only when the application is started
-        mainView.getSpinnerSaturateConvertCzi2Tif().setValue(cziToTifModel.getSaturationValue());// only when the application is started
-        mainView.getCheckBoxRotateConvertCzi2Tif().setSelected(cziToTifModel.isRotate());// only when the application is started
+        mainView.getTextFieldConvertCzi2Tif().setText(cziToTifModel.getDirPath());// only at application innitialization
+        mainView.getCheckBoxBgSubConvertCzi2Tif().setSelected(cziToTifModel.isBgSub());// only at application innitialization
+        mainView.getSpinnerRollingConvertCzi2Tif().setValue(cziToTifModel.getRollingValue());// only at application innitialization
+        mainView.getSpinnerSaturateConvertCzi2Tif().setValue(cziToTifModel.getSaturationValue());// only at application innitialization
+        mainView.getCheckBoxRotateConvertCzi2Tif().setSelected(cziToTifModel.isRotate());// only at application innitialization
         mainView.getComboBoxRoateDirectionConvertCzi2Tif().setSelectedItem(cziToTifModel.getRotateDirection());
         // Action for OK button in Converting step
         mainView.getButtonOkConvertCzi2Tif().addActionListener(new ActionListener() {
@@ -156,12 +185,53 @@ public class MainController {
                 czi2TifWorker.execute();
             }
         });
-        //----------- 2.Vessel segmentation -------------------------------
-        // create an instance of the Vessel segmentation model
-        VesselsSegmentationModel vesselsSegmentationModel = new VesselsSegmentationModel();
+        //----------- 1.Vessel segmentation -------------------------------
         // get initial values from properties file
         vesselsSegmentationModel.initValues("/properties_files/initValues.properties");
         mainView.getTableAddedFileVesselSegmentation().setModel(new DefaultTableModel(new String[]{"File Path"}, 0));
+        // Action for ADD button in segmentation step
+        mainView.getButtonAddFile().addActionListener(new AddFilePathToTable(
+                mainView.getTableAddedFileVesselSegmentation(),mainView));
+
+        // Action for REMOVE Button in segmentation step
+        mainView.getButtonRemove().addActionListener(new RemoveFilePathFromTable(mainView.getTableAddedFileVesselSegmentation()));
+
+        // tooltip to view full file path in segmentation step
+        mainView.getTableAddedFileVesselSegmentation().addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                int row = mainView.getTableAddedFileVesselSegmentation().rowAtPoint(e.getPoint());
+                int col = mainView.getTableAddedFileVesselSegmentation().columnAtPoint(e.getPoint());
+                if (row > -1 && col > -1) {
+                    Object value = mainView.getTableAddedFileVesselSegmentation().getValueAt(row, col);
+                    mainView.getTableAddedFileVesselSegmentation().setToolTipText(value != null ? value.toString() : null);
+                }
+            }
+        });
+        // button add folder for segmentation step
+        mainView.getButtonAddFolder().addActionListener(new AddFilePathFromDirToTable(mainView.getTableAddedFileVesselSegmentation(), mainView));
+        // button clear all in table for segmentation step
+        mainView.getButtonClear().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DefaultTableModel model = (DefaultTableModel) mainView.getTableAddedFileVesselSegmentation().getModel();
+                model.setRowCount(0);
+            }
+        });
+        // button add output Path
+        mainView.getButtonBrowseOutputPath().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser chooser = new JFileChooser();
+                chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                int returnVal = chooser.showOpenDialog(mainView);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File selectedDir = chooser.getSelectedFile();
+                    mainView.getTextFieldOutputPath().setText(selectedDir.getAbsolutePath());
+                }
+            }
+        });
+
         // spinner xy pixel size
         mainView.getSpinnerXYPixelSizeCreateSideView().addChangeListener(new ChangeListener() {
             @Override
@@ -232,6 +302,12 @@ public class MainController {
                     String fileToProcess = (String) mainView.getTableAddedFileVesselSegmentation()
                             .getModel()
                             .getValueAt(0, 0);
+                    vesselsSegmentationModel.setFilePath(Paths.get(fileToProcess));
+                    ImageData<UnsignedShortType, FloatType> imageData = new ImageData<>();
+                    vesselsSegmentationModel.setImageData(imageData);
+                    vesselsSegmentationModel.getImageData().setImagePath(Paths.get(fileToProcess));
+                    vesselsSegmentationModel.getImageData().setOutputDirPath(Paths.get(mainView.getTextFieldOutputPath().getText()));
+                    logService.info("image path: " + vesselsSegmentationModel.getImageData().getImagePath().toAbsolutePath().toString());
                     CreateSideViewWorker createSideViewWorker = new CreateSideViewWorker(
                             (int) mainView.getSpinnerXYPixelSizeCreateSideView().getValue(),
                             (int) mainView.getSpinnerZPixelSizeCreateSideView().getValue(),
@@ -253,7 +329,9 @@ public class MainController {
                                 mainView.getTextField2StatusVesselSegmentation().setText("Side View Created");
                                 mainView.getButtonProjAndSmooth().setEnabled(true);
                                 vesselsSegmentationModel.setSideView(createSideViewWorker.get());
-                                ImageJFunctions.show(vesselsSegmentationModel.getSideView());
+                                vesselsSegmentationModel.getImageData().setSideView(createSideViewWorker.get());
+                                ImagePlus sideViewDisplay = ImageJFunctions.show(vesselsSegmentationModel.getImageData().getSideView(), "Side View");
+                                vesselsSegmentationModel.setSideViewDisplay(sideViewDisplay);
                                 // use result here
                             } catch (Exception ex) {
                                 ex.printStackTrace();
@@ -267,35 +345,6 @@ public class MainController {
             }
         });
 
-        // Action for ADD button in segmentation step
-        mainView.getButtonAddFile().addActionListener(new AddFilePathToTable(
-                mainView.getTableAddedFileVesselSegmentation(),mainView));
-
-        // Action for REMOVE Button in segmentation step
-        mainView.getButtonRemove().addActionListener(new RemoveFilePathFromTable(mainView.getTableAddedFileVesselSegmentation()));
-
-        // tooltip to view full file path in segmentation step
-        mainView.getTableAddedFileVesselSegmentation().addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                int row = mainView.getTableAddedFileVesselSegmentation().rowAtPoint(e.getPoint());
-                int col = mainView.getTableAddedFileVesselSegmentation().columnAtPoint(e.getPoint());
-                if (row > -1 && col > -1) {
-                    Object value = mainView.getTableAddedFileVesselSegmentation().getValueAt(row, col);
-                    mainView.getTableAddedFileVesselSegmentation().setToolTipText(value != null ? value.toString() : null);
-                }
-            }
-        });
-        // button add folder for segmentation step
-        mainView.getButtonAddFolder().addActionListener(new AddFilePathFromDirToTable(mainView.getTableAddedFileVesselSegmentation(), mainView));
-        // button clear all in table for segmentation step
-        mainView.getButtonClear().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                DefaultTableModel model = (DefaultTableModel) mainView.getTableAddedFileVesselSegmentation().getModel();
-                model.setRowCount(0);
-            }
-        });
         // Slider update the percentage when the value change
         mainView.getSliderHybridWeight().addChangeListener(new ChangeListener(){
             @Override
@@ -316,7 +365,7 @@ public class MainController {
                     mainView.getButtonWatershed().setEnabled(false);
                     mainView.getButtonProcessWholeStack().setEnabled(false);
                     mainView.getButtonMoveToRadialProjection().setEnabled(false);
-                ProjectionAndSmoothingWorker pasw = new ProjectionAndSmoothingWorker(vesselsSegmentationModel.getSideView(),
+                ProjectionAndSmoothingWorker pasw = new ProjectionAndSmoothingWorker(vesselsSegmentationModel.getImageData().getSideView(),
                         mainView.getSliderHybridWeight().getValue(),
                         (int)mainView.getSpinnerAnalysisWindow().getValue(),
                         (double) mainView.getSpinnerPreWatershedSmoothing().getValue(),
@@ -338,8 +387,20 @@ public class MainController {
                                 vesselsSegmentationModel.setHybridStackSmoothedHeight(pasw.getHeight());
                                 vesselsSegmentationModel.setCellulose(pasw.getCellulose());
                                 vesselsSegmentationModel.setLignin(pasw.getLignin());
-                                ImageJFunctions.show(vesselsSegmentationModel.getHybridStackNonSmoothed());
-                                ImageJFunctions.show(vesselsSegmentationModel.getHybridStackSmoothed());
+                                vesselsSegmentationModel.setHybridStackSmoothedSlicesNumber(pasw.getSlicesNumber());
+                                // set Field for ImageData object
+                                vesselsSegmentationModel.getImageData().setHybridStackNonSmoothed(pasw.getHybridStackNonSmoothed());
+                                vesselsSegmentationModel.getImageData().setHybridStackSmoothed(pasw.getHybridStackSmoothed());
+                                vesselsSegmentationModel.getImageData().setHybridStackSmoothedWidth(pasw.getWidth());
+                                vesselsSegmentationModel.getImageData().setHybridStackSmoothedHeight(pasw.getHeight());
+                                vesselsSegmentationModel.getImageData().setCellulose(pasw.getCellulose());
+                                vesselsSegmentationModel.getImageData().setLignin(pasw.getLignin());
+                                vesselsSegmentationModel.getImageData().setHybridStackSmoothedSlicesNumber(pasw.getSlicesNumber());
+                                logService.info("set output to ImageData object");
+                                 ImagePlus hybridStackNonSmoothedDisplay = ImageJFunctions.show(vesselsSegmentationModel.getImageData().getHybridStackNonSmoothed(),"Raw Hybrid");
+                                 vesselsSegmentationModel.setHybridStackNonSmoothedDisplay(hybridStackNonSmoothedDisplay);
+                            ImagePlus hybridStackSmoothedDisplay = ImageJFunctions.show(vesselsSegmentationModel.getImageData().getHybridStackSmoothed(), "Smoothed Hybrid");
+                            vesselsSegmentationModel.setHybridStackSmoothedDisplay(hybridStackSmoothedDisplay);
                                 // update UI
                                 mainView.getTextField2StatusVesselSegmentation().setText("Complete Projection and Smoothing");
                                 mainView.getButtonSelectCentroid().setEnabled(true);
@@ -350,14 +411,13 @@ public class MainController {
             }
         });
         //TODO: seperate the below actionListener to its own class
-        // button select Centroid to view the image and let user select centroid
         mainView.getButtonSelectCentroid().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 mainView.getButtonWatershed().setEnabled(false);
                 mainView.getButtonProcessWholeStack().setEnabled(false);
                 mainView.getButtonMoveToRadialProjection().setEnabled(false);
-                RandomAccessibleInterval<FloatType>	smoothedStack = vesselsSegmentationModel.getHybridStackSmoothed();
+                RandomAccessibleInterval<FloatType>	smoothedStack = vesselsSegmentationModel.getImageData().getHybridStackSmoothed();
                 int slideForTuning = (int)mainView.getSpinnerSliceIndexForTuning().getValue();
                 RandomAccessibleInterval<FloatType> just1Slide = Views.hyperSlice(smoothedStack,2,slideForTuning);
                 // Copy the view to a new Img<FloatType>
@@ -416,9 +476,9 @@ public class MainController {
                     protected Void doInBackground() throws Exception {
                         int slideForTuning = (int)mainView.getSpinnerSliceIndexForTuning().getValue();
                         Reconstruction reconstruction = new Reconstruction(
-                                vesselsSegmentationModel.getHybridStackSmoothed(),
-                                vesselsSegmentationModel.getHybridStackSmoothedWidth(),
-                                vesselsSegmentationModel.getHybridStackSmoothedHeight(),
+                                vesselsSegmentationModel.getImageData().getHybridStackSmoothed(),
+                                vesselsSegmentationModel.getImageData().getHybridStackSmoothedWidth(),
+                                vesselsSegmentationModel.getImageData().getHybridStackSmoothedHeight(),
                                 (double)mainView.getSpinnerInnerVesselRadius().getValue(),
                                 vesselsSegmentationModel.getCoordinates(),
                                 (int)mainView.getSpinnerSliceIndexForTuning().getValue(),
@@ -449,12 +509,13 @@ public class MainController {
         mainView.getButtonProcessWholeStack().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                vesselsSegmentationModel.getImpInByte().close();
                 mainView.getTextField2StatusVesselSegmentation().setText("Processing whole stack...");
                 mainView.getProgressBarVesselSegmentation().setValue(0);
                 SegmentWholeStackWorker batchSegmentationWorker = new SegmentWholeStackWorker(
-                        vesselsSegmentationModel.getHybridStackSmoothed(),
-                        vesselsSegmentationModel.getHybridStackSmoothedWidth(),
-                        vesselsSegmentationModel.getHybridStackSmoothedHeight(),
+                        vesselsSegmentationModel.getImageData().getHybridStackSmoothed(),
+                        vesselsSegmentationModel.getImageData().getHybridStackSmoothedWidth(),
+                        vesselsSegmentationModel.getImageData().getHybridStackSmoothedHeight(),
                         (double)mainView.getSpinnerInnerVesselRadius().getValue(),
                         vesselsSegmentationModel.getCoordinatesBatch(),
                         (int)mainView.getSpinnerSliceIndexForTuning().getValue(),
@@ -471,25 +532,25 @@ public class MainController {
                         if ("state".equals(propertyChangeEvent.getPropertyName()) &&
                                 propertyChangeEvent.getNewValue() == SwingWorker.StateValue.DONE){
                             finalSegmentation=batchSegmentationWorker.getFinalSegmentation();
-                            vesselsSegmentationModel.setEdgeBinaryMaskImagePlus(batchSegmentationWorker.getEdgeBinaryMaskImagePlus());
-                            vesselsSegmentationModel.setCentroidHashMap(batchSegmentationWorker.getCentroidHashMap());
-                            vesselsSegmentationModel.setVesselArrayList(batchSegmentationWorker.getVesselArrayList());
+                            vesselsSegmentationModel.getImageData().setEdgeBinaryMaskImagePlus(batchSegmentationWorker.getEdgeBinaryMaskImagePlus());
+                            vesselsSegmentationModel.getImageData().setCentroidHashMap(batchSegmentationWorker.getCentroidHashMap());
+                            vesselsSegmentationModel.getImageData().setVesselList(batchSegmentationWorker.getVesselArrayList());
+                            vesselsSegmentationModel.getImageData().setRawSegmentation(batchSegmentationWorker.getFinalSegmentation());
+                            vesselsSegmentationModel.getImageData().setEdgeCentroidMaskImagePlus(batchSegmentationWorker.getEdgeCentroidMaskImagePlus());
 //                            ImagePlus hybridStackWithEdgeCentroidOverlay = batchSegmentationWorker.getStackWithVesselEdgeCentroidOverlay();
                             mainView.getTextField2StatusVesselSegmentation().setText("Complete processing whole stack ");
                             mainView.getButtonMoveToRadialProjection().setEnabled(true);
                             mainView.getProgressBarVesselSegmentation().setValue(100);
                             mainView.getProgressBarVesselSegmentation().setToolTipText(100+"%");
-                            batchSegmentationWorker.getFinalSegmentation().show();
-                            batchSegmentationWorker.getEdgeCentroidMaskImagePlus().show();
                             // show the results to users
-                            for (int i = 0; i < vesselsSegmentationModel.getVesselArrayList().size(); i++) {
-                                List<Double> perimeterList = vesselsSegmentationModel.getVesselArrayList().get(i).getPerimeterSizeInPixelList();
-                                List<Double> areaList = vesselsSegmentationModel.getVesselArrayList().get(i).getCircularityList();
-                                for (int j = 0; j < perimeterList.size(); j++) {
-                                    System.err.println(String.format("Z: %d perimeter: %.10f",(j+1),(perimeterList.get(i)*vesselsSegmentationModel.getXyPixelSize()/1000)));
-                                    System.err.println(String.format("Z: %d circularity: %.5f",(j+1),areaList.get(i)));
-                                }
-                            }
+                             ImagePlus segmentedStack = batchSegmentationWorker.getFinalSegmentation().duplicate();
+                            segmentedStack.setTitle(batchSegmentationWorker.getFinalSegmentation().getTitle());
+                            vesselsSegmentationModel.setRawSegmentation(segmentedStack);
+                            ImagePlus edgeCentroidMask = batchSegmentationWorker.getEdgeCentroidMaskImagePlus().duplicate();
+                            edgeCentroidMask.setTitle(batchSegmentationWorker.getEdgeCentroidMaskImagePlus().getTitle());
+                            vesselsSegmentationModel.setEdgeCentroidMaskImagePlus(edgeCentroidMask);
+                            segmentedStack.show();
+                            edgeCentroidMask.show();
                         }
                     }
                 });
@@ -504,9 +565,16 @@ public class MainController {
                 mainView.getTabbedPaneMainPane(),
                 mainView.getPanel3RadialProjection(),
                 mainView.getButtonRunRadialProjection(),
-                mainView.getButtonUnrollVessel()));
+                mainView.getButtonUnrollVessel(),
+                mainView.getTextFieldOutputPath(),
+                vesselsSegmentationModel,
+                Math.round((float) (vesselsSegmentationModel.getAnalysisWindow() * 1000) /vesselsSegmentationModel.getXyPixelSize()),
+                this.context,
+                mainView,
+                radialProjectionModel
+                ));
 
-        // add the values from the vesselSegmentation model to the view
+        // add the initial values from the vesselSegmentation model to the view
         mainView.getSpinnerXYPixelSizeCreateSideView().setValue(vesselsSegmentationModel.getXyPixelSize());
         mainView.getSpinnerZPixelSizeCreateSideView().setValue(vesselsSegmentationModel.getzPixelSize());
         mainView.getSpinnerAnalysisWindow().setValue(vesselsSegmentationModel.getAnalysisWindow());
@@ -515,8 +583,6 @@ public class MainController {
         mainView.getSpinnerInnerVesselRadius().setValue(vesselsSegmentationModel.getInnerVesselRadius());
         mainView.getSliderHybridWeight().setValue(vesselsSegmentationModel.getCelluloseToLigninRatio());
         //---------- - 3.Radial Projection and Unrolling -------------------------------
-        // initial the model for radial projection step
-        RadialProjectionModel radialProjectionModel = new RadialProjectionModel();
         // perform Radial Projection
         mainView.getButtonRunRadialProjection().addActionListener(new ActionListener() {
             @Override
@@ -525,20 +591,26 @@ public class MainController {
                 mainView.getTextFieldStatusRadialProjection().setText("Radial Projection...");
                 mainView.getProgressBarRadialProjection().setValue(0);
                 // Create copy of hybrid using cursors
-                 ImagePlus impFloat = RadialProjectionUtils.copyAndConvertRandomAccessIntervalToImagePlus(
-                         vesselsSegmentationModel.getHybridStackNonSmoothed(), "Non Smoothed Hybrid Stack");
+                 ImagePlus hybridNonSmoothed = RadialProjectionUtils.copyAndConvertRandomAccessIntervalToImagePlus(
+                         radialProjectionModel.getImageData().getHybridStackNonSmoothed(), "Non Smoothed Hybrid Stack");
+                ImagePlus hybridSmoothed = RadialProjectionUtils.copyAndConvertRandomAccessIntervalToImagePlus(
+                        radialProjectionModel.getImageData().getHybridStackSmoothed(), "Non Smoothed Hybrid Stack");
                 // Create copy of Lignin using cursors
                 ImagePlus lignin = RadialProjectionUtils.copyAndConvertRandomAccessIntervalToImagePlus(
-                        vesselsSegmentationModel.getLignin(), "Non Smoothed Hybrid Stack");
+                        radialProjectionModel.getImageData().getLignin(), "Non Smoothed Lignin Stack");
                 // Create copy of cellulose using cursors
                 ImagePlus cellulose = RadialProjectionUtils.copyAndConvertRandomAccessIntervalToImagePlus(
-                        vesselsSegmentationModel.getCellulose(), "Non Smoothed Hybrid Stack");
+                        radialProjectionModel.getImageData().getCellulose(), "Non Smoothed Cellulose Stack");
                 RadialProjectionWorker polarProjection = new RadialProjectionWorker(
-                        impFloat,
+                        hybridNonSmoothed,
+                        hybridSmoothed,
                         cellulose,
                         lignin,
-                        vesselsSegmentationModel.getEdgeBinaryMaskImagePlus(),
-                        vesselsSegmentationModel.getVesselArrayList()
+                        radialProjectionModel.getImageData().getEdgeBinaryMaskImagePlus(),
+                        radialProjectionModel.getImageData().getVesselList(),
+                        (int)mainView.getSpinnerXYPixelSizeCreateSideView().getValue()/1000.0,
+                        true,
+                        context
                 );
                 polarProjection.addPropertyChangeListener(new PropertyChangeListener() {
                     @Override
@@ -550,14 +622,37 @@ public class MainController {
                                 evt.getNewValue() == SwingWorker.StateValue.DONE){
                             mainView.getTextFieldStatusRadialProjection().setText("Radial Projection Complete");
                             mainView.getProgressBarRadialProjection().setValue(100);
-//                            List<ImagePlus> vesselRadialProjectionList = polarProjection.getVesselPolarProjectionArrayList();
-                            //TODO: the line below should not be placed here, the transfer of references from one model to another need to be handled gracefully not only when the radial projection is performed
-                            radialProjectionModel.setVesselArrayList(vesselsSegmentationModel.getVesselArrayList()); // transfer the vesselArrayList to from segmentation Model to radialProjectionModel
                             // show the results to users
-                            for (int i = 0; i < radialProjectionModel.getVesselArrayList().size(); i++) {
-                                radialProjectionModel.getVesselArrayList().get(i).getRadialProjectionCellulose().duplicate().show();
-                                radialProjectionModel.getVesselArrayList().get(i).getRadialProjectionHybrid().duplicate().show();
-                                radialProjectionModel.getVesselArrayList().get(i).getRadialProjectionLignin().duplicate().show();
+                            Toolbar toolbar = new Toolbar();
+                            int toolIdForCropping = Toolbar.RECTANGLE;
+                            for (int i = 0; i < radialProjectionModel.getImageData().getVesselList().size(); i++) { // for each vessel
+                                ImagePlus rpCellulose = radialProjectionModel.getImageData().getVesselList().get(i).getRadialProjectionCellulose().duplicate();
+                                rpCellulose.setTitle(radialProjectionModel.getImageData().getVesselList().get(i).getRadialProjectionCellulose().getTitle());
+                                ImagePlus rpHybrid = radialProjectionModel.getImageData().getVesselList().get(i).getRadialProjectionHybrid().duplicate();
+                                rpHybrid.setTitle(radialProjectionModel.getImageData().getVesselList().get(i).getRadialProjectionHybrid().getTitle());
+                                ImagePlus rpLignin = radialProjectionModel.getImageData().getVesselList().get(i).getRadialProjectionLignin().duplicate();
+                                rpLignin.setTitle(radialProjectionModel.getImageData().getVesselList().get(i).getRadialProjectionLignin().getTitle());
+                                List<ImagePlus> imagePlusList = new ArrayList<>(Arrays.asList(rpLignin, rpCellulose, rpHybrid));
+//                                ImageWindow rpCelluoseImageWindow = new ImageWindowForCropping(rpCellulose,
+//                                        radialProjectionModel.getImageData().getVesselList().get(i),
+//                                        imagePlusList,
+//                                        toolIdForCropping);
+//                                ImageWindow rpHybridImageWindow = new ImageWindowForCropping(rpHybrid,
+//                                        radialProjectionModel.getImageData().getVesselList().get(i),
+//                                        imagePlusList,
+//                                        toolIdForCropping);
+//                                rpHybridImageWindow.setLocation((int)rpCelluoseImageWindow.getLocation().getX(),
+//                                        (int)rpCelluoseImageWindow.getLocation().getY()+rpCelluoseImageWindow.getHeight());
+//                                ImageWindow rpLigninImageWindow = new ImageWindowForCropping(rpLignin,
+//                                        radialProjectionModel.getImageData().getVesselList().get(i),
+//                                        imagePlusList,
+//                                        toolIdForCropping);
+//                                rpLigninImageWindow.setLocation((int)rpHybridImageWindow.getLocation().getX(),
+//                                        (int)rpHybridImageWindow.getLocation().getY()+rpHybridImageWindow.getHeight());
+                                ImageWindowGroupController iwgc = new ImageWindowGroupController(imagePlusList,
+                                        radialProjectionModel.getImageData().getVesselList().get(i),
+                                        toolIdForCropping);
+                                radialProjectionModel.addVesselRadialProjectionImageWindowGroup(iwgc);
                             }
                             mainView.getButtonMoveToAnalysis().setEnabled(true);
                         }
@@ -575,19 +670,23 @@ public class MainController {
                 mainView.getProgressBarRadialProjection().setValue(0);
                 // create copy of Hybrid using cursors
                 ImagePlus hybrid = RadialProjectionUtils.copyAndConvertRandomAccessIntervalToImagePlus(
-                        vesselsSegmentationModel.getHybridStackNonSmoothed(), "Non Smoothed Hybrid Stack");
+                        radialProjectionModel.getImageData().getHybridStackNonSmoothed(), "Non Smoothed Hybrid Stack");
+                // create copy of Smoothed Hybrid using cursors
+                ImagePlus hybridSmoothed = RadialProjectionUtils.copyAndConvertRandomAccessIntervalToImagePlus(
+                        radialProjectionModel.getImageData().getHybridStackSmoothed(), "Smoothed Hybrid Stack");
                 // Create copy of Lignin using cursors
                 ImagePlus lignin = RadialProjectionUtils.copyAndConvertRandomAccessIntervalToImagePlus(
-                        vesselsSegmentationModel.getLignin(), "Non Smoothed Lignin Stack");
-                // Create copy of cellulose using cursors
+                        radialProjectionModel.getImageData().getLignin(), "Non Smoothed Lignin Stack");
+                // Create copy of Cellulose using cursors
                 ImagePlus cellulose = RadialProjectionUtils.copyAndConvertRandomAccessIntervalToImagePlus(
-                        vesselsSegmentationModel.getCellulose(), "Non Smoothed Cellulose Stack");
-                UnrollVesselWorker unrollVesselWorker = new UnrollVesselWorker(
+                        radialProjectionModel.getImageData().getCellulose(), "Non Smoothed Cellulose Stack");
+                UnrollVesselWorker unrollVesselWorker = new UnrollVesselWorker(hybridSmoothed,
                         hybrid,
                         cellulose,
                         lignin,
-                        vesselsSegmentationModel.getEdgeBinaryMaskImagePlus(),
-                        vesselsSegmentationModel.getVesselArrayList()
+                        radialProjectionModel.getImageData().getEdgeBinaryMaskImagePlus(),
+                        radialProjectionModel.getImageData().getVesselList(),
+                        true
                 );
                 unrollVesselWorker.addPropertyChangeListener(new PropertyChangeListener() {
                     @Override
@@ -600,11 +699,29 @@ public class MainController {
                             mainView.getTextFieldStatusRadialProjection().setText("Unrolling Complete");
                             mainView.getProgressBarRadialProjection().setValue(100);
                             // show the results to the users
-                            for (int i = 0; i < radialProjectionModel.getVesselArrayList().size(); i++) {
-                                radialProjectionModel.getVesselArrayList().get(i).getUnrolledVesselCellulose().duplicate().show();
-                                radialProjectionModel.getVesselArrayList().get(i).getUnrolledVesselHybrid().duplicate().show();
-                                radialProjectionModel.getVesselArrayList().get(i).getUnrolledVesselLignin().duplicate().show();
-                                radialProjectionModel.getVesselArrayList().get(i).getContour().duplicate().show();
+                            for (int i = 0; i < radialProjectionModel.getImageData().getVesselList().size(); i++) {
+//                                radialProjectionModel.getImageData().getVesselList().get(i).getUnrolledVesselCellulose().duplicate().show();
+//                                radialProjectionModel.getImageData().getVesselList().get(i).getUnrolledVesselHybrid().duplicate().show();
+//                                radialProjectionModel.getImageData().getVesselList().get(i).getUnrolledVesselLignin().duplicate().show();
+//                                radialProjectionModel.getImageData().getVesselList().get(i).getContour().duplicate().show();
+                                ImagePlus rpCellulose = radialProjectionModel.getImageData().getVesselList().get(i).getUnrolledVesselCellulose().duplicate();
+                                rpCellulose.setTitle(radialProjectionModel.getImageData().getVesselList().get(i).getUnrolledVesselCellulose().getTitle());
+                                ImagePlus rpHybrid = radialProjectionModel.getImageData().getVesselList().get(i).getUnrolledVesselHybrid().duplicate();
+                                rpHybrid.setTitle(radialProjectionModel.getImageData().getVesselList().get(i).getUnrolledVesselHybrid().getTitle());
+                                ImagePlus rpLignin = radialProjectionModel.getImageData().getVesselList().get(i).getUnrolledVesselLignin().duplicate();
+                                rpLignin.setTitle(radialProjectionModel.getImageData().getVesselList().get(i).getUnrolledVesselLignin().getTitle());
+                                ImagePlus rpContour = radialProjectionModel.getImageData().getVesselList().get(i).getContour().duplicate();
+                                rpContour.setTitle(radialProjectionModel.getImageData().getVesselList().get(i).getContour().getTitle());
+//                                rpCellulose.show();
+//                                rpHybrid.show();
+//                                rpLignin.show();
+//                                rpContour.show();
+                                List<ImagePlus> imagePlusList = new ArrayList<>(Arrays.asList(rpLignin, rpCellulose, rpHybrid, rpContour));
+                                int toolIdForCropping = Toolbar.RECTANGLE;
+                                ImageWindowGroupController iwgc = new ImageWindowGroupController(imagePlusList,
+                                        radialProjectionModel.getImageData().getVesselList().get(i),
+                                        toolIdForCropping);
+                                radialProjectionModel.addVesselUnrollImageWindowGroup(iwgc);
                             }
                         }
                     }
@@ -616,62 +733,57 @@ public class MainController {
         mainView.getButtonMoveToAnalysis().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                SaveRadialProjectionOutputWorker srpow = new SaveRadialProjectionOutputWorker(radialProjectionModel.getImageData());
+                srpow.execute();
+                SaveUnrollingOutputWorker suow = new SaveUnrollingOutputWorker(radialProjectionModel.getImageData());
+                suow.execute();
+                radialProjectionModel.closeAllImageWindowGroup();
+                analysisModel.setImageData(radialProjectionModel.getImageData());
+                mainView.getButtonRunRadialProjection().setEnabled(false);
+                mainView.getButtonUnrollVessel().setEnabled(false);
                 mainView.getButtonLegacyBandMeasurement().setEnabled(true);
                 mainView.getButtonSegmentationBySplitting().setEnabled(true);
                 mainView.getButtonCustomSkeletonize().setEnabled(true);
-                mainView.getTabbedPaneAnalysis().setSelectedComponent(mainView.getBandsAndGapsPanel());
+                DefaultTableModel model = (DefaultTableModel) mainView.getTableAnalysisInputImage().getModel();
+                model.addRow(new String[]{analysisModel.getImageData().getImagePath().toAbsolutePath().toString()});
+                SpinnerNumberModel spinnerNumberModelRandomBoxWidth = (SpinnerNumberModel) mainView.getSpinnerRandomBoxWidth().getModel();
+                spinnerNumberModelRandomBoxWidth.setMaximum(analysisModel.getImageData().getVesselList().get(0).getRadialProjectionHybrid().getWidth());
+                mainView.getTabbedPaneMainPane().setSelectedComponent(mainView.getPanel4Analysis());
             }
         });
         //-------------------Analysis----------------------------------------------
         mainView.getButtonLegacyBandMeasurement().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ImagePlus vessel1HybridRadialProjection = radialProjectionModel.getVesselArrayList().get(0).getRadialProjectionHybrid();
-                ImagePlus vessel2HybridRadialProjection = radialProjectionModel.getVesselArrayList().get(1).getRadialProjectionHybrid();
-                ShortProcessor vessel1HybridRadialProjectionImageProcessor = (ShortProcessor) vessel1HybridRadialProjection.getProcessor();
-                ShortProcessor vessel2HybridRadialProjectionImageProcessor = (ShortProcessor) vessel2HybridRadialProjection.getProcessor();
-                RandomLineScanWorker randomLineScanVessel1Worker = new RandomLineScanWorker((Integer) mainView.getSpinnerNumberOfLineScan().getValue(),
-                        (int) mainView.getSpinnerLineScanLength().getValue(),
-                        vesselsSegmentationModel.getXyPixelSize(),
-                        vessel1HybridRadialProjectionImageProcessor);
-                RandomLineScanWorker randomLineScanVessel2Worker = new RandomLineScanWorker((Integer) mainView.getSpinnerNumberOfLineScan().getValue(),
-                        (int) mainView.getSpinnerLineScanLength().getValue(),
-                        vesselsSegmentationModel.getXyPixelSize(),
-                        vessel2HybridRadialProjectionImageProcessor);
-                randomLineScanVessel1Worker.addPropertyChangeListener(new PropertyChangeListener() {
+                RandomLineScanWorker randomLineScanWorker = new RandomLineScanWorker(
+                        (Integer)mainView.getSpinnerNumberOfLineScan().getValue(),
+                        (Integer) mainView.getSpinnerLineScanLength().getValue(),
+                        analysisModel.getImageData().getXyPixelSize(),
+                        analysisModel.getImageData().getVesselList()
+                );
+                randomLineScanWorker.addPropertyChangeListener(new PropertyChangeListener() {
                     @Override
                     public void propertyChange(PropertyChangeEvent evt) {
-                        if("state".equals(evt.getPropertyName())&&
-                                evt.getNewValue()==SwingWorker.StateValue.DONE){
-                            ImageProcessor imageWithOnlyScanBand = randomLineScanVessel1Worker.getImageWithOnlyScanBand();
-                            ImagePlus imageWithOnlyScanBandImagePlus = new ImagePlus("Random Line Scan vessel 1", imageWithOnlyScanBand);
-                            ImageProcessor binary = imageWithOnlyScanBandImagePlus.getProcessor().duplicate();
-                            binary.setThreshold(1,binary.getMax(),ImageProcessor.BLACK_AND_WHITE_LUT);
-                            ImagePlus binaryImagePlus = new ImagePlus("binary band scan vessel 1",binary);
-                            imageWithOnlyScanBandImagePlus.show();
-                            binaryImagePlus.show();
-                            System.err.println("Mean of vessel 1 in micrometer: " + String.format("%.2f",randomLineScanVessel1Worker.getMeanBandLength()*((double)mainView.getSpinnerZPixelSizeCreateSideView().getValue()/1000)));
-                            System.err.println("Mean of vessel 2 in micrometer: " + String.format("%.2f",randomLineScanVessel2Worker.getMeanBandLength()*((double)mainView.getSpinnerZPixelSizeCreateSideView().getValue()/1000)));
+                        if ("state".equals(evt.getPropertyName()) &&
+                                evt.getNewValue() == SwingWorker.StateValue.DONE){
+                            int index = 0;
+                            mainView.getTextAreaBandGapResult().setText("");
+                            for (Vessel vessel:analysisModel.getImageData().getVesselList()){
+                                index++;
+                                ImagePlus bandBinary = vessel.getBandHybridMaskImagePlus().duplicate();
+                                bandBinary.setTitle(vessel.getBandHybridImagePlus().getTitle());
+                                bandBinary.show();
+                                mainView.getTextAreaBandGapResult().append("Vessel " + index + ": " + System.lineSeparator());
+                                mainView.getTextAreaBandGapResult().append("number of bands: " + vessel.getNoOfBands()+ System.lineSeparator());
+                                mainView.getTextAreaBandGapResult().append(String.format("Mean band width: %.3f ± %.3f",vessel.getMeanBandWidth(),vessel.getSdBandWidth())+System.lineSeparator());
+                                mainView.getTextAreaBandGapResult().append("number of gaps: " + vessel.getNoOfGaps()+ System.lineSeparator());
+                                mainView.getTextAreaBandGapResult().append(String.format("Mean gap width: %.3f ± %.3f",vessel.getMeanGapWidth(),vessel.getSdGapWidth())+System.lineSeparator());
+                                mainView.getTextAreaBandGapResult().append(System.lineSeparator());
+                            }
                         }
                     }
                 });
-                randomLineScanVessel2Worker.addPropertyChangeListener(new PropertyChangeListener() {
-                    @Override
-                    public void propertyChange(PropertyChangeEvent evt) {
-                        if("state".equals(evt.getPropertyName())&&
-                                evt.getNewValue()==SwingWorker.StateValue.DONE){
-                            ImageProcessor imageWithOnlyScanBand = randomLineScanVessel2Worker.getImageWithOnlyScanBand();
-                            ImagePlus imageWithOnlyScanBandImagePlus = new ImagePlus("Random Line Scan vessel 2", imageWithOnlyScanBand);
-                            ImageProcessor binary = imageWithOnlyScanBandImagePlus.getProcessor().duplicate();
-                            binary.setThreshold(1,binary.getMax(),ImageProcessor.BLACK_AND_WHITE_LUT);
-                            ImagePlus binaryImagePlus = new ImagePlus("binary band scan vessel 2",binary);
-                            imageWithOnlyScanBandImagePlus.show();
-                            binaryImagePlus.show();
-                        }
-                    }
-                });
-                randomLineScanVessel1Worker.execute();
-                randomLineScanVessel2Worker.execute();
+                randomLineScanWorker.execute();
             }
         });
 
@@ -723,6 +835,76 @@ public class MainController {
                 applyMaskedCelluloseImagePlus.show();
             }
         });
+
+        // Compute anisotropy
+        mainView.getSpinnerRandomBoxWidth().addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int value = (int) mainView.getSpinnerRandomBoxWidth().getValue();
+                analysisModel.setRandomBoxWidth(value);
+            }
+        });
+        mainView.getSpinnerNoRandomBoxes().addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int value = (int) mainView.getSpinnerNoRandomBoxes().getValue();
+                analysisModel.setNumberOfRandomBoxes(value);
+            }
+        });
+        mainView.getButtonComputeAnisotropy().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                AnisotropyWorker anisotropyWorker = new AnisotropyWorker(analysisModel.getImageData().getVesselList(),
+                        (int)mainView.getSpinnerRandomBoxWidth().getValue(),(int) mainView.getSpinnerNoRandomBoxes().getValue());
+                anisotropyWorker.addPropertyChangeListener(new PropertyChangeListener() {
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        if ("state".equals(evt.getPropertyName()) &&
+                                evt.getNewValue() == SwingWorker.StateValue.DONE){
+                            List<Vessel> vesselList = analysisModel.getImageData().getVesselList();
+                            mainView.getTextAreaAnisotropyResult().setText("");
+                            int idx = 0;
+                            for(Vessel vessel: vesselList){
+                                idx+=1;
+                                mainView.getTextAreaAnisotropyResult().append("Vessel " +idx+ System.lineSeparator());
+                                mainView.getTextAreaAnisotropyResult().append(String.format("Mean orientation: %.3f ± %.3f",vessel.getMeanBandOrientation(),vessel.getSdBandOrientation())+System.lineSeparator());
+                                mainView.getTextAreaAnisotropyResult().append(String.format("Mean anisotropy: %.3f ± %.3f",vessel.getMeanAnisotropy(),vessel.getSdAnisotropy())+ System.lineSeparator());
+                                mainView.getTextAreaAnisotropyResult().append(System.lineSeparator());
+                            }
+                        }
+                    }
+                });
+                anisotropyWorker.execute();
+            }
+        });
+
+        // save Analysis Result to CSV file
+        mainView.getButtonExportResultToCSV().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boolean combine = mainView.getCheckBoxCombineResultCSV().isSelected();
+                SaveVesselResultToCSV saveVesselResultToCSV = new SaveVesselResultToCSV(analysisModel.getImageDataList(), combine);
+                try {
+                    saveVesselResultToCSV.flush();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+        // save Analysis Result to XLSX file
+        mainView.getButtonExportToXLSX().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boolean combine = mainView.getCheckBoxCombineResultXLSX().isSelected();
+                SaveVesselResultToXLSX saveVesselResultToXLSX = new SaveVesselResultToXLSX(analysisModel.getImageDataList(), combine);
+                try {
+                    saveVesselResultToXLSX.flush();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
 
 
         //--------------MAIN WINDOW-----------------------------------------
