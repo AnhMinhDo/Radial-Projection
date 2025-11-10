@@ -255,13 +255,26 @@ public class Radical_Projection_Tool extends JFrame {
 
 	public JButton getButtonMoveToAnalysis() {return buttonMoveToAnalysis;}
 
+	public JPanel getPanel4Analysis(){return panel4Analysis;}
+
 	public JTabbedPane getTabbedPaneAnalysis() { return  tabbedPaneAnalysis;}
 
 	public JPanel getBandsAndGapsPanel() {return  bandsAndGapsPanel;}
 
 	public JSpinner getSpinnerNumberOfLineScan() {return  spinnerNumberOfLineScan;}
 	public JSpinner getSpinnerLineScanLength() {return  spinnerLineScanLength;}
-
+	public JButton getButtonBrowseOutputPath(){ return  buttonBrowseOutputPath;}
+	public JTextField getTextFieldOutputPath(){ return  textFieldOutputPath;}
+	public JButton getButtonComputeAnisotropy(){return buttonComputeAnisotropy;}
+	public JButton getButtonExportResultToCSV(){return buttonExportResultToCSV;}
+	public JCheckBox getCheckBoxCombineResultCSV(){return checkBoxCombineResultCSV;}
+	public JTextArea getTextAreaBandGapResult(){return textAreaBandGapResult;}
+	public JTextArea getTextAreaAnisotropyResult(){return textAreaAnisotropyResult;}
+	public JTable getTableAnalysisInputImage(){return tableAnalysisInputImage;}
+	public JSpinner getSpinnerNoRandomBoxes(){return spinnerNoRandomBoxes;}
+	public JSpinner getSpinnerRandomBoxWidth(){return spinnerRandomBoxWidth;}
+	public JButton getButtonExportToXLSX(){return  buttonExportToXLSX;}
+	public JCheckBox getCheckBoxCombineResultXLSX(){return  checkBoxCombineResultXLSX;}
 
 
 	private void initComponents() {
@@ -292,6 +305,9 @@ public class Radical_Projection_Tool extends JFrame {
 		buttonClear = new JButton();
 		scrollPaneVesselSegmentation = new JScrollPane();
 		tableAddedFileVesselSegmentation = new JTable();
+		labelOutputPath = new JLabel();
+		buttonBrowseOutputPath = new JButton();
+		textFieldOutputPath = new JTextField();
 		panelParametersVesselSegmentation = new JPanel();
 		labelTargetXYPixelSize = new JLabel();
 		spinnerXYPixelSizeCreateSideView = new JSpinner();
@@ -328,12 +344,12 @@ public class Radical_Projection_Tool extends JFrame {
 		progressBarRadialProjection = new JProgressBar();
 		panel4Analysis = new JPanel();
 		tabbedPaneAnalysis = new JTabbedPane();
-		panel1 = new JPanel();
-		button11 = new JButton();
-		button12 = new JButton();
+		panelImageForAnalysis = new JPanel();
+		buttonAddFileAnalysisStep = new JButton();
+		buttonRemoveFileAnalysisStep = new JButton();
 		button13 = new JButton();
-		scrollPane3 = new JScrollPane();
-		table3 = new JTable();
+		scrollPaneAnalysisInputImage = new JScrollPane();
+		tableAnalysisInputImage = new JTable();
 		bandsAndGapsPanel = new JPanel();
 		labelLegacyBandMeasurement = new JLabel();
 		buttonLegacyBandMeasurement = new JButton();
@@ -341,14 +357,27 @@ public class Radical_Projection_Tool extends JFrame {
 		spinnerNumberOfLineScan = new JSpinner();
 		labelLineScanLength = new JLabel();
 		spinnerLineScanLength = new JSpinner();
+		scrollPaneBandGapResult = new JScrollPane();
+		textAreaBandGapResult = new JTextArea();
 		labelBandsSegmentationBySplittingImage = new JLabel();
 		buttonSegmentationBySplitting = new JButton();
 		spinnerPercentageForSplitting = new JSpinner();
 		comboBoxAutoThresholdingMethod = new JComboBox<>(AutoThresholder.Method.values());
 		labelCustomSkeletonizeAlgorithm = new JLabel();
 		buttonCustomSkeletonize = new JButton();
-		panel8 = new JPanel();
-		checkBox2 = new JCheckBox();
+		panelOrientationAndAnisotropy = new JPanel();
+		buttonComputeAnisotropy = new JButton();
+		labelNoRandomBoxesAnisotropy = new JLabel();
+		spinnerNoRandomBoxes = new JSpinner();
+		label1 = new JLabel();
+		spinnerRandomBoxWidth = new JSpinner();
+		scrollPaneAnisotropy = new JScrollPane();
+		textAreaAnisotropyResult = new JTextArea();
+		panelExportResult = new JPanel();
+		buttonExportToXLSX = new JButton();
+		checkBoxCombineResultXLSX = new JCheckBox();
+		buttonExportResultToCSV = new JButton();
+		checkBoxCombineResultCSV = new JCheckBox();
 
 		//======== this ========
 		Container contentPane = getContentPane();
@@ -520,6 +549,18 @@ public class Radical_Projection_Tool extends JFrame {
 							scrollPaneVesselSegmentation.setViewportView(tableAddedFileVesselSegmentation);
 						}
 						panelImageListVesselSegmentation.add(scrollPaneVesselSegmentation, "cell 0 1 4 1");
+
+						//---- labelOutputPath ----
+						labelOutputPath.setText("Output Path");
+						panelImageListVesselSegmentation.add(labelOutputPath, "cell 0 2");
+
+						//---- buttonBrowseOutputPath ----
+						buttonBrowseOutputPath.setText("Browse");
+						panelImageListVesselSegmentation.add(buttonBrowseOutputPath, "cell 1 2");
+
+						//---- textFieldOutputPath ----
+						textFieldOutputPath.setEditable(false);
+						panelImageListVesselSegmentation.add(textFieldOutputPath, "cell 2 2 2 1");
 					}
 					tabbedPaneVesselSegmentation.addTab("Images List", panelImageListVesselSegmentation);
 
@@ -567,7 +608,7 @@ public class Radical_Projection_Tool extends JFrame {
 						panelParametersVesselSegmentation.add(labelAnalysisWindow, "cell 0 2");
 
 						//---- spinnerAnalysisWindow ----
-						spinnerAnalysisWindow.setModel(new SpinnerNumberModel(1, 0, null, 1));
+						spinnerAnalysisWindow.setModel(new SpinnerNumberModel(7, 0, null, 1));
 						panelParametersVesselSegmentation.add(spinnerAnalysisWindow, "cell 1 2");
 
 						//---- labelPreWatershedSmoothing ----
@@ -639,7 +680,7 @@ public class Radical_Projection_Tool extends JFrame {
 						panelParametersVesselSegmentation.add(buttonProcessWholeStack, "cell 0 9");
 
 						//---- buttonMoveToRadialProjection ----
-						buttonMoveToRadialProjection.setText("Move to next Step");
+						buttonMoveToRadialProjection.setText("<html>Move to <br> Radial Projection</html>");
 						buttonMoveToRadialProjection.setEnabled(false);
 						panelParametersVesselSegmentation.add(buttonMoveToRadialProjection, "cell 1 9");
 						panelParametersVesselSegmentation.add(separator1, "cell 0 10 2 1");
@@ -752,9 +793,9 @@ public class Radical_Projection_Tool extends JFrame {
 				//======== tabbedPaneAnalysis ========
 				{
 
-					//======== panel1 ========
+					//======== panelImageForAnalysis ========
 					{
-						panel1.setLayout(new MigLayout(
+						panelImageForAnalysis.setLayout(new MigLayout(
 							"hidemode 3,align center top",
 							// columns
 							"[fill]" +
@@ -776,25 +817,25 @@ public class Radical_Projection_Tool extends JFrame {
 							"[]" +
 							"[]"));
 
-						//---- button11 ----
-						button11.setText("add");
-						panel1.add(button11, "cell 0 0");
+						//---- buttonAddFileAnalysisStep ----
+						buttonAddFileAnalysisStep.setText("add");
+						panelImageForAnalysis.add(buttonAddFileAnalysisStep, "cell 0 0");
 
-						//---- button12 ----
-						button12.setText("Remove");
-						panel1.add(button12, "cell 1 0");
+						//---- buttonRemoveFileAnalysisStep ----
+						buttonRemoveFileAnalysisStep.setText("Remove");
+						panelImageForAnalysis.add(buttonRemoveFileAnalysisStep, "cell 1 0");
 
 						//---- button13 ----
 						button13.setText("OK");
-						panel1.add(button13, "cell 2 0");
+						panelImageForAnalysis.add(button13, "cell 2 0");
 
-						//======== scrollPane3 ========
+						//======== scrollPaneAnalysisInputImage ========
 						{
-							scrollPane3.setViewportView(table3);
+							scrollPaneAnalysisInputImage.setViewportView(tableAnalysisInputImage);
 						}
-						panel1.add(scrollPane3, "cell 0 1 3 4");
+						panelImageForAnalysis.add(scrollPaneAnalysisInputImage, "cell 0 1 3 4");
 					}
-					tabbedPaneAnalysis.addTab("Image", panel1);
+					tabbedPaneAnalysis.addTab("Image", panelImageForAnalysis);
 
 					//======== bandsAndGapsPanel ========
 					{
@@ -849,6 +890,15 @@ public class Radical_Projection_Tool extends JFrame {
 						spinnerLineScanLength.setModel(new SpinnerNumberModel(25, 1, null, 1));
 						bandsAndGapsPanel.add(spinnerLineScanLength, "cell 7 0");
 
+						//======== scrollPaneBandGapResult ========
+						{
+
+							//---- textAreaBandGapResult ----
+							textAreaBandGapResult.setEditable(false);
+							scrollPaneBandGapResult.setViewportView(textAreaBandGapResult);
+						}
+						bandsAndGapsPanel.add(scrollPaneBandGapResult, "cell 2 1 6 3");
+
 						//---- labelBandsSegmentationBySplittingImage ----
 						labelBandsSegmentationBySplittingImage.setText("<html>Band Segmentation <br> by Splitting Image</html>");
 						labelBandsSegmentationBySplittingImage.setVisible(false);
@@ -882,11 +932,13 @@ public class Radical_Projection_Tool extends JFrame {
 					}
 					tabbedPaneAnalysis.addTab("Bands & Gaps", bandsAndGapsPanel);
 
-					//======== panel8 ========
+					//======== panelOrientationAndAnisotropy ========
 					{
-						panel8.setLayout(new MigLayout(
+						panelOrientationAndAnisotropy.setLayout(new MigLayout(
 							"hidemode 3,align center top",
 							// columns
+							"[fill]" +
+							"[fill]" +
 							"[fill]" +
 							"[fill]" +
 							"[fill]" +
@@ -910,11 +962,79 @@ public class Radical_Projection_Tool extends JFrame {
 							"[]" +
 							"[]"));
 
-						//---- checkBox2 ----
-						checkBox2.setText("use this parameter");
-						panel8.add(checkBox2, "cell 0 0");
+						//---- buttonComputeAnisotropy ----
+						buttonComputeAnisotropy.setText("Compute Anisotropy");
+						panelOrientationAndAnisotropy.add(buttonComputeAnisotropy, "cell 0 0");
+
+						//---- labelNoRandomBoxesAnisotropy ----
+						labelNoRandomBoxesAnisotropy.setText("<html>Number of <br>Random boxes</html>");
+						panelOrientationAndAnisotropy.add(labelNoRandomBoxesAnisotropy, "cell 1 0 2 1");
+
+						//---- spinnerNoRandomBoxes ----
+						spinnerNoRandomBoxes.setModel(new SpinnerNumberModel(100, 1, null, 1));
+						panelOrientationAndAnisotropy.add(spinnerNoRandomBoxes, "cell 3 0 2 1");
+
+						//---- label1 ----
+						label1.setText("<html>Random box<br>width</html>");
+						panelOrientationAndAnisotropy.add(label1, "cell 6 0 2 1");
+
+						//---- spinnerRandomBoxWidth ----
+						spinnerRandomBoxWidth.setModel(new SpinnerNumberModel(70, 1, null, 1));
+						panelOrientationAndAnisotropy.add(spinnerRandomBoxWidth, "cell 9 0 2 1");
+
+						//======== scrollPaneAnisotropy ========
+						{
+
+							//---- textAreaAnisotropyResult ----
+							textAreaAnisotropyResult.setEditable(false);
+							scrollPaneAnisotropy.setViewportView(textAreaAnisotropyResult);
+						}
+						panelOrientationAndAnisotropy.add(scrollPaneAnisotropy, "cell 0 1 11 3");
 					}
-					tabbedPaneAnalysis.addTab("Parameter_2", panel8);
+					tabbedPaneAnalysis.addTab("Orientation & Anisotropy", panelOrientationAndAnisotropy);
+
+					//======== panelExportResult ========
+					{
+						panelExportResult.setLayout(new MigLayout(
+							"hidemode 3,align center top",
+							// columns
+							"[fill]" +
+							"[fill]" +
+							"[fill]" +
+							"[fill]" +
+							"[fill]" +
+							"[fill]" +
+							"[fill]" +
+							"[fill]" +
+							"[fill]" +
+							"[fill]" +
+							"[fill]" +
+							"[fill]",
+							// rows
+							"[]" +
+							"[]" +
+							"[]" +
+							"[]" +
+							"[]" +
+							"[]"));
+
+						//---- buttonExportToXLSX ----
+						buttonExportToXLSX.setText("Export Result to XLSX");
+						panelExportResult.add(buttonExportToXLSX, "cell 0 1 3 1");
+
+						//---- checkBoxCombineResultXLSX ----
+						checkBoxCombineResultXLSX.setText("Combine all images results");
+						panelExportResult.add(checkBoxCombineResultXLSX, "cell 3 1 3 1");
+
+						//---- buttonExportResultToCSV ----
+						buttonExportResultToCSV.setText("Export Result To CSV");
+						panelExportResult.add(buttonExportResultToCSV, "cell 0 2 3 1");
+
+						//---- checkBoxCombineResultCSV ----
+						checkBoxCombineResultCSV.setText("Combine all images results");
+						panelExportResult.add(checkBoxCombineResultCSV, "cell 3 2 3 1");
+					}
+					tabbedPaneAnalysis.addTab("Export Result", panelExportResult);
 				}
 				panel4Analysis.add(tabbedPaneAnalysis, "cell 0 1");
 			}
@@ -953,6 +1073,9 @@ public class Radical_Projection_Tool extends JFrame {
 	private JButton buttonClear;
 	private JScrollPane scrollPaneVesselSegmentation;
 	private JTable tableAddedFileVesselSegmentation;
+	private JLabel labelOutputPath;
+	private JButton buttonBrowseOutputPath;
+	private JTextField textFieldOutputPath;
 	private JPanel panelParametersVesselSegmentation;
 	private JLabel labelTargetXYPixelSize;
 	private JSpinner spinnerXYPixelSizeCreateSideView;
@@ -989,12 +1112,12 @@ public class Radical_Projection_Tool extends JFrame {
 	private JProgressBar progressBarRadialProjection;
 	private JPanel panel4Analysis;
 	private JTabbedPane tabbedPaneAnalysis;
-	private JPanel panel1;
-	private JButton button11;
-	private JButton button12;
+	private JPanel panelImageForAnalysis;
+	private JButton buttonAddFileAnalysisStep;
+	private JButton buttonRemoveFileAnalysisStep;
 	private JButton button13;
-	private JScrollPane scrollPane3;
-	private JTable table3;
+	private JScrollPane scrollPaneAnalysisInputImage;
+	private JTable tableAnalysisInputImage;
 	private JPanel bandsAndGapsPanel;
 	private JLabel labelLegacyBandMeasurement;
 	private JButton buttonLegacyBandMeasurement;
@@ -1002,13 +1125,26 @@ public class Radical_Projection_Tool extends JFrame {
 	private JSpinner spinnerNumberOfLineScan;
 	private JLabel labelLineScanLength;
 	private JSpinner spinnerLineScanLength;
+	private JScrollPane scrollPaneBandGapResult;
+	private JTextArea textAreaBandGapResult;
 	private JLabel labelBandsSegmentationBySplittingImage;
 	private JButton buttonSegmentationBySplitting;
 	private JSpinner spinnerPercentageForSplitting;
 	private JComboBox comboBoxAutoThresholdingMethod;
 	private JLabel labelCustomSkeletonizeAlgorithm;
 	private JButton buttonCustomSkeletonize;
-	private JPanel panel8;
-	private JCheckBox checkBox2;
+	private JPanel panelOrientationAndAnisotropy;
+	private JButton buttonComputeAnisotropy;
+	private JLabel labelNoRandomBoxesAnisotropy;
+	private JSpinner spinnerNoRandomBoxes;
+	private JLabel label1;
+	private JSpinner spinnerRandomBoxWidth;
+	private JScrollPane scrollPaneAnisotropy;
+	private JTextArea textAreaAnisotropyResult;
+	private JPanel panelExportResult;
+	private JButton buttonExportToXLSX;
+	private JCheckBox checkBoxCombineResultXLSX;
+	private JButton buttonExportResultToCSV;
+	private JCheckBox checkBoxCombineResultCSV;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
 }

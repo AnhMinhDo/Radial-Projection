@@ -169,6 +169,24 @@ new FormModel {
 							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 								"value": "cell 0 1 4 1"
 							} )
+							add( new FormComponent( "javax.swing.JLabel" ) {
+								name: "labelOutputPath"
+								"text": "Output Path"
+							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+								"value": "cell 0 2"
+							} )
+							add( new FormComponent( "javax.swing.JButton" ) {
+								name: "buttonBrowseOutputPath"
+								"text": "Browse"
+							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+								"value": "cell 1 2"
+							} )
+							add( new FormComponent( "javax.swing.JTextField" ) {
+								name: "textFieldOutputPath"
+								"editable": false
+							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+								"value": "cell 2 2 2 1"
+							} )
 						}, new FormLayoutConstraints( null ) {
 							"title": "Images List"
 						} )
@@ -215,7 +233,7 @@ new FormModel {
 								name: "spinnerAnalysisWindow"
 								"model": new javax.swing.SpinnerNumberModel {
 									minimum: 0
-									value: 1
+									value: 7
 								}
 							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 								"value": "cell 1 2"
@@ -322,7 +340,7 @@ new FormModel {
 							} )
 							add( new FormComponent( "javax.swing.JButton" ) {
 								name: "buttonMoveToRadialProjection"
-								"text": "Move to next Step"
+								"text": "<html>Move to <br> Radial Projection</html>"
 								"enabled": false
 							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 								"value": "cell 1 9"
@@ -419,15 +437,15 @@ new FormModel {
 							"$columnConstraints": "[fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill]"
 							"$rowConstraints": "[][][][][]"
 						} ) {
-							name: "panel1"
+							name: "panelImageForAnalysis"
 							add( new FormComponent( "javax.swing.JButton" ) {
-								name: "button11"
+								name: "buttonAddFileAnalysisStep"
 								"text": "add"
 							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 								"value": "cell 0 0"
 							} )
 							add( new FormComponent( "javax.swing.JButton" ) {
-								name: "button12"
+								name: "buttonRemoveFileAnalysisStep"
 								"text": "Remove"
 							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 								"value": "cell 1 0"
@@ -439,9 +457,9 @@ new FormModel {
 								"value": "cell 2 0"
 							} )
 							add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
-								name: "scrollPane3"
+								name: "scrollPaneAnalysisInputImage"
 								add( new FormComponent( "javax.swing.JTable" ) {
-									name: "table3"
+									name: "tableAnalysisInputImage"
 								} )
 							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 								"value": "cell 0 1 3 4"
@@ -499,6 +517,15 @@ new FormModel {
 							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 								"value": "cell 7 0"
 							} )
+							add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+								name: "scrollPaneBandGapResult"
+								add( new FormComponent( "javax.swing.JTextArea" ) {
+									name: "textAreaBandGapResult"
+									"editable": false
+								} )
+							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+								"value": "cell 2 1 6 3"
+							} )
 							add( new FormComponent( "javax.swing.JLabel" ) {
 								name: "labelBandsSegmentationBySplittingImage"
 								"text": "<html>Band Segmentation <br> by Splitting Image</html>"
@@ -550,18 +577,90 @@ new FormModel {
 						} )
 						add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 							"$layoutConstraints": "hidemode 3,align center top"
-							"$columnConstraints": "[fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill]"
+							"$columnConstraints": "[fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill]"
 							"$rowConstraints": "[][][][][]"
 						} ) {
-							name: "panel8"
-							add( new FormComponent( "javax.swing.JCheckBox" ) {
-								name: "checkBox2"
-								"text": "use this parameter"
+							name: "panelOrientationAndAnisotropy"
+							add( new FormComponent( "javax.swing.JButton" ) {
+								name: "buttonComputeAnisotropy"
+								"text": "Compute Anisotropy"
 							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 								"value": "cell 0 0"
 							} )
+							add( new FormComponent( "javax.swing.JLabel" ) {
+								name: "labelNoRandomBoxesAnisotropy"
+								"text": "<html>Number of <br>Random boxes</html>"
+							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+								"value": "cell 1 0 2 1"
+							} )
+							add( new FormComponent( "javax.swing.JSpinner" ) {
+								name: "spinnerNoRandomBoxes"
+								"model": new javax.swing.SpinnerNumberModel {
+									minimum: 1
+									value: 100
+								}
+							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+								"value": "cell 3 0 2 1"
+							} )
+							add( new FormComponent( "javax.swing.JLabel" ) {
+								name: "label1"
+								"text": "<html>Random box<br>width</html>"
+							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+								"value": "cell 6 0 2 1"
+							} )
+							add( new FormComponent( "javax.swing.JSpinner" ) {
+								name: "spinnerRandomBoxWidth"
+								"model": new javax.swing.SpinnerNumberModel {
+									minimum: 1
+									value: 70
+								}
+							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+								"value": "cell 9 0 2 1"
+							} )
+							add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+								name: "scrollPaneAnisotropy"
+								add( new FormComponent( "javax.swing.JTextArea" ) {
+									name: "textAreaAnisotropyResult"
+									"editable": false
+								} )
+							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+								"value": "cell 0 1 11 3"
+							} )
 						}, new FormLayoutConstraints( null ) {
-							"title": "Parameter_2"
+							"title": "Orientation & Anisotropy"
+						} )
+						add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+							"$layoutConstraints": "hidemode 3,align center top"
+							"$columnConstraints": "[fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill][fill]"
+							"$rowConstraints": "[][][][][][]"
+						} ) {
+							name: "panelExportResult"
+							add( new FormComponent( "javax.swing.JButton" ) {
+								name: "buttonExportToXLSX"
+								"text": "Export Result to XLSX"
+							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+								"value": "cell 0 1 3 1"
+							} )
+							add( new FormComponent( "javax.swing.JCheckBox" ) {
+								name: "checkBoxCombineResultXLSX"
+								"text": "Combine all images results"
+							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+								"value": "cell 3 1 3 1"
+							} )
+							add( new FormComponent( "javax.swing.JButton" ) {
+								name: "buttonExportResultToCSV"
+								"text": "Export Result To CSV"
+							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+								"value": "cell 0 2 3 1"
+							} )
+							add( new FormComponent( "javax.swing.JCheckBox" ) {
+								name: "checkBoxCombineResultCSV"
+								"text": "Combine all images results"
+							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+								"value": "cell 3 2 3 1"
+							} )
+						}, new FormLayoutConstraints( null ) {
+							"title": "Export Result"
 						} )
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 0 1"
