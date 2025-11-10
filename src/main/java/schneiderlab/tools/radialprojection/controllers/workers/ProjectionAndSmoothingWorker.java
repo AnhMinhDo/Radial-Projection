@@ -24,6 +24,7 @@ public class ProjectionAndSmoothingWorker extends SwingWorker<RandomAccessibleIn
     private RandomAccessibleInterval<FloatType> cellulose;
     private int width;
     private int height;
+    private int slicesNumber;
 
     public ProjectionAndSmoothingWorker(ImgPlus<UnsignedShortType> sideView,
                                         int ligninToCelluloseWeight,
@@ -55,6 +56,8 @@ public class ProjectionAndSmoothingWorker extends SwingWorker<RandomAccessibleIn
         return height;
     }
 
+    public int getSlicesNumber() { return slicesNumber; }
+
     public RandomAccessibleInterval<FloatType> getLignin() {return lignin;}
 
     public RandomAccessibleInterval<FloatType> getCellulose() {return cellulose;}
@@ -79,7 +82,8 @@ public class ProjectionAndSmoothingWorker extends SwingWorker<RandomAccessibleIn
         hybridStackNonSmoothed = chs.getHybridNonSmoothedStack();
         this.radius = chs.getRadius();
         this.width = chs.getSmoothedStackWidth();
-        this.height = chs.getGetSmoothedStackHeight();
+        this.height = chs.getSmoothedStackHeight();
+        this.slicesNumber = chs.getSmoothedStackSlicesNumber();
         this.cellulose = chs.getCellulose();
         this.lignin = chs.getLignin();
         return hybridStackSmoothed;
