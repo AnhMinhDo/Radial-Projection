@@ -9,6 +9,7 @@ import ij.process.ByteProcessor;
 import ij.process.ShortProcessor;
 import net.imagej.DatasetService;
 import net.imagej.ImgPlus;
+import net.imagej.ui.ImageJUIService;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgs;
@@ -305,8 +306,9 @@ public class MainController {
                     vesselsSegmentationModel.setFilePath(Paths.get(fileToProcess));
                     ImageData<UnsignedShortType, FloatType> imageData = new ImageData<>();
                     vesselsSegmentationModel.setImageData(imageData);
-                    vesselsSegmentationModel.getImageData().setImagePath(Paths.get(fileToProcess));
+                    vesselsSegmentationModel.getImageData().setImagePath(vesselsSegmentationModel.getFilePath());
                     vesselsSegmentationModel.getImageData().setOutputDirPath(Paths.get(mainView.getTextFieldOutputPath().getText()));
+                    mainView.getTextFieldCurrentFileSegmentation().setText(vesselsSegmentationModel.getFilePath().toString());
                     logService.info("image path: " + vesselsSegmentationModel.getImageData().getImagePath().toAbsolutePath().toString());
                     CreateSideViewWorker createSideViewWorker = new CreateSideViewWorker(
                             (int) mainView.getSpinnerXYPixelSizeCreateSideView().getValue(),
@@ -330,7 +332,11 @@ public class MainController {
                                 mainView.getButtonProjAndSmooth().setEnabled(true);
                                 vesselsSegmentationModel.setSideView(createSideViewWorker.get());
                                 vesselsSegmentationModel.getImageData().setSideView(createSideViewWorker.get());
-                                ImagePlus sideViewDisplay = ImageJFunctions.show(vesselsSegmentationModel.getImageData().getSideView(), "Side View");
+                                ImagePlus sideViewDisplay = ImageJFunctions.wrapUnsignedShort(vesselsSegmentationModel.getImageData().getSideView(), "Side View");
+//                                sideViewDisplay.show();
+                                new ImageWindow(sideViewDisplay);
+//                                ImagePlus sideViewDisplay = ImageJFunctions.show(vesselsSegmentationModel.getImageData().getSideView(), "Side View");
+
                                 vesselsSegmentationModel.setSideViewDisplay(sideViewDisplay);
                                 // use result here
                             } catch (Exception ex) {
@@ -396,7 +402,7 @@ public class MainController {
                                 vesselsSegmentationModel.getImageData().setCellulose(pasw.getCellulose());
                                 vesselsSegmentationModel.getImageData().setLignin(pasw.getLignin());
                                 vesselsSegmentationModel.getImageData().setHybridStackSmoothedSlicesNumber(pasw.getSlicesNumber());
-                                logService.info("set output to ImageData object");
+                                logService.info("Set output to ImageData object");
                                  ImagePlus hybridStackNonSmoothedDisplay = ImageJFunctions.show(vesselsSegmentationModel.getImageData().getHybridStackNonSmoothed(),"Raw Hybrid");
                                  vesselsSegmentationModel.setHybridStackNonSmoothedDisplay(hybridStackNonSmoothedDisplay);
                             ImagePlus hybridStackSmoothedDisplay = ImageJFunctions.show(vesselsSegmentationModel.getImageData().getHybridStackSmoothed(), "Smoothed Hybrid");
@@ -410,7 +416,7 @@ public class MainController {
                 pasw.execute();
             }
         });
-        //TODO: seperate the below actionListener to its own class
+        //TODO: separate the below actionListener to its own class
         mainView.getButtonSelectCentroid().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -912,6 +918,8 @@ public class MainController {
         mainView.getParentFrame().addWindowListener(
                 new AddSavingActionWhenMainWindowClosed(cziToTifModel,
                                                         vesselsSegmentationModel));
+        // TODO: save parameters when the user close the main Fiji/Imagej menu
+
     }
 
 

@@ -94,6 +94,13 @@ public class MoveCurrentFileToRadialProjectionStep implements ActionListener {
         tabbedMainPane.setSelectedComponent(radialProjectionPanel);
         radialProjectionButton.setEnabled(true);
         unrollingButton.setEnabled(true);
+        mainview.getButtonProjAndSmooth().setEnabled(false);
+        mainview.getButtonSelectCentroid().setEnabled(false);
+        mainview.getButtonWatershed().setEnabled(false);
+        mainview.getButtonProcessWholeStack().setEnabled(false);
+        mainview.getButtonMoveToRadialProjection().setEnabled(false);
+        mainview.getButtonCreateSideView().setEnabled(true);
+        mainview.getTextFieldCurrentFileSegmentation().setText("");
         vesselsSegmentationModel.getSideViewDisplay().close();
         vesselsSegmentationModel.getRawSegmentation().close();
         vesselsSegmentationModel.getEdgeCentroidMaskImagePlus().close();
