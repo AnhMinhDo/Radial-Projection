@@ -275,7 +275,7 @@ public class Radical_Projection_Tool extends JFrame {
 	public JSpinner getSpinnerRandomBoxWidth(){return spinnerRandomBoxWidth;}
 	public JButton getButtonExportToXLSX(){return  buttonExportToXLSX;}
 	public JCheckBox getCheckBoxCombineResultXLSX(){return  checkBoxCombineResultXLSX;}
-
+	public JTextField getTextFieldCurrentFileSegmentation(){return textFieldCurrentFileSegmentation;}
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
@@ -309,6 +309,8 @@ public class Radical_Projection_Tool extends JFrame {
 		buttonBrowseOutputPath = new JButton();
 		textFieldOutputPath = new JTextField();
 		panelParametersVesselSegmentation = new JPanel();
+		label2 = new JLabel();
+		textFieldCurrentFileSegmentation = new JTextField();
 		labelTargetXYPixelSize = new JLabel();
 		spinnerXYPixelSizeCreateSideView = new JSpinner();
 		labelTargetZPixelSize = new JLabel();
@@ -585,111 +587,121 @@ public class Radical_Projection_Tool extends JFrame {
 							"[]" +
 							"[]" +
 							"[]" +
+							"[]" +
 							"[]"));
+
+						//---- label2 ----
+						label2.setText("Current file:");
+						panelParametersVesselSegmentation.add(label2, "cell 0 0");
+
+						//---- textFieldCurrentFileSegmentation ----
+						textFieldCurrentFileSegmentation.setEditable(false);
+						textFieldCurrentFileSegmentation.setHorizontalAlignment(SwingConstants.TRAILING);
+						panelParametersVesselSegmentation.add(textFieldCurrentFileSegmentation, "cell 1 0 2 1");
 
 						//---- labelTargetXYPixelSize ----
 						labelTargetXYPixelSize.setText("<html>target_xy pixel size(nm)</html>");
-						panelParametersVesselSegmentation.add(labelTargetXYPixelSize, "cell 0 0");
+						panelParametersVesselSegmentation.add(labelTargetXYPixelSize, "cell 0 1");
 
 						//---- spinnerXYPixelSizeCreateSideView ----
 						spinnerXYPixelSizeCreateSideView.setModel(new SpinnerNumberModel(200, 0, null, 1));
-						panelParametersVesselSegmentation.add(spinnerXYPixelSizeCreateSideView, "cell 1 0");
+						panelParametersVesselSegmentation.add(spinnerXYPixelSizeCreateSideView, "cell 1 1");
 
 						//---- labelTargetZPixelSize ----
 						labelTargetZPixelSize.setText("<html>target_z pixel size(nm)</html>");
-						panelParametersVesselSegmentation.add(labelTargetZPixelSize, "cell 0 1");
+						panelParametersVesselSegmentation.add(labelTargetZPixelSize, "cell 0 2");
 
 						//---- spinnerZPixelSizeCreateSideView ----
 						spinnerZPixelSizeCreateSideView.setModel(new SpinnerNumberModel(200, 0, null, 1));
-						panelParametersVesselSegmentation.add(spinnerZPixelSizeCreateSideView, "cell 1 1");
+						panelParametersVesselSegmentation.add(spinnerZPixelSizeCreateSideView, "cell 1 2");
 
 						//---- labelAnalysisWindow ----
 						labelAnalysisWindow.setText("<html>Analysis Window (\u03bcm)</html>");
-						panelParametersVesselSegmentation.add(labelAnalysisWindow, "cell 0 2");
+						panelParametersVesselSegmentation.add(labelAnalysisWindow, "cell 0 3");
 
 						//---- spinnerAnalysisWindow ----
 						spinnerAnalysisWindow.setModel(new SpinnerNumberModel(7, 0, null, 1));
-						panelParametersVesselSegmentation.add(spinnerAnalysisWindow, "cell 1 2");
+						panelParametersVesselSegmentation.add(spinnerAnalysisWindow, "cell 1 3");
 
 						//---- labelPreWatershedSmoothing ----
 						labelPreWatershedSmoothing.setText("<html>Pre-watershed <br>Smoothing</html>");
-						panelParametersVesselSegmentation.add(labelPreWatershedSmoothing, "cell 0 3");
+						panelParametersVesselSegmentation.add(labelPreWatershedSmoothing, "cell 0 4");
 
 						//---- spinnerPreWatershedSmoothing ----
 						spinnerPreWatershedSmoothing.setModel(new SpinnerNumberModel(2.0, 0.0, 5.0, 0.1));
-						panelParametersVesselSegmentation.add(spinnerPreWatershedSmoothing, "cell 1 3");
+						panelParametersVesselSegmentation.add(spinnerPreWatershedSmoothing, "cell 1 4");
 
 						//---- labelSliceIndexforTuning ----
 						labelSliceIndexforTuning.setText("<html>slice index for tuning</html>");
-						panelParametersVesselSegmentation.add(labelSliceIndexforTuning, "cell 0 4");
+						panelParametersVesselSegmentation.add(labelSliceIndexforTuning, "cell 0 5");
 
 						//---- spinnerSliceIndexForTuning ----
 						spinnerSliceIndexForTuning.setModel(new SpinnerNumberModel(0, 0, null, 1));
-						panelParametersVesselSegmentation.add(spinnerSliceIndexForTuning, "cell 1 4");
+						panelParametersVesselSegmentation.add(spinnerSliceIndexForTuning, "cell 1 5");
 
 						//---- labelInnerVesselRadius ----
 						labelInnerVesselRadius.setText("<html>Inner Vessel Radius (\u03bcm)</html>");
-						panelParametersVesselSegmentation.add(labelInnerVesselRadius, "cell 0 5");
+						panelParametersVesselSegmentation.add(labelInnerVesselRadius, "cell 0 6");
 
 						//---- spinnerInnerVesselRadius ----
 						spinnerInnerVesselRadius.setModel(new SpinnerNumberModel(1.0, 0.25, 30.0, 0.05));
-						panelParametersVesselSegmentation.add(spinnerInnerVesselRadius, "cell 1 5");
+						panelParametersVesselSegmentation.add(spinnerInnerVesselRadius, "cell 1 6");
 
 						//---- labelHybridWeight ----
 						labelHybridWeight.setText("<html>Hybrid-weighting of <br> lignin-to-cellulose(%)</html>");
-						panelParametersVesselSegmentation.add(labelHybridWeight, "cell 0 6");
+						panelParametersVesselSegmentation.add(labelHybridWeight, "cell 0 7");
 
 						//---- labelLigninHybridWeight ----
 						labelLigninHybridWeight.setText("Lignin 100%");
 						labelLigninHybridWeight.setHorizontalAlignment(SwingConstants.RIGHT);
-						panelParametersVesselSegmentation.add(labelLigninHybridWeight, "cell 1 6");
+						panelParametersVesselSegmentation.add(labelLigninHybridWeight, "cell 1 7");
 
 						//---- sliderHybridWeight ----
 						sliderHybridWeight.setValue(0);
 						sliderHybridWeight.setPaintTicks(true);
 						sliderHybridWeight.setMajorTickSpacing(25);
-						panelParametersVesselSegmentation.add(sliderHybridWeight, "cell 2 6");
+						panelParametersVesselSegmentation.add(sliderHybridWeight, "cell 2 7");
 
 						//---- labelCelluloseHybridWeight ----
 						labelCelluloseHybridWeight.setText("Cellulose 0%");
 						labelCelluloseHybridWeight.setHorizontalAlignment(SwingConstants.LEFT);
-						panelParametersVesselSegmentation.add(labelCelluloseHybridWeight, "cell 3 6");
+						panelParametersVesselSegmentation.add(labelCelluloseHybridWeight, "cell 3 7");
 
 						//---- buttonCreateSideView ----
 						buttonCreateSideView.setText("Create Side View");
-						panelParametersVesselSegmentation.add(buttonCreateSideView, "cell 0 7");
+						panelParametersVesselSegmentation.add(buttonCreateSideView, "cell 0 8");
 
 						//---- buttonProjAndSmooth ----
 						buttonProjAndSmooth.setText("<html>Projection and <br> smoothing</html>");
 						buttonProjAndSmooth.setEnabled(false);
-						panelParametersVesselSegmentation.add(buttonProjAndSmooth, "cell 1 7");
+						panelParametersVesselSegmentation.add(buttonProjAndSmooth, "cell 1 8");
 
 						//---- buttonSelectCentroid ----
 						buttonSelectCentroid.setText("Select Centroid");
 						buttonSelectCentroid.setEnabled(false);
-						panelParametersVesselSegmentation.add(buttonSelectCentroid, "cell 0 8");
+						panelParametersVesselSegmentation.add(buttonSelectCentroid, "cell 0 9");
 
 						//---- buttonWatershed ----
 						buttonWatershed.setText("Watershed");
 						buttonWatershed.setEnabled(false);
-						panelParametersVesselSegmentation.add(buttonWatershed, "cell 1 8");
+						panelParametersVesselSegmentation.add(buttonWatershed, "cell 1 9");
 
 						//---- buttonProcessWholeStack ----
 						buttonProcessWholeStack.setText("Process Whole Stack");
 						buttonProcessWholeStack.setEnabled(false);
-						panelParametersVesselSegmentation.add(buttonProcessWholeStack, "cell 0 9");
+						panelParametersVesselSegmentation.add(buttonProcessWholeStack, "cell 0 10");
 
 						//---- buttonMoveToRadialProjection ----
 						buttonMoveToRadialProjection.setText("<html>Move to <br> Radial Projection</html>");
 						buttonMoveToRadialProjection.setEnabled(false);
-						panelParametersVesselSegmentation.add(buttonMoveToRadialProjection, "cell 1 9");
-						panelParametersVesselSegmentation.add(separator1, "cell 0 10 2 1");
+						panelParametersVesselSegmentation.add(buttonMoveToRadialProjection, "cell 1 10");
+						panelParametersVesselSegmentation.add(separator1, "cell 0 11 2 1");
 
 						//---- textField2StatusVesselSegmentation ----
 						textField2StatusVesselSegmentation.setEditable(false);
 						textField2StatusVesselSegmentation.setBorder(null);
-						panelParametersVesselSegmentation.add(textField2StatusVesselSegmentation, "cell 0 11 2 1");
-						panelParametersVesselSegmentation.add(progressBarVesselSegmentation, "cell 2 11 2 1");
+						panelParametersVesselSegmentation.add(textField2StatusVesselSegmentation, "cell 0 12 2 1");
+						panelParametersVesselSegmentation.add(progressBarVesselSegmentation, "cell 2 12 2 1");
 					}
 					tabbedPaneVesselSegmentation.addTab("Parameters", panelParametersVesselSegmentation);
 				}
@@ -724,11 +736,12 @@ public class Radical_Projection_Tool extends JFrame {
 					"[]"));
 
 				//---- labelFileNameRadialProjection ----
-				labelFileNameRadialProjection.setText("File name ");
+				labelFileNameRadialProjection.setText("Current File:");
 				panel3RadialProjection.add(labelFileNameRadialProjection, "cell 0 0");
 
 				//---- textFieldRadialProjection ----
 				textFieldRadialProjection.setEditable(false);
+				textFieldRadialProjection.setHorizontalAlignment(SwingConstants.RIGHT);
 				panel3RadialProjection.add(textFieldRadialProjection, "cell 1 0 5 1");
 
 				//---- buttonRunRadialProjection ----
@@ -1077,6 +1090,8 @@ public class Radical_Projection_Tool extends JFrame {
 	private JButton buttonBrowseOutputPath;
 	private JTextField textFieldOutputPath;
 	private JPanel panelParametersVesselSegmentation;
+	private JLabel label2;
+	private JTextField textFieldCurrentFileSegmentation;
 	private JLabel labelTargetXYPixelSize;
 	private JSpinner spinnerXYPixelSizeCreateSideView;
 	private JLabel labelTargetZPixelSize;
