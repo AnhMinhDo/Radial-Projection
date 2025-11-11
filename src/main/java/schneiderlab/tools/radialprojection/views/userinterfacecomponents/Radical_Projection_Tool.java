@@ -277,6 +277,7 @@ public class Radical_Projection_Tool extends JFrame {
 	public JCheckBox getCheckBoxCombineResultXLSX(){return  checkBoxCombineResultXLSX;}
 	public JTextField getTextFieldCurrentFileSegmentation(){return textFieldCurrentFileSegmentation;}
 	public JPanel getPanelOrientationAndAnisotropy(){return panelOrientationAndAnisotropy;}
+	public JTable getTableFileCziToTiff(){return tableFileCziToTiff;}
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
@@ -297,6 +298,8 @@ public class Radical_Projection_Tool extends JFrame {
 		buttonOkConvertCzi2Tif = new JButton();
 		textFieldStatusConvertCzi2Tif = new JTextField();
 		progressBarConvertCzi2Tif = new JProgressBar();
+		scrollPaneTableFileCziToTiff = new JScrollPane();
+		tableFileCziToTiff = new JTable();
 		panelVesselsSegmentation = new JPanel();
 		tabbedPaneVesselSegmentation = new JTabbedPane();
 		panelImageListVesselSegmentation = new JPanel();
@@ -417,58 +420,64 @@ public class Radical_Projection_Tool extends JFrame {
 
 				//---- buttonBrowseConvertCzi2Tif ----
 				buttonBrowseConvertCzi2Tif.setText("Browse");
-				panelConvertCzi2Tif.add(buttonBrowseConvertCzi2Tif, "cell 0 1");
+				panelConvertCzi2Tif.add(buttonBrowseConvertCzi2Tif, "cell 0 0");
 
 				//---- textFieldConvertCzi2Tif ----
 				textFieldConvertCzi2Tif.setText("file/Path");
 				textFieldConvertCzi2Tif.setEditable(false);
-				panelConvertCzi2Tif.add(textFieldConvertCzi2Tif, "cell 1 1 8 1");
+				panelConvertCzi2Tif.add(textFieldConvertCzi2Tif, "cell 1 0 8 1");
 
 				//---- checkBoxBgSubConvertCzi2Tif ----
 				checkBoxBgSubConvertCzi2Tif.setText("background subtraction: ");
-				panelConvertCzi2Tif.add(checkBoxBgSubConvertCzi2Tif, "cell 0 2");
+				panelConvertCzi2Tif.add(checkBoxBgSubConvertCzi2Tif, "cell 0 1");
 
 				//---- labelRollingConvertCzi2Tif ----
 				labelRollingConvertCzi2Tif.setText("Rolling");
-				panelConvertCzi2Tif.add(labelRollingConvertCzi2Tif, "cell 1 2");
+				panelConvertCzi2Tif.add(labelRollingConvertCzi2Tif, "cell 1 1");
 
 				//---- spinnerRollingConvertCzi2Tif ----
 				spinnerRollingConvertCzi2Tif.setModel(new SpinnerNumberModel(10, 1, null, 1));
 				spinnerRollingConvertCzi2Tif.setEnabled(false);
-				panelConvertCzi2Tif.add(spinnerRollingConvertCzi2Tif, "cell 2 2");
+				panelConvertCzi2Tif.add(spinnerRollingConvertCzi2Tif, "cell 2 1");
 
 				//---- labelEnhanceConstConvertCzi2Tif ----
 				labelEnhanceConstConvertCzi2Tif.setText("Enhance Constrast: ");
-				panelConvertCzi2Tif.add(labelEnhanceConstConvertCzi2Tif, "cell 0 3");
+				panelConvertCzi2Tif.add(labelEnhanceConstConvertCzi2Tif, "cell 0 2");
 
 				//---- labelSaturateConvertCzi2Tif ----
 				labelSaturateConvertCzi2Tif.setText("Saturated");
-				panelConvertCzi2Tif.add(labelSaturateConvertCzi2Tif, "cell 1 3");
+				panelConvertCzi2Tif.add(labelSaturateConvertCzi2Tif, "cell 1 2");
 
 				//---- spinnerSaturateConvertCzi2Tif ----
 				spinnerSaturateConvertCzi2Tif.setModel(new SpinnerNumberModel(35, 0, 100, 1));
-				panelConvertCzi2Tif.add(spinnerSaturateConvertCzi2Tif, "cell 2 3");
+				panelConvertCzi2Tif.add(spinnerSaturateConvertCzi2Tif, "cell 2 2");
 
 				//---- labelpercentSignConvertCzi2Tif ----
 				labelpercentSignConvertCzi2Tif.setText("%");
-				panelConvertCzi2Tif.add(labelpercentSignConvertCzi2Tif, "cell 3 3");
+				panelConvertCzi2Tif.add(labelpercentSignConvertCzi2Tif, "cell 3 2");
 
 				//---- checkBoxRotateConvertCzi2Tif ----
 				checkBoxRotateConvertCzi2Tif.setText("Rotate:");
-				panelConvertCzi2Tif.add(checkBoxRotateConvertCzi2Tif, "cell 0 4");
+				panelConvertCzi2Tif.add(checkBoxRotateConvertCzi2Tif, "cell 0 3");
 
 				//---- comboBoxRoateDirectionConvertCzi2Tif ----
 				comboBoxRoateDirectionConvertCzi2Tif.setEnabled(false);
-				panelConvertCzi2Tif.add(comboBoxRoateDirectionConvertCzi2Tif, "cell 1 4 2 1");
+				panelConvertCzi2Tif.add(comboBoxRoateDirectionConvertCzi2Tif, "cell 1 3 2 1");
 
 				//---- buttonOkConvertCzi2Tif ----
 				buttonOkConvertCzi2Tif.setText("OK");
-				panelConvertCzi2Tif.add(buttonOkConvertCzi2Tif, "cell 0 5");
+				panelConvertCzi2Tif.add(buttonOkConvertCzi2Tif, "cell 0 4");
 
 				//---- textFieldStatusConvertCzi2Tif ----
 				textFieldStatusConvertCzi2Tif.setEditable(false);
-				panelConvertCzi2Tif.add(textFieldStatusConvertCzi2Tif, "cell 0 6");
-				panelConvertCzi2Tif.add(progressBarConvertCzi2Tif, "cell 1 6 3 1");
+				panelConvertCzi2Tif.add(textFieldStatusConvertCzi2Tif, "cell 0 5");
+				panelConvertCzi2Tif.add(progressBarConvertCzi2Tif, "cell 1 5 3 1");
+
+				//======== scrollPaneTableFileCziToTiff ========
+				{
+					scrollPaneTableFileCziToTiff.setViewportView(tableFileCziToTiff);
+				}
+				panelConvertCzi2Tif.add(scrollPaneTableFileCziToTiff, "cell 0 6 4 1");
 			}
 			tabbedPaneMainPane.addTab("0. CZI to TIFF", panelConvertCzi2Tif);
 
@@ -1079,6 +1088,8 @@ public class Radical_Projection_Tool extends JFrame {
 	private JButton buttonOkConvertCzi2Tif;
 	private JTextField textFieldStatusConvertCzi2Tif;
 	private JProgressBar progressBarConvertCzi2Tif;
+	private JScrollPane scrollPaneTableFileCziToTiff;
+	private JTable tableFileCziToTiff;
 	private JPanel panelVesselsSegmentation;
 	private JTabbedPane tabbedPaneVesselSegmentation;
 	private JPanel panelImageListVesselSegmentation;
