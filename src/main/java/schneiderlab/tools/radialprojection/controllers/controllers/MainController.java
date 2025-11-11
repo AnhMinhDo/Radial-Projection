@@ -21,6 +21,7 @@ import net.imglib2.view.Views;
 import org.scijava.Context;
 import org.scijava.log.LogService;
 import org.scijava.ui.UIService;
+import schneiderlab.tools.radialprojection.CurrentOSSystem;
 import schneiderlab.tools.radialprojection.controllers.uiaction.*;
 import schneiderlab.tools.radialprojection.controllers.uiaction.czitotif.BrowseButtonCZIToTif;
 import schneiderlab.tools.radialprojection.controllers.uiaction.mainwindow.AddSavingActionWhenMainWindowClosed;
@@ -68,14 +69,17 @@ public class MainController {
     private LogService logService;
     private DatasetService datasetService;
     private UIService uiService;
+    private CurrentOSSystem currentOSSystem;
 
     public MainController(Radical_Projection_Tool mainView,
-                          Context context) {
+                          Context context,
+                          CurrentOSSystem currentOSSystem) {
         this.mainView = mainView;
         this.context= context;
         logService = context.getService(LogService.class);
         datasetService = context.getService(DatasetService.class);
         uiService = context.getService(UIService.class);
+        this.currentOSSystem=currentOSSystem;
 
         //----------Create the Model each step in pipeline--------------------
         // create an instance of the czi to TIF model
@@ -167,6 +171,7 @@ public class MainController {
         mainView.getSpinnerSaturateConvertCzi2Tif().setValue(cziToTifModel.getSaturationValue());// only at application innitialization
         mainView.getCheckBoxRotateConvertCzi2Tif().setSelected(cziToTifModel.isRotate());// only at application innitialization
         mainView.getComboBoxRoateDirectionConvertCzi2Tif().setSelectedItem(cziToTifModel.getRotateDirection());
+
         // Action for OK button in Converting step
         mainView.getButtonOkConvertCzi2Tif().addActionListener(new ActionListener() {
             @Override
@@ -231,6 +236,19 @@ public class MainController {
                     mainView.getTextFieldOutputPath().setText(selectedDir.getAbsolutePath());
                 }
             }
+        });
+
+        // textField show current file
+        mainView.getTextFieldCurrentFileSegmentation().getDocument().addDocumentListener(new DocumentListener() {
+            void update() {
+                mainView.getTextFieldCurrentFileSegmentation().setToolTipText(mainView.getTextFieldCurrentFileSegmentation().getText()); // or any custom logic
+            }
+            @Override
+            public void insertUpdate(DocumentEvent e) {update();}
+            @Override
+            public void removeUpdate(DocumentEvent e) {update();}
+            @Override
+            public void changedUpdate(DocumentEvent e) {update();}
         });
 
         // spinner xy pixel size
@@ -299,55 +317,52 @@ public class MainController {
                 mainView.getButtonWatershed().setEnabled(false);
                 mainView.getButtonProcessWholeStack().setEnabled(false);
                 mainView.getButtonMoveToRadialProjection().setEnabled(false);
-                try {
-                    String fileToProcess = (String) mainView.getTableAddedFileVesselSegmentation()
-                            .getModel()
-                            .getValueAt(0, 0);
-                    vesselsSegmentationModel.setFilePath(Paths.get(fileToProcess));
-                    ImageData<UnsignedShortType, FloatType> imageData = new ImageData<>();
-                    vesselsSegmentationModel.setImageData(imageData);
-                    vesselsSegmentationModel.getImageData().setImagePath(vesselsSegmentationModel.getFilePath());
-                    vesselsSegmentationModel.getImageData().setOutputDirPath(Paths.get(mainView.getTextFieldOutputPath().getText()));
-                    mainView.getTextFieldCurrentFileSegmentation().setText(vesselsSegmentationModel.getFilePath().toString());
-                    logService.info("image path: " + vesselsSegmentationModel.getImageData().getImagePath().toAbsolutePath().toString());
-                    CreateSideViewWorker createSideViewWorker = new CreateSideViewWorker(
-                            (int) mainView.getSpinnerXYPixelSizeCreateSideView().getValue(),
-                            (int) mainView.getSpinnerZPixelSizeCreateSideView().getValue(),
-                            Paths.get(fileToProcess),
-                            context
-                    );
-                    createSideViewWorker.addPropertyChangeListener(new PropertyChangeListener() {
-                        @Override
-                        public void propertyChange(PropertyChangeEvent evt) {
-                            if ("progress".equals(evt.getPropertyName())){
-                                mainView.getProgressBarVesselSegmentation().setValue((int)evt.getNewValue());
-                            }
-                        }
-                    });
-                    createSideViewWorker.addPropertyChangeListener(propChangeEvent -> {
-                        if ("state".equals(propChangeEvent.getPropertyName()) &&
-                                propChangeEvent.getNewValue() == SwingWorker.StateValue.DONE) {
-                            try {
-                                mainView.getTextField2StatusVesselSegmentation().setText("Side View Created");
-                                mainView.getButtonProjAndSmooth().setEnabled(true);
-                                vesselsSegmentationModel.setSideView(createSideViewWorker.get());
-                                vesselsSegmentationModel.getImageData().setSideView(createSideViewWorker.get());
-                                ImagePlus sideViewDisplay = ImageJFunctions.wrapUnsignedShort(vesselsSegmentationModel.getImageData().getSideView(), "Side View");
-//                                sideViewDisplay.show();
-                                new ImageWindow(sideViewDisplay);
-//                                ImagePlus sideViewDisplay = ImageJFunctions.show(vesselsSegmentationModel.getImageData().getSideView(), "Side View");
-
-                                vesselsSegmentationModel.setSideViewDisplay(sideViewDisplay);
-                                // use result here
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
-                        }
-                    });
-                    createSideViewWorker.execute();
-                } catch (Exception ex) {
+                int rowCount = mainView.getTableAddedFileVesselSegmentation().getModel().getRowCount();
+                if(rowCount ==0){
                     mainView.getButtonAddFile().doClick();
+                    return;
                 }
+                String fileToProcess = (String) mainView.getTableAddedFileVesselSegmentation()
+                        .getModel()
+                        .getValueAt(0, 0);
+                vesselsSegmentationModel.setFilePath(Paths.get(fileToProcess));
+                ImageData<UnsignedShortType, FloatType> imageData = new ImageData<>();
+                vesselsSegmentationModel.setImageData(imageData);
+                vesselsSegmentationModel.getImageData().setImagePath(vesselsSegmentationModel.getFilePath());
+                vesselsSegmentationModel.getImageData().setOutputDirPath(Paths.get(mainView.getTextFieldOutputPath().getText()));
+                logService.info("image path: " + vesselsSegmentationModel.getImageData().getImagePath().toAbsolutePath().toString());
+                CreateSideViewWorker createSideViewWorker = new CreateSideViewWorker(
+                        (int) mainView.getSpinnerXYPixelSizeCreateSideView().getValue(),
+                        (int) mainView.getSpinnerZPixelSizeCreateSideView().getValue(),
+                        Paths.get(fileToProcess),
+                        context,
+                        mainView
+                );
+                createSideViewWorker.addPropertyChangeListener(new PropertyChangeListener() {
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        if ("progress".equals(evt.getPropertyName())){
+                                    mainView.getProgressBarVesselSegmentation().setValue((int)evt.getNewValue());
+                        }
+                    }
+                });
+                createSideViewWorker.addPropertyChangeListener(propChangeEvent -> {
+                    if ("state".equals(propChangeEvent.getPropertyName()) &&
+                            propChangeEvent.getNewValue() == SwingWorker.StateValue.DONE) {
+                        vesselsSegmentationModel.setSideView(createSideViewWorker.getSideViewImgPlus());
+                        vesselsSegmentationModel.getImageData().setSideView(createSideViewWorker.getSideViewImgPlus());
+                        ImagePlus sideViewDisplay = ImageJFunctions.wrapUnsignedShort(vesselsSegmentationModel.getImageData().getSideView(), "Side View");
+                        sideViewDisplay.getProcessor().resetMinAndMax();
+                        vesselsSegmentationModel.setSideViewDisplay(sideViewDisplay);
+                        mainView.getTextField2StatusVesselSegmentation().setText("Side View Created");
+                        mainView.getButtonProjAndSmooth().setEnabled(true);
+                        mainView.getTextFieldCurrentFileSegmentation().setText(vesselsSegmentationModel.getFilePath().getFileName().toString());
+                        sideViewDisplay.show();
+                        if(currentOSSystem==CurrentOSSystem.MAC){sideViewDisplay.updateAndRepaintWindow();}
+
+                    }
+                });
+                createSideViewWorker.execute();
             }
         });
 
@@ -405,8 +420,10 @@ public class MainController {
                                 logService.info("Set output to ImageData object");
                                  ImagePlus hybridStackNonSmoothedDisplay = ImageJFunctions.show(vesselsSegmentationModel.getImageData().getHybridStackNonSmoothed(),"Raw Hybrid");
                                  vesselsSegmentationModel.setHybridStackNonSmoothedDisplay(hybridStackNonSmoothedDisplay);
+                                 hybridStackNonSmoothedDisplay.updateAndRepaintWindow();
                             ImagePlus hybridStackSmoothedDisplay = ImageJFunctions.show(vesselsSegmentationModel.getImageData().getHybridStackSmoothed(), "Smoothed Hybrid");
                             vesselsSegmentationModel.setHybridStackSmoothedDisplay(hybridStackSmoothedDisplay);
+                            if(currentOSSystem==CurrentOSSystem.MAC){hybridStackNonSmoothedDisplay.updateAndRepaintWindow();}
                                 // update UI
                                 mainView.getTextField2StatusVesselSegmentation().setText("Complete Projection and Smoothing");
                                 mainView.getButtonSelectCentroid().setEnabled(true);
@@ -440,6 +457,7 @@ public class MainController {
                 vesselsSegmentationModel.setImpInByte(new ImagePlus("impInByte", impFloat.getProcessor().convertToByte(true)));
                 impFloat.resetDisplayRange();
                 vesselsSegmentationModel.getImpInByte().show();
+                vesselsSegmentationModel.getImpInByte().updateAndRepaintWindow();
                 // Create a new PointRoi to collect points
                 PointRoi pointRoi = new PointRoi();
                 vesselsSegmentationModel.getImpInByte().setRoi(pointRoi);
@@ -470,6 +488,15 @@ public class MainController {
                         IJ.log(vesselsSegmentationModel.getCoordinates().toString());
                         mainView.getButtonWatershed().setEnabled(true);
                     }
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        IJ.setTool(Toolbar.POINT);
+                    }
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                        IJ.setTool(Toolbar.RECTANGLE);
+                    }
+
                 });
             }
         });
@@ -505,6 +532,7 @@ public class MainController {
                             mainView.getButtonWatershed().setEnabled(false);
                             vesselsSegmentationModel.getImpInByte().setOverlay(vesselsSegmentationModel.getOverlaySegmentation());
                             vesselsSegmentationModel.getImpInByte().updateAndDraw();
+                            vesselsSegmentationModel.getImpInByte().updateAndRepaintWindow();
                         }
                     }
                 });
@@ -557,6 +585,10 @@ public class MainController {
                             vesselsSegmentationModel.setEdgeCentroidMaskImagePlus(edgeCentroidMask);
                             segmentedStack.show();
                             edgeCentroidMask.show();
+                            if(currentOSSystem==CurrentOSSystem.MAC) {
+                                segmentedStack.updateAndRepaintWindow();
+                                edgeCentroidMask.updateAndRepaintWindow();
+                            }
                         }
                     }
                 });
@@ -639,22 +671,6 @@ public class MainController {
                                 ImagePlus rpLignin = radialProjectionModel.getImageData().getVesselList().get(i).getRadialProjectionLignin().duplicate();
                                 rpLignin.setTitle(radialProjectionModel.getImageData().getVesselList().get(i).getRadialProjectionLignin().getTitle());
                                 List<ImagePlus> imagePlusList = new ArrayList<>(Arrays.asList(rpLignin, rpCellulose, rpHybrid));
-//                                ImageWindow rpCelluoseImageWindow = new ImageWindowForCropping(rpCellulose,
-//                                        radialProjectionModel.getImageData().getVesselList().get(i),
-//                                        imagePlusList,
-//                                        toolIdForCropping);
-//                                ImageWindow rpHybridImageWindow = new ImageWindowForCropping(rpHybrid,
-//                                        radialProjectionModel.getImageData().getVesselList().get(i),
-//                                        imagePlusList,
-//                                        toolIdForCropping);
-//                                rpHybridImageWindow.setLocation((int)rpCelluoseImageWindow.getLocation().getX(),
-//                                        (int)rpCelluoseImageWindow.getLocation().getY()+rpCelluoseImageWindow.getHeight());
-//                                ImageWindow rpLigninImageWindow = new ImageWindowForCropping(rpLignin,
-//                                        radialProjectionModel.getImageData().getVesselList().get(i),
-//                                        imagePlusList,
-//                                        toolIdForCropping);
-//                                rpLigninImageWindow.setLocation((int)rpHybridImageWindow.getLocation().getX(),
-//                                        (int)rpHybridImageWindow.getLocation().getY()+rpHybridImageWindow.getHeight());
                                 ImageWindowGroupController iwgc = new ImageWindowGroupController(imagePlusList,
                                         radialProjectionModel.getImageData().getVesselList().get(i),
                                         toolIdForCropping);
@@ -706,10 +722,6 @@ public class MainController {
                             mainView.getProgressBarRadialProjection().setValue(100);
                             // show the results to the users
                             for (int i = 0; i < radialProjectionModel.getImageData().getVesselList().size(); i++) {
-//                                radialProjectionModel.getImageData().getVesselList().get(i).getUnrolledVesselCellulose().duplicate().show();
-//                                radialProjectionModel.getImageData().getVesselList().get(i).getUnrolledVesselHybrid().duplicate().show();
-//                                radialProjectionModel.getImageData().getVesselList().get(i).getUnrolledVesselLignin().duplicate().show();
-//                                radialProjectionModel.getImageData().getVesselList().get(i).getContour().duplicate().show();
                                 ImagePlus rpCellulose = radialProjectionModel.getImageData().getVesselList().get(i).getUnrolledVesselCellulose().duplicate();
                                 rpCellulose.setTitle(radialProjectionModel.getImageData().getVesselList().get(i).getUnrolledVesselCellulose().getTitle());
                                 ImagePlus rpHybrid = radialProjectionModel.getImageData().getVesselList().get(i).getUnrolledVesselHybrid().duplicate();
@@ -718,10 +730,6 @@ public class MainController {
                                 rpLignin.setTitle(radialProjectionModel.getImageData().getVesselList().get(i).getUnrolledVesselLignin().getTitle());
                                 ImagePlus rpContour = radialProjectionModel.getImageData().getVesselList().get(i).getContour().duplicate();
                                 rpContour.setTitle(radialProjectionModel.getImageData().getVesselList().get(i).getContour().getTitle());
-//                                rpCellulose.show();
-//                                rpHybrid.show();
-//                                rpLignin.show();
-//                                rpContour.show();
                                 List<ImagePlus> imagePlusList = new ArrayList<>(Arrays.asList(rpLignin, rpCellulose, rpHybrid, rpContour));
                                 int toolIdForCropping = Toolbar.RECTANGLE;
                                 ImageWindowGroupController iwgc = new ImageWindowGroupController(imagePlusList,
@@ -779,6 +787,7 @@ public class MainController {
                                 ImagePlus bandBinary = vessel.getBandHybridMaskImagePlus().duplicate();
                                 bandBinary.setTitle(vessel.getBandHybridImagePlus().getTitle());
                                 bandBinary.show();
+                                if(currentOSSystem==CurrentOSSystem.MAC){bandBinary.updateAndRepaintWindow();}
                                 mainView.getTextAreaBandGapResult().append("Vessel " + index + ": " + System.lineSeparator());
                                 mainView.getTextAreaBandGapResult().append("number of bands: " + vessel.getNoOfBands()+ System.lineSeparator());
                                 mainView.getTextAreaBandGapResult().append(String.format("Mean band width: %.3f ± %.3f",vessel.getMeanBandWidth(),vessel.getSdBandWidth())+System.lineSeparator());
@@ -857,6 +866,7 @@ public class MainController {
                 analysisModel.setNumberOfRandomBoxes(value);
             }
         });
+
         mainView.getButtonComputeAnisotropy().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -921,6 +931,7 @@ public class MainController {
         // TODO: save parameters when the user close the main Fiji/Imagej menu
 
     }
+
 
 
 }
