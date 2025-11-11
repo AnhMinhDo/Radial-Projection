@@ -205,9 +205,10 @@ new FormModel {
 							add( new FormComponent( "javax.swing.JTextField" ) {
 								name: "textFieldCurrentFileSegmentation"
 								"editable": false
-								"horizontalAlignment": 11
+								"horizontalAlignment": 4
+								"enabled": false
 							}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-								"value": "cell 1 0 2 1"
+								"value": "cell 1 0 3 1, growx 0"
 							} )
 							add( new FormComponent( "javax.swing.JLabel" ) {
 								name: "labelTargetXYPixelSize"

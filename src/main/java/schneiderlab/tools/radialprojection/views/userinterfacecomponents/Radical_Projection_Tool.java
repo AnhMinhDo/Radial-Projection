@@ -276,6 +276,7 @@ public class Radical_Projection_Tool extends JFrame {
 	public JButton getButtonExportToXLSX(){return  buttonExportToXLSX;}
 	public JCheckBox getCheckBoxCombineResultXLSX(){return  checkBoxCombineResultXLSX;}
 	public JTextField getTextFieldCurrentFileSegmentation(){return textFieldCurrentFileSegmentation;}
+	public JPanel getPanelOrientationAndAnisotropy(){return panelOrientationAndAnisotropy;}
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
@@ -596,8 +597,9 @@ public class Radical_Projection_Tool extends JFrame {
 
 						//---- textFieldCurrentFileSegmentation ----
 						textFieldCurrentFileSegmentation.setEditable(false);
-						textFieldCurrentFileSegmentation.setHorizontalAlignment(SwingConstants.TRAILING);
-						panelParametersVesselSegmentation.add(textFieldCurrentFileSegmentation, "cell 1 0 2 1");
+						textFieldCurrentFileSegmentation.setHorizontalAlignment(SwingConstants.RIGHT);
+						textFieldCurrentFileSegmentation.setEnabled(false);
+						panelParametersVesselSegmentation.add(textFieldCurrentFileSegmentation, "cell 1 0 3 1, growx 0");
 
 						//---- labelTargetXYPixelSize ----
 						labelTargetXYPixelSize.setText("<html>target_xy pixel size(nm)</html>");
