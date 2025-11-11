@@ -31,7 +31,7 @@ public class Main implements Command {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            JFrame frame = new JFrame("Radical Projection Tool");
+            JFrame frame = new JFrame("Radial Projection Tool");
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 //            RadialProjectionModel radialProjectionModel = new RadialProjectionModel();
             Radical_Projection_Tool form = new Radical_Projection_Tool(context, frame);
