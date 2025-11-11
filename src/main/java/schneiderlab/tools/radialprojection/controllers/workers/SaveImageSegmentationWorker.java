@@ -86,6 +86,7 @@ public class SaveImageSegmentationWorker extends SwingWorker<Void, Void> {
 //        Dataset ds = datasetService.create(merge);
 //        datasetIOService.save(ds,completeOutPutPath.toAbsolutePath().toString());
         ImagePlus mergeImagePlus= ImageJFunctions.wrapUnsignedShort(merge, merge.getName());
+        mergeImagePlus.getProcessor().resetMinAndMax();
         FileSaver mergeImagePlusSaver = new FileSaver(mergeImagePlus);
         mergeImagePlusSaver.saveAsTiff(completeOutPutPath.toAbsolutePath().toString());
         logService.info("Saving SideView Complete");
