@@ -14,35 +14,17 @@ converting proprietary CZI format to TIF format
  */
 public class CZIProcessor {
 
-    public static void convertingCZItoTIFF(String folderPath,
+    public static void convertingCZItoTIFF(File file,
                                         boolean backgroundSubtraction,
                                         int rolling,
                                         int saturated,
                                         boolean isRotate,
                                         RotateDirection rotateDirection,
                                         boolean fixArtifact) {
-
-        if (folderPath == null || folderPath.isEmpty()) {
-            System.err.println("Error: Folder path is empty.");
-            return;
-        }
-        File folder = new File(folderPath);
-        if (!folder.exists() || !folder.isDirectory()) {
-            System.err.println("Error: Invalid folder path.");
-            return;
-        }
-        File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".czi"));
-        if (files == null || files.length == 0) {
-            System.err.println("No CZI files found in folder.");
-            return;
-        }
-        IJ.log(String.valueOf(backgroundSubtraction));
-        for (File file : files) {
-            if (backgroundSubtraction) {
-                executeWithBGSub(file,rolling,saturated,isRotate,rotateDirection,fixArtifact);
-            } else {
-                executeNoBGSub(file,saturated,isRotate,rotateDirection,fixArtifact);
-            }
+        if (backgroundSubtraction) {
+            executeWithBGSub(file,rolling,saturated,isRotate,rotateDirection,fixArtifact);
+        } else {
+            executeNoBGSub(file,saturated,isRotate,rotateDirection,fixArtifact);
         }
     }
 
