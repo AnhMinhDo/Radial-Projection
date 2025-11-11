@@ -8,8 +8,6 @@ import ij.process.AutoThresholder;
 import ij.process.ByteProcessor;
 import ij.process.ShortProcessor;
 import net.imagej.DatasetService;
-import net.imagej.ImgPlus;
-import net.imagej.ui.ImageJUIService;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgs;
@@ -39,7 +37,6 @@ import schneiderlab.tools.radialprojection.models.czitotifmodel.CziToTifModel;
 import schneiderlab.tools.radialprojection.models.radialprojection.AnalysisModel;
 import schneiderlab.tools.radialprojection.models.radialprojection.RadialProjectionModel;
 import schneiderlab.tools.radialprojection.models.radialprojection.VesselsSegmentationModel;
-import schneiderlab.tools.radialprojection.views.userinterfacecomponents.ImageWindowForCropping;
 import schneiderlab.tools.radialprojection.views.userinterfacecomponents.ImageWindowGroupController;
 import schneiderlab.tools.radialprojection.views.userinterfacecomponents.Radical_Projection_Tool;
 
@@ -99,7 +96,8 @@ public class MainController {
         // Action for Browse button in Converting step
         mainView.getButtonBrowseConvertCzi2Tif().addActionListener(new BrowseButtonCZIToTif(
                 mainView.getTextFieldConvertCzi2Tif(),
-                mainView.getParentFrame()
+                mainView.getParentFrame(),
+                mainView.getTableFileCziToTiff()
         ));
         // starting dir for text field
         mainView.getTextFieldConvertCzi2Tif().getDocument().addDocumentListener(
@@ -171,7 +169,20 @@ public class MainController {
         mainView.getSpinnerSaturateConvertCzi2Tif().setValue(cziToTifModel.getSaturationValue());// only at application innitialization
         mainView.getCheckBoxRotateConvertCzi2Tif().setSelected(cziToTifModel.isRotate());// only at application innitialization
         mainView.getComboBoxRoateDirectionConvertCzi2Tif().setSelectedItem(cziToTifModel.getRotateDirection());
-
+        // prepare the model for the file table in czitotif step
+        mainView.getTableFileCziToTiff().setModel(new DefaultTableModel(new String[]{"File Name"}, 0));
+        // tooltip to view full file path in the table of cziToTif
+        mainView.getTableFileCziToTiff().addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                int row = mainView.getTableFileCziToTiff().rowAtPoint(e.getPoint());
+                int col = mainView.getTableFileCziToTiff().columnAtPoint(e.getPoint());
+                if (row > -1 && col > -1) {
+                    String value = (String) mainView.getTableFileCziToTiff().getValueAt(row, col);
+                    mainView.getTableFileCziToTiff().setToolTipText(value);
+                }
+            }
+        });
         // Action for OK button in Converting step
         mainView.getButtonOkConvertCzi2Tif().addActionListener(new ActionListener() {
             @Override
@@ -182,12 +193,26 @@ public class MainController {
                 RotateDirection rotateDirection = cziToTifModel.getRotateDirection();
                 boolean isRotate = cziToTifModel.isRotate();
                 boolean isBackgroundSubtraction = cziToTifModel.isBgSub();
+                mainView.getTextFieldStatusConvertCzi2Tif().setText("Converting...");
+                mainView.getProgressBarConvertCzi2Tif().setValue(0);
                 Czi2TifWorker czi2TifWorker = new Czi2TifWorker(folderPath,
                         isBackgroundSubtraction,
                         rolling,
                         saturated,
                         isRotate,
                         rotateDirection);
+                czi2TifWorker.addPropertyChangeListener(new PropertyChangeListener() {
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        if ("progress".equals(evt.getPropertyName())){
+                            mainView.getProgressBarConvertCzi2Tif().setValue((int)evt.getNewValue());
+                        } else if ("state".equals(evt.getPropertyName()) &&
+                                evt.getNewValue() == SwingWorker.StateValue.DONE) {
+                            mainView.getProgressBarConvertCzi2Tif().setValue(100);
+                            mainView.getTextFieldStatusConvertCzi2Tif().setText("Complete");
+                        }
+                    }
+                });
                 czi2TifWorker.execute();
             }
         });
@@ -196,7 +221,7 @@ public class MainController {
         vesselsSegmentationModel.initValues("/properties_files/initValues.properties");
         mainView.getTableAddedFileVesselSegmentation().setModel(new DefaultTableModel(new String[]{"File Path"}, 0));
         // Action for ADD button in segmentation step
-        mainView.getButtonAddFile().addActionListener(new AddFilePathToTable(
+        mainView.getButtonAddFile().addActionListener(new AddFilePathToTableVesselSegmentation(
                 mainView.getTableAddedFileVesselSegmentation(),mainView));
 
         // Action for REMOVE Button in segmentation step
@@ -215,7 +240,7 @@ public class MainController {
             }
         });
         // button add folder for segmentation step
-        mainView.getButtonAddFolder().addActionListener(new AddFilePathFromDirToTable(mainView.getTableAddedFileVesselSegmentation(), mainView));
+        mainView.getButtonAddFolder().addActionListener(new AddFilePathFromDirToTableVesselSegmentation(mainView.getTableAddedFileVesselSegmentation(), mainView, mainView));
         // button clear all in table for segmentation step
         mainView.getButtonClear().addActionListener(new ActionListener() {
             @Override
