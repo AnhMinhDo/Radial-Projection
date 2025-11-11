@@ -25,6 +25,7 @@ public class ImageWindowGroupController {
                     vessel,
                     imagePlusList,
                     toolForCroppingImage);
+            iwfc.getImagePlus().updateAndRepaintWindow();
             imageWindowList.add(iwfc);
             if(i != 0){
                 ImageWindow preImageWindow = imageWindowList.get(i-1);
