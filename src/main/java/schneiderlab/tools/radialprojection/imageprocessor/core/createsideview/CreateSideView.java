@@ -18,45 +18,41 @@ import net.imglib2.interpolation.randomaccess.NLinearInterpolatorFactory;
 import net.imglib2.realtransform.AffineTransform3D;
 import net.imglib2.realtransform.RealViews;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.type.numeric.integer.ByteType;
-import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 import org.scijava.Context;
-import schneiderlab.tools.radialprojection.imageprocessor.core.utils.RadialProjectionUtils;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import net.imglib2.type.numeric.RealType;
 
 import static ij.IJ.debugMode;
 
 public class CreateSideView <T extends RealType<T>>{
-    private final Path filePath;
+    private final ImgPlus<T> imgPlusInput;
     private final Context context;
     private final int targetXYpixelSize;
     private final int targetZpixelSize;
     private final OpService ops;
 
     public CreateSideView(Context context,
-                          Path filePath,
+                          ImgPlus<T> imgPlusInput,
                           int targetXYpixelSize,
                           int targetZpixelSize) {
-        this.filePath = filePath;
+//        this.filePath = filePath;
+        this.imgPlusInput = imgPlusInput;
         this.context = context;
         this.targetXYpixelSize= targetXYpixelSize;
         this.targetZpixelSize=targetZpixelSize;
         this.ops = context.service(OpService.class);
-
     }
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private int currentProgress;
-    private final double totalNumberOfSteps=10;
+    private final double totalNumberOfSteps=8;
 
     public void setNewProgressValue(int newProgressValue) {
         int previousProgress = this.currentProgress;
@@ -72,38 +68,15 @@ public class CreateSideView <T extends RealType<T>>{
         this.pcs.removePropertyChangeListener(listener);
     }
 
-    public Img<UnsignedShortType> process() throws Exception {
-        // get the status Service
-//        StatusService statusService = context.getService(StatusService.class);
-        // Get DatasetService and UIService from context
-        IJ.showStatus("loading file: "+filePath.getFileName().toString());
-        DatasetIOService ioService = context.getService(DatasetIOService.class);
+    public Img<UnsignedShortType> process() {
         setNewProgressValue((int)(1*(100/totalNumberOfSteps))); // update ProgressBar
-        // load the image
-        Dataset img = ioService.open(filePath.toString());
-        IJ.showStatus("checking image type ....");
-        // open file with file path, pre-condition: the input image is 16-bit
-        ImgPlus<T> genericImgPlus = (ImgPlus<T>) img.getImgPlus();
-        setNewProgressValue((int)(2*(100/totalNumberOfSteps))); // update ProgressBar
-//        // Verify the type
-//        if (!(genericImgPlus.firstElement() instanceof UnsignedShortType)) {
-//            ImagePlus imagePlusGeneralType = IJ.openImage(filePath.toString());
-//            imagePlusGeneralType.getProcessor().convertToShortProcessor(true);
-//            FileSaver fileSaver = new FileSaver(imagePlusGeneralType);
-//            String name8 = RadialProjectionUtils.filenameWithoutExtension(filePath.toString());
-//            String name16 = name8+"16bit.tif";
-//            fileSaver.saveAsTiff(name16);
-//            img = ioService.open(name16);
-//            genericImgPlus = img.getImgPlus();
-//        }
-        setNewProgressValue((int)(3*(100/totalNumberOfSteps))); // update ProgressBar
-        ImgPlus<T> imgPlus = genericImgPlus;
+        ImgPlus<T> imgPlus = this.imgPlusInput;
 
         // split the channels
         int channelDim = imgPlus.dimensionIndex(Axes.CHANNEL);
         boolean hasChannels = (channelDim >= 0);
         long numChannels = hasChannels ? imgPlus.dimension(channelDim) : 1;
-        setNewProgressValue((int)(4*(100/totalNumberOfSteps))); // update ProgressBar
+        setNewProgressValue((int)(2*(100/totalNumberOfSteps))); // update ProgressBar
         // container for post-processed channels
         ArrayList<RandomAccessibleInterval<UnsignedShortType>> processedChannels = new ArrayList<>();
         // debugging
@@ -126,15 +99,14 @@ public class CreateSideView <T extends RealType<T>>{
         int xDim = imgPlus.dimensionIndex(Axes.X);
         int yDim = imgPlus.dimensionIndex(Axes.Y);
         int zDim = imgPlus.dimensionIndex(Axes.Z);
-        setNewProgressValue((int)(5*(100/totalNumberOfSteps))); // update ProgressBar
+        setNewProgressValue((int)(3*(100/totalNumberOfSteps))); // update ProgressBar
         // get the spatial dimension size
         long width = imgPlus.dimension(xDim);
         long height = imgPlus.dimension(yDim);
         long depth = imgPlus.dimension(zDim);
-        setNewProgressValue((int)(6*(100/totalNumberOfSteps))); // update ProgressBar
-        IJ.showStatus("Processing image: "+filePath.getFileName().toString());
+        setNewProgressValue((int)(4*(100/totalNumberOfSteps))); // update ProgressBar
         // Go through each channel and process
-        setNewProgressValue((int)(7*(100/totalNumberOfSteps))); // update ProgressBar
+        setNewProgressValue((int)(5*(100/totalNumberOfSteps))); // update ProgressBar
         for (int c = 0; c < numChannels; c++) {
             RandomAccessibleInterval<FloatType> channelImg = hasChannels
                     ? ops.convert().float32(Views.hyperSlice(imgPlus, channelDim, c))
@@ -218,15 +190,15 @@ public class CreateSideView <T extends RealType<T>>{
         // the 2 channels
         RandomAccessibleInterval<UnsignedShortType> rai1 = processedChannels.get(0);
         RandomAccessibleInterval<UnsignedShortType> rai2 = processedChannels.get(1);
-        setNewProgressValue((int)(8*(100/totalNumberOfSteps))); // update ProgressBar
+        setNewProgressValue((int)(6*(100/totalNumberOfSteps))); // update ProgressBar
         // create new imgplus for output
         ImgPlus<UnsignedShortType> outputImgPlus = createImgPlusFrom3DChannels(rai1, rai2);
-        setNewProgressValue((int)(9*(100/totalNumberOfSteps))); // update ProgressBar
+        setNewProgressValue((int)(7*(100/totalNumberOfSteps))); // update ProgressBar
         // add the channels to empty
         copyToChannel(rai1,outputImgPlus,0);
         copyToChannel(rai2,outputImgPlus,1);
 
-        setNewProgressValue((int)(10*(100/totalNumberOfSteps))); // update ProgressBar
+        setNewProgressValue((int)(8*(100/totalNumberOfSteps))); // update ProgressBar
         return outputImgPlus;
     }
 
