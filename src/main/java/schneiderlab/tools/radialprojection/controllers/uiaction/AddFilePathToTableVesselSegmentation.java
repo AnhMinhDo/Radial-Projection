@@ -7,11 +7,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class AddFilePathToTable implements ActionListener {
+public class AddFilePathToTableVesselSegmentation implements ActionListener {
     private final JTable table;
     private final Component parent;
 
-    public AddFilePathToTable (JTable table, Component parent) {
+    public AddFilePathToTableVesselSegmentation(JTable table, Component parent) {
         this.table = table;
         this.parent = parent;
     }
