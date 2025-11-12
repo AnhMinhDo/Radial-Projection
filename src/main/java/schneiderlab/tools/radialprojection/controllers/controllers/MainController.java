@@ -383,8 +383,6 @@ public class MainController {
                         mainView.getButtonProjAndSmooth().setEnabled(true);
                         mainView.getTextFieldCurrentFileSegmentation().setText(vesselsSegmentationModel.getFilePath().getFileName().toString());
                         sideViewDisplay.show();
-                        if(currentOSSystem==CurrentOSSystem.MAC){sideViewDisplay.updateAndRepaintWindow();}
-
                     }
                 });
                 createSideViewWorker.execute();
@@ -448,7 +446,6 @@ public class MainController {
                                  hybridStackNonSmoothedDisplay.updateAndRepaintWindow();
                             ImagePlus hybridStackSmoothedDisplay = ImageJFunctions.show(vesselsSegmentationModel.getImageData().getHybridStackSmoothed(), "Smoothed Hybrid");
                             vesselsSegmentationModel.setHybridStackSmoothedDisplay(hybridStackSmoothedDisplay);
-                            if(currentOSSystem==CurrentOSSystem.MAC){hybridStackNonSmoothedDisplay.updateAndRepaintWindow();}
                                 // update UI
                                 mainView.getTextField2StatusVesselSegmentation().setText("Complete Projection and Smoothing");
                                 mainView.getButtonSelectCentroid().setEnabled(true);
@@ -610,10 +607,6 @@ public class MainController {
                             vesselsSegmentationModel.setEdgeCentroidMaskImagePlus(edgeCentroidMask);
                             segmentedStack.show();
                             edgeCentroidMask.show();
-                            if(currentOSSystem==CurrentOSSystem.MAC) {
-                                segmentedStack.updateAndRepaintWindow();
-                                edgeCentroidMask.updateAndRepaintWindow();
-                            }
                         }
                     }
                 });
@@ -812,7 +805,6 @@ public class MainController {
                                 ImagePlus bandBinary = vessel.getBandHybridMaskImagePlus().duplicate();
                                 bandBinary.setTitle(vessel.getBandHybridImagePlus().getTitle());
                                 bandBinary.show();
-                                if(currentOSSystem==CurrentOSSystem.MAC){bandBinary.updateAndRepaintWindow();}
                                 mainView.getTextAreaBandGapResult().append("Vessel " + index + ": " + System.lineSeparator());
                                 mainView.getTextAreaBandGapResult().append("number of bands: " + vessel.getNoOfBands()+ System.lineSeparator());
                                 mainView.getTextAreaBandGapResult().append(String.format("Mean band width: %.3f ± %.3f",vessel.getMeanBandWidth(),vessel.getSdBandWidth())+System.lineSeparator());
