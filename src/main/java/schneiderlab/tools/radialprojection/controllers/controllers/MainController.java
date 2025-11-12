@@ -443,7 +443,6 @@ public class MainController {
                                 logService.info("Set output to ImageData object");
                                  ImagePlus hybridStackNonSmoothedDisplay = ImageJFunctions.show(vesselsSegmentationModel.getImageData().getHybridStackNonSmoothed(),"Raw Hybrid");
                                  vesselsSegmentationModel.setHybridStackNonSmoothedDisplay(hybridStackNonSmoothedDisplay);
-                                 hybridStackNonSmoothedDisplay.updateAndRepaintWindow();
                             ImagePlus hybridStackSmoothedDisplay = ImageJFunctions.show(vesselsSegmentationModel.getImageData().getHybridStackSmoothed(), "Smoothed Hybrid");
                             vesselsSegmentationModel.setHybridStackSmoothedDisplay(hybridStackSmoothedDisplay);
                                 // update UI
@@ -479,7 +478,6 @@ public class MainController {
                 vesselsSegmentationModel.setImpInByte(new ImagePlus("impInByte", impFloat.getProcessor().convertToByte(true)));
                 impFloat.resetDisplayRange();
                 vesselsSegmentationModel.getImpInByte().show();
-                vesselsSegmentationModel.getImpInByte().updateAndRepaintWindow();
                 // Create a new PointRoi to collect points
                 PointRoi pointRoi = new PointRoi();
                 vesselsSegmentationModel.getImpInByte().setRoi(pointRoi);
@@ -554,7 +552,6 @@ public class MainController {
                             mainView.getButtonWatershed().setEnabled(false);
                             vesselsSegmentationModel.getImpInByte().setOverlay(vesselsSegmentationModel.getOverlaySegmentation());
                             vesselsSegmentationModel.getImpInByte().updateAndDraw();
-                            vesselsSegmentationModel.getImpInByte().updateAndRepaintWindow();
                         }
                     }
                 });
