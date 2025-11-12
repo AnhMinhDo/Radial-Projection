@@ -22,15 +22,15 @@ public class Main implements Command {
 
     public void launchUI(){
             CurrentOSSystem currentOSSystem = CurrentOSSystem.getCurrent();
-            try {
-                if (currentOSSystem==CurrentOSSystem.MAC) {
-                    com.formdev.flatlaf.themes.FlatMacLightLaf.setup();
-                } else {
-                    com.formdev.flatlaf.FlatLightLaf.setup();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+//            try {
+//                if (currentOSSystem==CurrentOSSystem.MAC) {
+//                    com.formdev.flatlaf.themes.FlatMacLightLaf.setup();
+//                } else {
+//                    com.formdev.flatlaf.FlatLightLaf.setup();
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
             JFrame frame = new JFrame("Radial Projection Tool");
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 //            RadialProjectionModel radialProjectionModel = new RadialProjectionModel();
