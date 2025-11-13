@@ -473,9 +473,9 @@ public class MainController {
                     dstCursor.next().set(srcCursor.next());
                 }
                 // Convert to ImagePlus
-                ImagePlus impFloat = ImageJFunctions.wrap(copy, "Copied RAI");
+                ImagePlus impFloat = ImageJFunctions.wrap(copy, "smoothed Side View");
                 impFloat.resetDisplayRange();
-                vesselsSegmentationModel.setImpInByte(new ImagePlus("impInByte", impFloat.getProcessor().convertToByte(true)));
+                vesselsSegmentationModel.setImpInByte(new ImagePlus("1st slice", impFloat.getProcessor().convertToByte(true)));
                 impFloat.resetDisplayRange();
                 vesselsSegmentationModel.getImpInByte().show();
                 // Create a new PointRoi to collect points
