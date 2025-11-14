@@ -137,7 +137,7 @@ public class SaveVesselResultToXLSX {
                 }
             }
             // Save combined file to parent directory
-            Path combinedPath = imagesToExport.get(0).getOutputDirPath().resolve("Combined_Vessel_Analysis.xlsx");
+            Path combinedPath = imagesToExport.get(imagesToExport.size()-1).getOutputDirPath().resolve("Combined_Vessel_Analysis.xlsx"); // save the combine in the parent dir of the last Image in the list
             try (FileOutputStream out = new FileOutputStream(combinedPath.toFile())) {
                 workbookCombine.write(out);
             }
