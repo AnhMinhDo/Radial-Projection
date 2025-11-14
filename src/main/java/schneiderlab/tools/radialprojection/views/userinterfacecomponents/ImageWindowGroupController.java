@@ -25,24 +25,37 @@ public class ImageWindowGroupController {
                     vessel,
                     imagePlusList,
                     toolForCroppingImage);
-            iwfc.getImagePlus().updateAndRepaintWindow();
             imageWindowList.add(iwfc);
-            if(i != 0){
+//            if(i != 0){
+//                ImageWindow preImageWindow = imageWindowList.get(i-1);
+//                int previousHeight = preImageWindow.getHeight();
+//                int x = (int)preImageWindow.getLocation().getX();
+//                int y = (int)preImageWindow.getLocation().getY()-previousHeight;
+//                iwfc.setLocation(x,y);
+//            }
+//            imageWindowPositionList.add(new Point((int)iwfc.getX(),(int)iwfc.getY()));
+        }
+        for (int i = 0; i < imageWindowList.size(); i++) {
+            // TODO: reposition of the window sequentially
+            ImageWindow iwfc = imageWindowList.get(i);
+            if(i==0){
+                imageWindowPositionList.add(new Point((int)iwfc.getX(),(int)iwfc.getY()));
+            } else {
                 ImageWindow preImageWindow = imageWindowList.get(i-1);
                 int previousHeight = preImageWindow.getHeight();
                 int x = (int)preImageWindow.getLocation().getX();
                 int y = (int)preImageWindow.getLocation().getY()-previousHeight;
                 iwfc.setLocation(x,y);
+                imageWindowPositionList.add(new Point(x,y));
             }
-            imageWindowPositionList.add(new Point((int)iwfc.getX(),(int)iwfc.getY()));
         }
-            ImageWindow imageWindow = imageWindowList.get(0);
-            imageWindow.addComponentListener(new ImageWindowAdapter(
-                    imageWindow,
-                    imageWindowList,
-                    0,
-                    imageWindowPositionList
-            ));
+        ImageWindow imageWindow = imageWindowList.get(0);
+        imageWindow.addComponentListener(new ImageWindowAdapter(
+                imageWindow,
+                imageWindowList,
+                0,
+                imageWindowPositionList
+        ));
     }
 
     public void closeAllWindowInGroup(){
