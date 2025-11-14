@@ -9,10 +9,11 @@ import schneiderlab.tools.radialprojection.controllers.workers.SaveImageSegmenta
 import schneiderlab.tools.radialprojection.imageprocessor.core.ImageData;
 import schneiderlab.tools.radialprojection.models.radialprojection.RadialProjectionModel;
 import schneiderlab.tools.radialprojection.models.radialprojection.VesselsSegmentationModel;
-import schneiderlab.tools.radialprojection.views.userinterfacecomponents.Radical_Projection_Tool;
+import schneiderlab.tools.radialprojection.views.userinterfacecomponents.MainView;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.file.Path;
@@ -20,10 +21,8 @@ import java.nio.file.Path;
 public class MoveCurrentFileToRadialProjectionStep implements ActionListener {
     private final JTable table;
     private final JTextField textField;
-    private final JTabbedPane tabbedMainPane;
     private final JPanel radialProjectionPanel;
     private final JButton radialProjectionButton;
-    private final JButton unrollingButton;
     private Path outputPath;
     private Path inputImagePath;
     private ImagePlus hybridStackNonSmoothed;
@@ -36,29 +35,25 @@ public class MoveCurrentFileToRadialProjectionStep implements ActionListener {
     private VesselsSegmentationModel vesselsSegmentationModel;
     private JTextField textfieldOutput;
     private final Context context;
-    private final Radical_Projection_Tool mainview;
+    private final MainView mainview;
     private ImageData<UnsignedShortType, FloatType> imageData;
     private final RadialProjectionModel radialProjectionModel;
     private UIService uiService;
 
     public MoveCurrentFileToRadialProjectionStep(JTable table,
                                                  JTextField textFieldRadicalProjectionStep,
-                                                 JTabbedPane tabbedMainPane,
                                                  JPanel radialProjectionPanel,
                                                  JButton radialProjectionButton,
-                                                 JButton unrollingButton,
                                                  JTextField textfieldOutput,
                                                  VesselsSegmentationModel vesselsSegmentationModel,
                                                  int numberOfWalkSum,
                                                  Context context,
-                                                 Radical_Projection_Tool mainview,
+                                                 MainView mainview,
                                                  RadialProjectionModel radialProjectionModel) {
         this.table = table;
         this.textField = textFieldRadicalProjectionStep;
-        this.tabbedMainPane = tabbedMainPane;
         this.radialProjectionPanel = radialProjectionPanel;
         this.radialProjectionButton = radialProjectionButton;
-        this.unrollingButton = unrollingButton;
         this.textfieldOutput= textfieldOutput;
         this.vesselsSegmentationModel=vesselsSegmentationModel;
         this.numberOfWalkSum = numberOfWalkSum;
@@ -91,9 +86,9 @@ public class MoveCurrentFileToRadialProjectionStep implements ActionListener {
         radialProjectionModel.getImageData().setAnalysisWindow(vesselsSegmentationModel.getAnalysisWindow());
         radialProjectionModel.getImageData().setSmoothingSigma(vesselsSegmentationModel.getSmoothingSigma());
         radialProjectionModel.getImageData().setInnerVesselRadius(vesselsSegmentationModel.getInnerVesselRadius());
-        tabbedMainPane.setSelectedComponent(radialProjectionPanel);
+        CardLayout card = mainview.getMainPanelCardLayout();
+        card.show(mainview.getPanelMainRight(),"card3");
         radialProjectionButton.setEnabled(true);
-        unrollingButton.setEnabled(true);
         mainview.getButtonProjAndSmooth().setEnabled(false);
         mainview.getButtonSelectCentroid().setEnabled(false);
         mainview.getButtonWatershed().setEnabled(false);

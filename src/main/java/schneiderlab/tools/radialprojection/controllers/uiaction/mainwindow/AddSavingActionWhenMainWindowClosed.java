@@ -2,7 +2,6 @@ package schneiderlab.tools.radialprojection.controllers.uiaction.mainwindow;
 
 import schneiderlab.tools.radialprojection.models.czitotifmodel.CziToTifModel;
 import schneiderlab.tools.radialprojection.models.radialprojection.VesselsSegmentationModel;
-import schneiderlab.tools.radialprojection.views.userinterfacecomponents.Radical_Projection_Tool;
 import ij.Prefs;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;

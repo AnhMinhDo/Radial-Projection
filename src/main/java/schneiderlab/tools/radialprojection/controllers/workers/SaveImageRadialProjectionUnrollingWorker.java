@@ -6,14 +6,14 @@ import org.scijava.Context;
 import org.scijava.log.LogService;
 import schneiderlab.tools.radialprojection.models.radialprojection.RadialProjectionModel;
 import schneiderlab.tools.radialprojection.models.radialprojection.VesselsSegmentationModel;
-import schneiderlab.tools.radialprojection.views.userinterfacecomponents.Radical_Projection_Tool;
+import schneiderlab.tools.radialprojection.views.userinterfacecomponents.MainView;
 
 import javax.swing.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class SaveImageRadialProjectionUnrollingWorker extends SwingWorker<Void, Void> {
-    private final Radical_Projection_Tool mainview;
+    private final MainView mainview;
     private final RadialProjectionModel radialProjectionModel;
     private final VesselsSegmentationModel vesselsSegmentationModel;
     private final Context context;
@@ -21,7 +21,7 @@ public class SaveImageRadialProjectionUnrollingWorker extends SwingWorker<Void, 
     private final DatasetService datasetService;
     private final LogService logService;
 
-    public SaveImageRadialProjectionUnrollingWorker(Radical_Projection_Tool mainview,
+    public SaveImageRadialProjectionUnrollingWorker(MainView mainview,
                                                     RadialProjectionModel radialProjectionModel,
                                                     VesselsSegmentationModel vesselsSegmentationModel,
                                                     Context context) {

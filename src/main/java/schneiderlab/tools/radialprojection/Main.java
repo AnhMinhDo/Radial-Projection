@@ -7,7 +7,7 @@ import org.scijava.plugin.Plugin;
 import javax.swing.*;
 
 import schneiderlab.tools.radialprojection.controllers.controllers.MainController;
-import schneiderlab.tools.radialprojection.views.userinterfacecomponents.Radical_Projection_Tool;
+import schneiderlab.tools.radialprojection.views.userinterfacecomponents.MainView;
 
 @Plugin(type = Command.class, menuPath = "Plugins > Radial Projection")
 public class Main implements Command {
@@ -34,7 +34,7 @@ public class Main implements Command {
             JFrame frame = new JFrame("Radial Projection Tool");
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 //            RadialProjectionModel radialProjectionModel = new RadialProjectionModel();
-            Radical_Projection_Tool form = new Radical_Projection_Tool(context, frame);
+            MainView form = new MainView(context, frame);
             MainController mainController = new MainController(form, context, currentOSSystem);
             frame.setContentPane(form.getContentPane());
             frame.pack();

@@ -1,7 +1,7 @@
 package schneiderlab.tools.radialprojection.controllers.uiaction;
 
 
-import schneiderlab.tools.radialprojection.views.userinterfacecomponents.Radical_Projection_Tool;
+import schneiderlab.tools.radialprojection.views.userinterfacecomponents.MainView;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -13,11 +13,11 @@ import java.io.File;
 public class AddFilePathFromDirToTableVesselSegmentation implements ActionListener {
     private final JTable table;
     private final Component parent;
-    private Radical_Projection_Tool mainView;
+    private MainView mainView;
 
     public AddFilePathFromDirToTableVesselSegmentation(JTable table,
                                                        Component parent,
-                                                       Radical_Projection_Tool mainView) {
+                                                       MainView mainView) {
         this.table = table;
         this.parent = parent;
         this.mainView = mainView;

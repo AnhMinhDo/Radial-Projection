@@ -83,7 +83,8 @@ public class VesselsSegmentationModel {
             this.setSmoothingSigma(smoothingSigma);
             int sliceIndexForTuning = (int)Prefs.get("RadialProjection.VesselsSegmentationModel.sliceIndexForTuning",
                     Integer.parseInt(props.getProperty("VesselsSegmentationModel.sliceIndexForTuning")));
-            this.setSliceIndexForTuning(sliceIndexForTuning);
+//            this.setSliceIndexForTuning(sliceIndexForTuning);
+            this.setSliceIndexForTuning();// set always at slice index 0 //TODO: should use this for another feature but leave this at 0 for now
             double innerVesselRadius = Prefs.get("RadialProjection.VesselsSegmentationModel.innerVesselRadius",
                     Double.parseDouble(props.getProperty("VesselsSegmentationModel.innerVesselRadius")));
             this.setInnerVesselRadius(innerVesselRadius);
@@ -344,8 +345,12 @@ public class VesselsSegmentationModel {
         return sliceIndexForTuning;
     }
 
-    public void setSliceIndexForTuning(int sliceIndexForTuning) {
-        this.sliceIndexForTuning = sliceIndexForTuning;
+//    public void setSliceIndexForTuning(int sliceIndexForTuning) {
+//        this.sliceIndexForTuning = sliceIndexForTuning;
+//    }
+
+    public void setSliceIndexForTuning() {
+        this.sliceIndexForTuning = 0;
     }
 
     public double getInnerVesselRadius() {

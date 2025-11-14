@@ -3,9 +3,7 @@ package schneiderlab.tools.radialprojection.controllers.workers;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.io.FileSaver;
-import ij.process.ByteProcessor;
 import io.scif.services.DatasetIOService;
-import net.imagej.Dataset;
 import net.imagej.DatasetService;
 import net.imagej.ImgPlus;
 import net.imagej.axis.*;
@@ -21,7 +19,7 @@ import org.scijava.Context;
 import schneiderlab.tools.radialprojection.imageprocessor.core.utils.RadialProjectionUtils;
 import schneiderlab.tools.radialprojection.models.radialprojection.VesselsSegmentationModel;
 import org.scijava.log.LogService;
-import schneiderlab.tools.radialprojection.views.userinterfacecomponents.Radical_Projection_Tool;
+import schneiderlab.tools.radialprojection.views.userinterfacecomponents.MainView;
 
 import javax.swing.*;
 import java.nio.file.Files;
@@ -29,14 +27,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class SaveImageSegmentationWorker extends SwingWorker<Void, Void> {
-    private final Radical_Projection_Tool mainview;
+    private final MainView mainview;
     private final VesselsSegmentationModel vesselsSegmentationModel;
     private final Context context;
     private final DatasetIOService datasetIOService;
     private final DatasetService datasetService;
     private final LogService logService;
 
-    public SaveImageSegmentationWorker(Radical_Projection_Tool mainView,
+    public SaveImageSegmentationWorker(MainView mainView,
                                        VesselsSegmentationModel vesselsSegmentationModel,
                                        Context context) {
         this.mainview=mainView;

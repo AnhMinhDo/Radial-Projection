@@ -7,13 +7,12 @@ import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 import net.imagej.axis.DefaultLinearAxis;
 import net.imglib2.img.Img;
-import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
 import org.scijava.Context;
 import org.scijava.log.LogService;
 import schneiderlab.tools.radialprojection.imageprocessor.core.createsideview.CreateSideView;
-import schneiderlab.tools.radialprojection.views.userinterfacecomponents.Radical_Projection_Tool;
+import schneiderlab.tools.radialprojection.views.userinterfacecomponents.MainView;
 
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
@@ -27,13 +26,13 @@ public class CreateSideViewWorker <T extends RealType<T>> extends SwingWorker<Vo
     private final Path filePath;
     private final Context context;
     private ImgPlus<UnsignedShortType> sideViewImgPlus;
-    private Radical_Projection_Tool mainview;
+    private MainView mainview;
 
     public CreateSideViewWorker(int targetXYpixelSize,
                                 int targetZpixelSize,
                                 Path filePath,
                                 Context context,
-                                Radical_Projection_Tool mainview) {
+                                MainView mainview) {
         this.targetXYpixelSize = targetXYpixelSize;
         this.targetZpixelSize = targetZpixelSize;
         this.filePath = filePath;
