@@ -571,7 +571,7 @@ public class MainView extends JFrame {
 				//======== panelImageListVesselSegmentation ========
 				{
 					panelImageListVesselSegmentation.setLayout(new MigLayout(
-						"hidemode 3,align center top",
+						"hidemode 3,align left top",
 						// columns
 						"[fill]" +
 						"[fill]" +

@@ -205,7 +205,7 @@ new FormModel {
 				add( new FormContainer( "javax.swing.JTabbedPane", new FormLayoutManager( class javax.swing.JTabbedPane ) ) {
 					name: "tabbedPaneVesselSegmentation"
 					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
-						"$layoutConstraints": "hidemode 3,align center top"
+						"$layoutConstraints": "hidemode 3,align left top"
 						"$columnConstraints": "[fill][fill][fill][fill]"
 						"$rowConstraints": "[][][][][][]"
 					} ) {
