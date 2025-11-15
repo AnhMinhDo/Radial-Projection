@@ -37,22 +37,39 @@ new FormModel {
 					} )
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "buttonTabVesselSegmentation"
-						"text": "<html>1. Vessel<br>Segmentation</html>"
+						"text": "<html>1. Vessel<br>   Segmentation</html>"
 						"borderPainted": false
+						"horizontalAlignment": 2
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 0 3"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelIconArrow1"
+						"icon": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"horizontalAlignment": 0
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 4"
 					} )
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "buttonTabRadialProjection"
 						"text": "2. Radial Projection"
 						"borderPainted": false
+						"horizontalAlignment": 2
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 0 5"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelIconArrow2"
+						"icon": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"horizontalAlignment": 0
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 6"
 					} )
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "buttonTabAnalysis"
 						"text": "3. Analysis"
 						"borderPainted": false
+						"horizontalAlignment": 2
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 0 7"
 					} )
@@ -151,6 +168,9 @@ new FormModel {
 					} )
 					add( new FormComponent( "javax.swing.JComboBox" ) {
 						name: "comboBoxRoateDirectionConvertCzi2Tif"
+						auxiliary() {
+							"JavaCodeGenerator.customCreateCode": "new JComboBox<>(RotateDirection.values());"
+						}
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 1 3 2 1"
 					} )
@@ -177,7 +197,7 @@ new FormModel {
 							name: "tableFileCziToTiff"
 						} )
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 0 6 3 1"
+						"value": "cell 0 6 4 1"
 					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "card1"
@@ -350,30 +370,35 @@ new FormModel {
 						add( new FormComponent( "javax.swing.JButton" ) {
 							name: "buttonProjAndSmooth"
 							"text": "<html>Projection and <br> smoothing</html>"
+							"enabled": false
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 							"value": "cell 1 7"
 						} )
 						add( new FormComponent( "javax.swing.JButton" ) {
 							name: "buttonSelectCentroid"
 							"text": "Slect Centroid"
+							"enabled": false
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 							"value": "cell 0 8"
 						} )
 						add( new FormComponent( "javax.swing.JButton" ) {
 							name: "buttonWatershed"
 							"text": "Watershed"
+							"enabled": false
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 							"value": "cell 1 8"
 						} )
 						add( new FormComponent( "javax.swing.JButton" ) {
 							name: "buttonProcessWholeStack"
 							"text": "Process Whole Stack"
+							"enabled": false
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 							"value": "cell 0 9"
 						} )
 						add( new FormComponent( "javax.swing.JButton" ) {
 							name: "buttonMoveToRadialProjection"
 							"text": "<html>Move to <br> Radial Projection</html>"
+							"enabled": false
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 							"value": "cell 1 9"
 						} )
@@ -420,12 +445,14 @@ new FormModel {
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "buttonRunRadialProjection"
 						"text": "Radial Projection & Unrolling"
+						"enabled": false
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 0 1 2 1"
 					} )
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "buttonMoveToAnalysis"
 						"text": "Move to Analysis"
+						"enabled": false
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 0 2 2 1"
 					} )
@@ -487,6 +514,7 @@ new FormModel {
 						add( new FormComponent( "javax.swing.JButton" ) {
 							name: "buttonLegacyBandMeasurement"
 							"text": "Measure"
+							"enabled": false
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 							"value": "cell 2 0 2 1"
 						} )
@@ -498,6 +526,10 @@ new FormModel {
 						} )
 						add( new FormComponent( "javax.swing.JSpinner" ) {
 							name: "spinnerNumberOfLineScan"
+							"model": new javax.swing.SpinnerNumberModel {
+								minimum: 1
+								value: 100
+							}
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 							"value": "cell 5 0"
 						} )
@@ -509,6 +541,10 @@ new FormModel {
 						} )
 						add( new FormComponent( "javax.swing.JSpinner" ) {
 							name: "spinnerLineScanLength"
+							"model": new javax.swing.SpinnerNumberModel {
+								minimum: 1
+								value: 25
+							}
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 							"value": "cell 7 0"
 						} )
@@ -525,7 +561,7 @@ new FormModel {
 					} )
 					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 						"$layoutConstraints": "hidemode 3,align left top"
-						"$columnConstraints": "[fill][fill][fill][fill][fill][fill]"
+						"$columnConstraints": "[fill][fill][fill][fill]"
 						"$rowConstraints": "[][][][][][]"
 					} ) {
 						name: "panelOrientationAndAnisotropy"
@@ -533,29 +569,38 @@ new FormModel {
 							name: "labelNumberRandomBoxesAnisotropy"
 							"text": "<html>Number of <br>Random boxes</html>"
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-							"value": "cell 1 0"
+							"value": "cell 0 0"
 						} )
 						add( new FormComponent( "javax.swing.JSpinner" ) {
 							name: "spinnerNumberRandomBoxes"
+							"model": new javax.swing.SpinnerNumberModel {
+								minimum: 1
+								value: 100
+							}
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-							"value": "cell 2 0"
+							"value": "cell 1 0"
 						} )
 						add( new FormComponent( "javax.swing.JLabel" ) {
 							name: "labelRandomboxWidth"
 							"text": "<html>Random box<br>width</html>"
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-							"value": "cell 3 0"
+							"value": "cell 2 0"
 						} )
 						add( new FormComponent( "javax.swing.JSpinner" ) {
 							name: "spinnerRandomBoxWidth"
+							"model": new javax.swing.SpinnerNumberModel {
+								minimum: 2
+								value: 70
+							}
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-							"value": "cell 4 0"
+							"value": "cell 3 0"
 						} )
 						add( new FormComponent( "javax.swing.JButton" ) {
 							name: "buttonComputeAnisotropy"
 							"text": "Compute Anisotropy"
+							"enabled": false
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-							"value": "cell 1 1"
+							"value": "cell 0 1"
 						} )
 						add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 							name: "scrollPaneAnisotropy"
@@ -563,7 +608,7 @@ new FormModel {
 								name: "textAreaAnisotropyResult"
 							} )
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-							"value": "cell 1 2 4 3"
+							"value": "cell 0 2 4 3"
 						} )
 					}, new FormLayoutConstraints( null ) {
 						"title": "Orientation & Anisotropy"
@@ -619,7 +664,7 @@ new FormModel {
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 5 )
-			"size": new java.awt.Dimension( 880, 550 )
+			"size": new java.awt.Dimension( 865, 550 )
 		} )
 	}
 }

@@ -25,7 +25,7 @@ public class MainView extends JFrame {
 	public MainView(Context context, JFrame parentFrame) {
 		initComponents();
 		this.parentFrame=parentFrame;
-//		this.getComboBoxRoateDirectionConvertCzi2Tif().setSelectedIndex(0);
+		this.getComboBoxRoateDirectionConvertCzi2Tif().setSelectedIndex(0);
 	}
 	public JFrame getParentFrame() {
 		return parentFrame;
@@ -33,6 +33,8 @@ public class MainView extends JFrame {
 
 	public JButton getButtonTabCzi2Tif(){ return buttonTabCzi2Tif;}
 	public JButton getButtonTabVesselSegmentation(){ return buttonTabVesselSegmentation;}
+	public JLabel getLabelIconArrow1(){return labelIconArrow1;}
+	public JLabel getLabelIconArrow2(){return labelIconArrow2;}
 	public JButton getButtonTabRadialProjection(){ return buttonTabRadialProjection;}
 	public JButton getButtonTabAnalysis(){ return buttonTabAnalysis;}
 	public JButton getButtonTabBatchMode(){ return buttonTabBatchMode;}
@@ -286,6 +288,9 @@ public class MainView extends JFrame {
 	public JTextField getTextFieldCurrentFileSegmentation(){return textFieldCurrentFileSegmentation;}
 	public JPanel getPanelOrientationAndAnisotropy(){return panelOrientationAndAnisotropy;}
 	public JTable getTableFileCziToTiff(){return tableFileCziToTiff;}
+	public JTextField getTextFieldCurrentFileAnalysis(){return textFieldCurrentFileAnalysis;}
+
+
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
 		// Generated using JFormDesigner Educational license - Anh Minh Do
@@ -295,7 +300,9 @@ public class MainView extends JFrame {
 		separator1 = new JSeparator();
 		label1 = new JLabel();
 		buttonTabVesselSegmentation = new JButton();
+		labelIconArrow1 = new JLabel();
 		buttonTabRadialProjection = new JButton();
+		labelIconArrow2 = new JLabel();
 		buttonTabAnalysis = new JButton();
 		separator2 = new JSeparator();
 		label2 = new JLabel();
@@ -312,7 +319,7 @@ public class MainView extends JFrame {
 		spinnerSaturateConvertCzi2Tif = new JSpinner();
 		labelpercentSignConvertCzi2Tif = new JLabel();
 		checkBoxRotateConvertCzi2Tif = new JCheckBox();
-		comboBoxRoateDirectionConvertCzi2Tif = new JComboBox();
+		comboBoxRoateDirectionConvertCzi2Tif = new JComboBox<>(RotateDirection.values());
 		buttonOkConvertCzi2Tif = new JButton();
 		textFieldStatusConvertCzi2Tif = new JTextField();
 		progressBarConvertCzi2Tif = new JProgressBar();
@@ -433,18 +440,31 @@ public class MainView extends JFrame {
 				panelGroupButtonTab.add(label1, "cell 0 2");
 
 				//---- buttonTabVesselSegmentation ----
-				buttonTabVesselSegmentation.setText("<html>1. Vessel<br>Segmentation</html>");
+				buttonTabVesselSegmentation.setText("<html>1. Vessel<br>   Segmentation</html>");
 				buttonTabVesselSegmentation.setBorderPainted(false);
+				buttonTabVesselSegmentation.setHorizontalAlignment(SwingConstants.LEFT);
 				panelGroupButtonTab.add(buttonTabVesselSegmentation, "cell 0 3");
+
+				//---- labelIconArrow1 ----
+				labelIconArrow1.setIcon(null);
+				labelIconArrow1.setHorizontalAlignment(SwingConstants.CENTER);
+				panelGroupButtonTab.add(labelIconArrow1, "cell 0 4");
 
 				//---- buttonTabRadialProjection ----
 				buttonTabRadialProjection.setText("2. Radial Projection");
 				buttonTabRadialProjection.setBorderPainted(false);
+				buttonTabRadialProjection.setHorizontalAlignment(SwingConstants.LEFT);
 				panelGroupButtonTab.add(buttonTabRadialProjection, "cell 0 5");
+
+				//---- labelIconArrow2 ----
+				labelIconArrow2.setIcon(null);
+				labelIconArrow2.setHorizontalAlignment(SwingConstants.CENTER);
+				panelGroupButtonTab.add(labelIconArrow2, "cell 0 6");
 
 				//---- buttonTabAnalysis ----
 				buttonTabAnalysis.setText("3. Analysis");
 				buttonTabAnalysis.setBorderPainted(false);
+				buttonTabAnalysis.setHorizontalAlignment(SwingConstants.LEFT);
 				panelGroupButtonTab.add(buttonTabAnalysis, "cell 0 7");
 				panelGroupButtonTab.add(separator2, "cell 0 8");
 
@@ -541,7 +561,7 @@ public class MainView extends JFrame {
 				{
 					scrollPaneTableFileCziToTiff.setViewportView(tableFileCziToTiff);
 				}
-				panelConvertCzi2Tif.add(scrollPaneTableFileCziToTiff, "cell 0 6 3 1");
+				panelConvertCzi2Tif.add(scrollPaneTableFileCziToTiff, "cell 0 6 4 1");
 			}
 			panelMainRight.add(panelConvertCzi2Tif, "card1");
 
@@ -680,22 +700,27 @@ public class MainView extends JFrame {
 
 					//---- buttonProjAndSmooth ----
 					buttonProjAndSmooth.setText("<html>Projection and <br> smoothing</html>");
+					buttonProjAndSmooth.setEnabled(false);
 					panelParametersVesselSegmentation.add(buttonProjAndSmooth, "cell 1 7");
 
 					//---- buttonSelectCentroid ----
 					buttonSelectCentroid.setText("Slect Centroid");
+					buttonSelectCentroid.setEnabled(false);
 					panelParametersVesselSegmentation.add(buttonSelectCentroid, "cell 0 8");
 
 					//---- buttonWatershed ----
 					buttonWatershed.setText("Watershed");
+					buttonWatershed.setEnabled(false);
 					panelParametersVesselSegmentation.add(buttonWatershed, "cell 1 8");
 
 					//---- buttonProcessWholeStack ----
 					buttonProcessWholeStack.setText("Process Whole Stack");
+					buttonProcessWholeStack.setEnabled(false);
 					panelParametersVesselSegmentation.add(buttonProcessWholeStack, "cell 0 9");
 
 					//---- buttonMoveToRadialProjection ----
 					buttonMoveToRadialProjection.setText("<html>Move to <br> Radial Projection</html>");
+					buttonMoveToRadialProjection.setEnabled(false);
 					panelParametersVesselSegmentation.add(buttonMoveToRadialProjection, "cell 1 9");
 					panelParametersVesselSegmentation.add(separator3, "cell 0 10 2 1");
 
@@ -743,10 +768,12 @@ public class MainView extends JFrame {
 
 				//---- buttonRunRadialProjection ----
 				buttonRunRadialProjection.setText("Radial Projection & Unrolling");
+				buttonRunRadialProjection.setEnabled(false);
 				panel3RadialProjection.add(buttonRunRadialProjection, "cell 0 1 2 1");
 
 				//---- buttonMoveToAnalysis ----
 				buttonMoveToAnalysis.setText("Move to Analysis");
+				buttonMoveToAnalysis.setEnabled(false);
 				panel3RadialProjection.add(buttonMoveToAnalysis, "cell 0 2 2 1");
 				panel3RadialProjection.add(textFieldStatusRadialProjection, "cell 0 4 2 1");
 				panel3RadialProjection.add(progressBarRadialProjection, "cell 2 4 4 1");
@@ -806,16 +833,23 @@ public class MainView extends JFrame {
 
 					//---- buttonLegacyBandMeasurement ----
 					buttonLegacyBandMeasurement.setText("Measure");
+					buttonLegacyBandMeasurement.setEnabled(false);
 					bandsAndGapsPanel.add(buttonLegacyBandMeasurement, "cell 2 0 2 1");
 
 					//---- labelNumberOfLineScan ----
 					labelNumberOfLineScan.setText("<html>Number of <br> line scan  </html>");
 					bandsAndGapsPanel.add(labelNumberOfLineScan, "cell 4 0");
+
+					//---- spinnerNumberOfLineScan ----
+					spinnerNumberOfLineScan.setModel(new SpinnerNumberModel(100, 1, null, 1));
 					bandsAndGapsPanel.add(spinnerNumberOfLineScan, "cell 5 0");
 
 					//---- labelLineScanLength ----
 					labelLineScanLength.setText("<html>Line Scan Length (\u00b5m)</html>");
 					bandsAndGapsPanel.add(labelLineScanLength, "cell 6 0");
+
+					//---- spinnerLineScanLength ----
+					spinnerLineScanLength.setModel(new SpinnerNumberModel(25, 1, null, 1));
 					bandsAndGapsPanel.add(spinnerLineScanLength, "cell 7 0");
 
 					//======== scrollPaneBandGapResult ========
@@ -834,8 +868,6 @@ public class MainView extends JFrame {
 						"[fill]" +
 						"[fill]" +
 						"[fill]" +
-						"[fill]" +
-						"[fill]" +
 						"[fill]",
 						// rows
 						"[]" +
@@ -847,23 +879,30 @@ public class MainView extends JFrame {
 
 					//---- labelNumberRandomBoxesAnisotropy ----
 					labelNumberRandomBoxesAnisotropy.setText("<html>Number of <br>Random boxes</html>");
-					panelOrientationAndAnisotropy.add(labelNumberRandomBoxesAnisotropy, "cell 1 0");
-					panelOrientationAndAnisotropy.add(spinnerNumberRandomBoxes, "cell 2 0");
+					panelOrientationAndAnisotropy.add(labelNumberRandomBoxesAnisotropy, "cell 0 0");
+
+					//---- spinnerNumberRandomBoxes ----
+					spinnerNumberRandomBoxes.setModel(new SpinnerNumberModel(100, 1, null, 1));
+					panelOrientationAndAnisotropy.add(spinnerNumberRandomBoxes, "cell 1 0");
 
 					//---- labelRandomboxWidth ----
 					labelRandomboxWidth.setText("<html>Random box<br>width</html>");
-					panelOrientationAndAnisotropy.add(labelRandomboxWidth, "cell 3 0");
-					panelOrientationAndAnisotropy.add(spinnerRandomBoxWidth, "cell 4 0");
+					panelOrientationAndAnisotropy.add(labelRandomboxWidth, "cell 2 0");
+
+					//---- spinnerRandomBoxWidth ----
+					spinnerRandomBoxWidth.setModel(new SpinnerNumberModel(70, 2, null, 1));
+					panelOrientationAndAnisotropy.add(spinnerRandomBoxWidth, "cell 3 0");
 
 					//---- buttonComputeAnisotropy ----
 					buttonComputeAnisotropy.setText("Compute Anisotropy");
-					panelOrientationAndAnisotropy.add(buttonComputeAnisotropy, "cell 1 1");
+					buttonComputeAnisotropy.setEnabled(false);
+					panelOrientationAndAnisotropy.add(buttonComputeAnisotropy, "cell 0 1");
 
 					//======== scrollPaneAnisotropy ========
 					{
 						scrollPaneAnisotropy.setViewportView(textAreaAnisotropyResult);
 					}
-					panelOrientationAndAnisotropy.add(scrollPaneAnisotropy, "cell 1 2 4 3");
+					panelOrientationAndAnisotropy.add(scrollPaneAnisotropy, "cell 0 2 4 3");
 				}
 				tabbedPaneAnalysis.addTab("Orientation & Anisotropy", panelOrientationAndAnisotropy);
 
@@ -922,7 +961,9 @@ public class MainView extends JFrame {
 	private JSeparator separator1;
 	private JLabel label1;
 	private JButton buttonTabVesselSegmentation;
+	private JLabel labelIconArrow1;
 	private JButton buttonTabRadialProjection;
+	private JLabel labelIconArrow2;
 	private JButton buttonTabAnalysis;
 	private JSeparator separator2;
 	private JLabel label2;
