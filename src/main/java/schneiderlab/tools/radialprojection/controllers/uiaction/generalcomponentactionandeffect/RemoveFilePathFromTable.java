@@ -1,4 +1,4 @@
-package schneiderlab.tools.radialprojection.controllers.uiaction;
+package schneiderlab.tools.radialprojection.controllers.uiaction.generalcomponentactionandeffect;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

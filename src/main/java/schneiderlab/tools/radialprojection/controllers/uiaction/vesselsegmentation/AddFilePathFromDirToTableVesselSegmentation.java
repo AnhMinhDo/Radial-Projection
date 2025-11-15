@@ -1,4 +1,4 @@
-package schneiderlab.tools.radialprojection.controllers.uiaction;
+package schneiderlab.tools.radialprojection.controllers.uiaction.vesselsegmentation;
 
 
 import schneiderlab.tools.radialprojection.views.userinterfacecomponents.MainView;

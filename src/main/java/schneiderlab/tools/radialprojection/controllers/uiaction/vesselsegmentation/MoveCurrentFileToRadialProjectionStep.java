@@ -1,4 +1,4 @@
-package schneiderlab.tools.radialprojection.controllers.uiaction;
+package schneiderlab.tools.radialprojection.controllers.uiaction.vesselsegmentation;
 
 import ij.ImagePlus;
 import net.imglib2.type.numeric.integer.UnsignedShortType;

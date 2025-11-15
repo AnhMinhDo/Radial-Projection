@@ -1,4 +1,4 @@
-package schneiderlab.tools.radialprojection.controllers.uiaction;
+package schneiderlab.tools.radialprojection.controllers.uiaction.vesselsegmentation;
 
 
 import javax.swing.*;
