@@ -74,11 +74,11 @@ public class MoveCurrentFileToRadialProjectionStep implements ActionListener {
         saveImageWorker.execute();
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         if (model.getRowCount() > 0) {
-            String currentFilePathString = (String) model.getValueAt(0,0);
-            textField.setText(currentFilePathString);
+//            String currentFilePathString = (String) model.getValueAt(0,0);
             model.removeRow(0);
         }
         radialProjectionModel.setImageData(vesselsSegmentationModel.getImageData());
+        textField.setText(radialProjectionModel.getImageData().getImagePath().getFileName().toString());
         // add the parameters for this image to the object
         radialProjectionModel.getImageData().setXyPixelSize(vesselsSegmentationModel.getXyPixelSize());
         radialProjectionModel.getImageData().setzPixelSize(vesselsSegmentationModel.getzPixelSize());
