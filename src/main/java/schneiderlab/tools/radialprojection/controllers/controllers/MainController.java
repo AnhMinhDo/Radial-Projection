@@ -125,6 +125,9 @@ public class MainController {
                 card.show(mainView.getPanelMainRight(),"card5");
             }
         });
+        Icon downArrow = new ImageIcon(getClass().getResource("/icons/arrow-down-solid-full.png"));
+        mainView.getLabelIconArrow1().setIcon(downArrow);
+        mainView.getLabelIconArrow2().setIcon(downArrow);
 
         //-----------0.CZI to TIF converting Steps-------------------------------
 
@@ -671,12 +674,12 @@ public class MainController {
         mainView.getSpinnerInnerVesselRadius().setValue(vesselsSegmentationModel.getInnerVesselRadius());
         mainView.getSliderHybridWeight().setValue(vesselsSegmentationModel.getCelluloseToLigninRatio());
         //---------- - 3.Radial Projection and Unrolling -------------------------------
-        // perform Radial Projection
+        // perform Radial Projection and Unrolling
         mainView.getButtonRunRadialProjection().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // update the status bar
-                mainView.getTextFieldStatusRadialProjection().setText("Radial Projection...");
+                mainView.getTextFieldStatusRadialProjection().setText("Radial Projection And Unrolling...");
                 mainView.getProgressBarRadialProjection().setValue(0);
                 // Create copy of hybrid using cursors
                  ImagePlus hybridNonSmoothed = RadialProjectionUtils.copyAndConvertRandomAccessIntervalToImagePlus(
@@ -689,7 +692,7 @@ public class MainController {
                 // Create copy of cellulose using cursors
                 ImagePlus cellulose = RadialProjectionUtils.copyAndConvertRandomAccessIntervalToImagePlus(
                         radialProjectionModel.getImageData().getCellulose(), "Non Smoothed Cellulose Stack");
-                RadialProjectionWorker polarProjection = new RadialProjectionWorker(
+                RadialProjectionAndUnrollingWorker radialProjectionAndUnrollingWorker = new RadialProjectionAndUnrollingWorker(
                         hybridNonSmoothed,
                         hybridSmoothed,
                         cellulose,
@@ -700,7 +703,7 @@ public class MainController {
                         true,
                         context
                 );
-                polarProjection.addPropertyChangeListener(new PropertyChangeListener() {
+                radialProjectionAndUnrollingWorker.addPropertyChangeListener(new PropertyChangeListener() {
                     @Override
                     public void propertyChange(PropertyChangeEvent evt) {
                         if("progress".equals(evt.getPropertyName())){
@@ -708,11 +711,12 @@ public class MainController {
                         }
                         if ("state".equals(evt.getPropertyName()) &&
                                 evt.getNewValue() == SwingWorker.StateValue.DONE){
-                            mainView.getTextFieldStatusRadialProjection().setText("Radial Projection Complete");
+                            mainView.getTextFieldStatusRadialProjection().setText("Radial Projection  and Unrolling Complete");
                             mainView.getProgressBarRadialProjection().setValue(100);
                             // show the results to users
                             Toolbar toolbar = new Toolbar();
                             int toolIdForCropping = Toolbar.RECTANGLE;
+                            // show the radial Projection result
                             for (int i = 0; i < radialProjectionModel.getImageData().getVesselList().size(); i++) { // for each vessel
                                 ImagePlus rpCellulose = radialProjectionModel.getImageData().getVesselList().get(i).getRadialProjectionCellulose().duplicate();
                                 rpCellulose.setTitle(radialProjectionModel.getImageData().getVesselList().get(i).getRadialProjectionCellulose().getTitle());
@@ -726,11 +730,28 @@ public class MainController {
                                         toolIdForCropping);
                                 radialProjectionModel.addVesselRadialProjectionImageWindowGroup(iwgc);
                             }
+                            // show the unrolling result
+                            for (int i = 0; i < radialProjectionModel.getImageData().getVesselList().size(); i++) {
+                                ImagePlus urCellulose = radialProjectionModel.getImageData().getVesselList().get(i).getUnrolledVesselCellulose().duplicate();
+                                urCellulose.setTitle(radialProjectionModel.getImageData().getVesselList().get(i).getUnrolledVesselCellulose().getTitle());
+                                ImagePlus urHybrid = radialProjectionModel.getImageData().getVesselList().get(i).getUnrolledVesselHybrid().duplicate();
+                                urHybrid.setTitle(radialProjectionModel.getImageData().getVesselList().get(i).getUnrolledVesselHybrid().getTitle());
+                                ImagePlus urLignin = radialProjectionModel.getImageData().getVesselList().get(i).getUnrolledVesselLignin().duplicate();
+                                urLignin.setTitle(radialProjectionModel.getImageData().getVesselList().get(i).getUnrolledVesselLignin().getTitle());
+                                ImagePlus urContour = radialProjectionModel.getImageData().getVesselList().get(i).getContour().duplicate();
+                                urContour.setTitle(radialProjectionModel.getImageData().getVesselList().get(i).getContour().getTitle());
+                                List<ImagePlus> imagePlusList = new ArrayList<>(Arrays.asList(urLignin, urCellulose, urHybrid, urContour));
+                                ImageWindowGroupController iwgc = new ImageWindowGroupController(imagePlusList,
+                                        radialProjectionModel.getImageData().getVesselList().get(i),
+                                        toolIdForCropping);
+                                radialProjectionModel.addVesselUnrollImageWindowGroup(iwgc);
+                            }
+
                             mainView.getButtonMoveToAnalysis().setEnabled(true);
                         }
                     }
                 });
-                polarProjection.execute();
+                radialProjectionAndUnrollingWorker.execute();
             }
         });
 //        // Unrolling Vessels
@@ -814,6 +835,8 @@ public class MainController {
                 spinnerNumberModelRandomBoxWidth.setMaximum(analysisModel.getImageData().getVesselList().get(0).getRadialProjectionHybrid().getWidth());
                 CardLayout card = mainView.getMainPanelCardLayout();
                 card.show(mainView.getPanelMainRight(),"card4");
+                mainView.getTextFieldCurrentFileAnalysis().setText(
+                        analysisModel.getImageData().getImagePath().getFileName().toString());
             }
         });
         //-------------------Analysis----------------------------------------------
@@ -826,6 +849,10 @@ public class MainController {
                         analysisModel.getImageData().getXyPixelSize(),
                         analysisModel.getImageData().getVesselList()
                 );
+                for (Vessel vessel: analysisModel.getImageData().getVesselList()){
+                    vessel.getRadialProjectionHybrid().show();
+                    vessel.getUnrolledVesselHybrid().show();
+                }
                 randomLineScanWorker.addPropertyChangeListener(new PropertyChangeListener() {
                     @Override
                     public void propertyChange(PropertyChangeEvent evt) {
@@ -848,7 +875,7 @@ public class MainController {
                         }
                     }
                 });
-                randomLineScanWorker.execute();
+//                randomLineScanWorker.execute();
             }
         });
 
