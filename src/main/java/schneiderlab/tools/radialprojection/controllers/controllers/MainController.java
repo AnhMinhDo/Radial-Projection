@@ -3,16 +3,11 @@ package schneiderlab.tools.radialprojection.controllers.controllers;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.*;
-import ij.plugin.filter.BackgroundSubtracter;
-import ij.process.AutoThresholder;
-import ij.process.ByteProcessor;
-import ij.process.ShortProcessor;
 import net.imagej.DatasetService;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.display.imagej.ImageJFunctions;
-import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
@@ -20,14 +15,16 @@ import org.scijava.Context;
 import org.scijava.log.LogService;
 import org.scijava.ui.UIService;
 import schneiderlab.tools.radialprojection.CurrentOSSystem;
-import schneiderlab.tools.radialprojection.controllers.uiaction.*;
 import schneiderlab.tools.radialprojection.controllers.uiaction.czitotif.BrowseButtonCZIToTif;
+import schneiderlab.tools.radialprojection.controllers.uiaction.generalcomponentactionandeffect.RemoveFilePathFromTable;
+import schneiderlab.tools.radialprojection.controllers.uiaction.generalcomponentactionandeffect.ShowFullStringOfCellinTable;
 import schneiderlab.tools.radialprojection.controllers.uiaction.mainwindow.AddSavingActionWhenMainWindowClosed;
+import schneiderlab.tools.radialprojection.controllers.uiaction.vesselsegmentation.AddFilePathFromDirToTableVesselSegmentation;
+import schneiderlab.tools.radialprojection.controllers.uiaction.vesselsegmentation.AddFilePathToTableVesselSegmentation;
+import schneiderlab.tools.radialprojection.controllers.uiaction.vesselsegmentation.CreateSideViewButtonAction;
+import schneiderlab.tools.radialprojection.controllers.uiaction.vesselsegmentation.MoveCurrentFileToRadialProjectionStep;
 import schneiderlab.tools.radialprojection.controllers.workers.*;
-import schneiderlab.tools.radialprojection.imageprocessor.core.ImageData;
 import schneiderlab.tools.radialprojection.imageprocessor.core.Vessel;
-import schneiderlab.tools.radialprojection.imageprocessor.core.bandgapmeasurement.Tile;
-import schneiderlab.tools.radialprojection.imageprocessor.core.bandgapmeasurement.Utils;
 import schneiderlab.tools.radialprojection.imageprocessor.core.convertczitotif.RotateDirection;
 import schneiderlab.tools.radialprojection.imageprocessor.core.io.SaveVesselResultToCSV;
 import schneiderlab.tools.radialprojection.imageprocessor.core.io.SaveVesselResultToXLSX;
@@ -53,7 +50,6 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -212,17 +208,18 @@ public class MainController {
         // prepare the model for the file table in czitotif step
         mainView.getTableFileCziToTiff().setModel(new DefaultTableModel(new String[]{"File Name"}, 0));
         // tooltip to view full file path in the table of cziToTif
-        mainView.getTableFileCziToTiff().addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                int row = mainView.getTableFileCziToTiff().rowAtPoint(e.getPoint());
-                int col = mainView.getTableFileCziToTiff().columnAtPoint(e.getPoint());
-                if (row > -1 && col > -1) {
-                    String value = (String) mainView.getTableFileCziToTiff().getValueAt(row, col);
-                    mainView.getTableFileCziToTiff().setToolTipText(value);
-                }
-            }
-        });
+//        mainView.getTableFileCziToTiff().addMouseMotionListener(new MouseMotionAdapter() {
+//            @Override
+//            public void mouseMoved(MouseEvent e) {
+//                int row = mainView.getTableFileCziToTiff().rowAtPoint(e.getPoint());
+//                int col = mainView.getTableFileCziToTiff().columnAtPoint(e.getPoint());
+//                if (row > -1 && col > -1) {
+//                    String value = (String) mainView.getTableFileCziToTiff().getValueAt(row, col);
+//                    mainView.getTableFileCziToTiff().setToolTipText(value);
+//                }
+//            }
+//        });
+        mainView.getTableFileCziToTiff().addMouseMotionListener( new ShowFullStringOfCellinTable(mainView.getTableFileCziToTiff()));
         // Action for OK button in Converting step
         mainView.getButtonOkConvertCzi2Tif().addActionListener(new ActionListener() {
             @Override
@@ -268,17 +265,18 @@ public class MainController {
         mainView.getButtonRemove().addActionListener(new RemoveFilePathFromTable(mainView.getTableAddedFileVesselSegmentation()));
 
         // tooltip to view full file path in segmentation step
-        mainView.getTableAddedFileVesselSegmentation().addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                int row = mainView.getTableAddedFileVesselSegmentation().rowAtPoint(e.getPoint());
-                int col = mainView.getTableAddedFileVesselSegmentation().columnAtPoint(e.getPoint());
-                if (row > -1 && col > -1) {
-                    Object value = mainView.getTableAddedFileVesselSegmentation().getValueAt(row, col);
-                    mainView.getTableAddedFileVesselSegmentation().setToolTipText(value != null ? value.toString() : null);
-                }
-            }
-        });
+//        mainView.getTableAddedFileVesselSegmentation().addMouseMotionListener(new MouseMotionAdapter() {
+//            @Override
+//            public void mouseMoved(MouseEvent e) {
+//                int row = mainView.getTableAddedFileVesselSegmentation().rowAtPoint(e.getPoint());
+//                int col = mainView.getTableAddedFileVesselSegmentation().columnAtPoint(e.getPoint());
+//                if (row > -1 && col > -1) {
+//                    Object value = mainView.getTableAddedFileVesselSegmentation().getValueAt(row, col);
+//                    mainView.getTableAddedFileVesselSegmentation().setToolTipText(value != null ? value.toString() : null);
+//                }
+//            }
+//        });
+        mainView.getTableAddedFileVesselSegmentation().addMouseMotionListener(new ShowFullStringOfCellinTable(mainView.getTableAddedFileVesselSegmentation()));
         // button add folder for segmentation step
         mainView.getButtonAddFolder().addActionListener(new AddFilePathFromDirToTableVesselSegmentation(mainView.getTableAddedFileVesselSegmentation(), mainView, mainView));
         // button clear all in table for segmentation step
@@ -373,61 +371,66 @@ public class MainController {
             }
         });
         // Create Side view button
-        mainView.getButtonCreateSideView().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                mainView.getTextField2StatusVesselSegmentation().setText("Creating Side View...");
-                mainView.getButtonProjAndSmooth().setEnabled(false);
-                mainView.getButtonSelectCentroid().setEnabled(false);
-                mainView.getButtonWatershed().setEnabled(false);
-                mainView.getButtonProcessWholeStack().setEnabled(false);
-                mainView.getButtonMoveToRadialProjection().setEnabled(false);
-                int rowCount = mainView.getTableAddedFileVesselSegmentation().getModel().getRowCount();
-                if(rowCount ==0){
-                    mainView.getButtonAddFile().doClick();
-                    return;
-                }
-                String fileToProcess = (String) mainView.getTableAddedFileVesselSegmentation()
-                        .getModel()
-                        .getValueAt(0, 0);
-                vesselsSegmentationModel.setFilePath(Paths.get(fileToProcess));
-                ImageData<UnsignedShortType, FloatType> imageData = new ImageData<>();
-                vesselsSegmentationModel.setImageData(imageData);
-                vesselsSegmentationModel.getImageData().setImagePath(vesselsSegmentationModel.getFilePath());
-                vesselsSegmentationModel.getImageData().setOutputDirPath(Paths.get(mainView.getTextFieldOutputPath().getText()));
-                logService.info("image path: " + vesselsSegmentationModel.getImageData().getImagePath().toAbsolutePath().toString());
-                CreateSideViewWorker createSideViewWorker = new CreateSideViewWorker(
-                        (int) mainView.getSpinnerXYPixelSizeCreateSideView().getValue(),
-                        (int) mainView.getSpinnerZPixelSizeCreateSideView().getValue(),
-                        Paths.get(fileToProcess),
-                        context,
-                        mainView
-                );
-                createSideViewWorker.addPropertyChangeListener(new PropertyChangeListener() {
-                    @Override
-                    public void propertyChange(PropertyChangeEvent evt) {
-                        if ("progress".equals(evt.getPropertyName())){
-                                    mainView.getProgressBarVesselSegmentation().setValue((int)evt.getNewValue());
-                        }
-                    }
-                });
-                createSideViewWorker.addPropertyChangeListener(propChangeEvent -> {
-                    if ("state".equals(propChangeEvent.getPropertyName()) &&
-                            propChangeEvent.getNewValue() == SwingWorker.StateValue.DONE) {
-                        vesselsSegmentationModel.setSideView(createSideViewWorker.getSideViewImgPlus());
-                        vesselsSegmentationModel.getImageData().setSideView(createSideViewWorker.getSideViewImgPlus());
-                        ImagePlus sideViewDisplay = ImageJFunctions.wrapUnsignedShort(vesselsSegmentationModel.getImageData().getSideView(), "Side View");
-                        sideViewDisplay.getProcessor().resetMinAndMax();
-                        vesselsSegmentationModel.setSideViewDisplay(sideViewDisplay);
-                        mainView.getTextField2StatusVesselSegmentation().setText("Side View Created");
-                        mainView.getButtonProjAndSmooth().setEnabled(true);
-                        mainView.getTextFieldCurrentFileSegmentation().setText(vesselsSegmentationModel.getFilePath().getFileName().toString());
-                        sideViewDisplay.show();
-                    }
-                });
-                createSideViewWorker.execute();
-            }
-        });
+        mainView.getButtonCreateSideView().addActionListener( new CreateSideViewButtonAction(
+                mainView,
+                vesselsSegmentationModel,
+                context
+        ));
+//        mainView.getButtonCreateSideView().addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                mainView.getTextField2StatusVesselSegmentation().setText("Creating Side View...");
+//                mainView.getButtonProjAndSmooth().setEnabled(false);
+//                mainView.getButtonSelectCentroid().setEnabled(false);
+//                mainView.getButtonWatershed().setEnabled(false);
+//                mainView.getButtonProcessWholeStack().setEnabled(false);
+//                mainView.getButtonMoveToRadialProjection().setEnabled(false);
+//                int rowCount = mainView.getTableAddedFileVesselSegmentation().getModel().getRowCount();
+//                if(rowCount ==0){
+//                    mainView.getButtonAddFile().doClick();
+//                    return;
+//                }
+//                String fileToProcess = (String) mainView.getTableAddedFileVesselSegmentation()
+//                        .getModel()
+//                        .getValueAt(0, 0);
+//                vesselsSegmentationModel.setFilePath(Paths.get(fileToProcess));
+//                ImageData<UnsignedShortType, FloatType> imageData = new ImageData<>();
+//                vesselsSegmentationModel.setImageData(imageData);
+//                vesselsSegmentationModel.getImageData().setImagePath(vesselsSegmentationModel.getFilePath());
+//                vesselsSegmentationModel.getImageData().setOutputDirPath(Paths.get(mainView.getTextFieldOutputPath().getText()));
+//                logService.info("image path: " + vesselsSegmentationModel.getImageData().getImagePath().toAbsolutePath().toString());
+//                CreateSideViewWorker createSideViewWorker = new CreateSideViewWorker(
+//                        (int) mainView.getSpinnerXYPixelSizeCreateSideView().getValue(),
+//                        (int) mainView.getSpinnerZPixelSizeCreateSideView().getValue(),
+//                        Paths.get(fileToProcess),
+//                        context,
+//                        mainView
+//                );
+//                createSideViewWorker.addPropertyChangeListener(new PropertyChangeListener() {
+//                    @Override
+//                    public void propertyChange(PropertyChangeEvent evt) {
+//                        if ("progress".equals(evt.getPropertyName())){
+//                                    mainView.getProgressBarVesselSegmentation().setValue((int)evt.getNewValue());
+//                        }
+//                    }
+//                });
+//                createSideViewWorker.addPropertyChangeListener(propChangeEvent -> {
+//                    if ("state".equals(propChangeEvent.getPropertyName()) &&
+//                            propChangeEvent.getNewValue() == SwingWorker.StateValue.DONE) {
+//                        vesselsSegmentationModel.setSideView(createSideViewWorker.getSideViewImgPlus());
+//                        vesselsSegmentationModel.getImageData().setSideView(createSideViewWorker.getSideViewImgPlus());
+//                        ImagePlus sideViewDisplay = ImageJFunctions.wrapUnsignedShort(vesselsSegmentationModel.getImageData().getSideView(), "Side View");
+//                        sideViewDisplay.getProcessor().resetMinAndMax();
+//                        vesselsSegmentationModel.setSideViewDisplay(sideViewDisplay);
+//                        mainView.getTextField2StatusVesselSegmentation().setText("Side View Created");
+//                        mainView.getButtonProjAndSmooth().setEnabled(true);
+//                        mainView.getTextFieldCurrentFileSegmentation().setText(vesselsSegmentationModel.getFilePath().getFileName().toString());
+//                        sideViewDisplay.show();
+//                    }
+//                });
+//                createSideViewWorker.execute();
+//            }
+//        });
 
         // Slider update the percentage when the value change
         mainView.getSliderHybridWeight().addChangeListener(new ChangeListener(){
@@ -665,7 +668,7 @@ public class MainController {
                 radialProjectionModel
                 ));
 
-        // add the initial values from the vesselSegmentation model to the view
+        // add the initial values from the vesselsegmentation model to the view
         mainView.getSpinnerXYPixelSizeCreateSideView().setValue(vesselsSegmentationModel.getXyPixelSize());
         mainView.getSpinnerZPixelSizeCreateSideView().setValue(vesselsSegmentationModel.getzPixelSize());
         mainView.getSpinnerAnalysisWindow().setValue(vesselsSegmentationModel.getAnalysisWindow());
