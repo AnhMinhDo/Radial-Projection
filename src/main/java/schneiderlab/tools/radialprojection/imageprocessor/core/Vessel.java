@@ -94,21 +94,6 @@ public class Vessel {
 //        return vesselSliceDataArrayList.size();
     }
 
-//    public int getUserSelectedLowerboundSlice() {
-//        return userSelectedLowerboundSlice;
-//    }
-//
-//    public void setUserSelectedLowerboundSlice(int userSelectedLowerboundSlice) {
-//        this.userSelectedLowerboundSlice = userSelectedLowerboundSlice;
-//    }
-//
-//    public int getUserSelectedUpperboundSlice() {
-//        return userSelectedUpperboundSlice;
-//    }
-//
-//    public void setUserSelectedUpperboundSlice(int userSelectedUpperboundSlice) {
-//        this.userSelectedUpperboundSlice = userSelectedUpperboundSlice;
-//    }
 
     public Point getClickPoint(int index){
         return vesselSliceDataArrayList.get(index).getClickPoint();
@@ -132,6 +117,11 @@ public class Vessel {
         } else {
             return this.centroidArrayList.subList(this.sliceCroppedRange.getStart(),this.sliceCroppedRange.getEnd()+1);
         }
+    }
+
+    public void resetCroppedRange(){
+        sliceCroppedRange.setStart(0);
+        sliceCroppedRange.setEnd(centroidArrayList.size()-1);
     }
 
     public List<Point> getCentroidArrayListWithoutCropping(){
@@ -527,16 +517,24 @@ public class Vessel {
     }
 
     private class SliceCroppedRange {
-        private final int start;
-        private final int end;
+        private int start;
+        private int end;
 
         public SliceCroppedRange(int start, int end) {
             this.start = start;
             this.end = end;
         }
 
+        public void setStart(int start) {
+            this.start = start;
+        }
+
         public int getStart() {
             return start;
+        }
+
+        public void setEnd(int end) {
+            this.end = end;
         }
 
         public int getEnd() {
