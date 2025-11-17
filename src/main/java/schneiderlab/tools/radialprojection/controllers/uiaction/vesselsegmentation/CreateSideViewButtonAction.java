@@ -1,5 +1,6 @@
 package schneiderlab.tools.radialprojection.controllers.uiaction.vesselsegmentation;
 
+import ij.IJ;
 import ij.ImagePlus;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
@@ -50,10 +51,10 @@ public class CreateSideViewButtonAction implements ActionListener {
                 .getModel()
                 .getValueAt(0, 0);
         vesselsSegmentationModel.setFilePath(Paths.get(fileToProcess));
+        IJ.log("processing file: "+ fileToProcess);
         ImageData<UnsignedShortType, FloatType> imageData = new ImageData<>();
         vesselsSegmentationModel.setImageData(imageData);
         vesselsSegmentationModel.getImageData().setImagePath(vesselsSegmentationModel.getFilePath());
-        vesselsSegmentationModel.getImageData().setOutputDirPath(Paths.get(mainView.getTextFieldOutputPath().getText()));
         logService.info("Load image at: " + vesselsSegmentationModel.getImageData().getImagePath().toAbsolutePath().toString());
         CreateSideViewWorker createSideViewWorker = new CreateSideViewWorker(
                 (int) mainView.getSpinnerXYPixelSizeCreateSideView().getValue(),
