@@ -289,7 +289,8 @@ public class MainView extends JFrame {
 	public JPanel getPanelOrientationAndAnisotropy(){return panelOrientationAndAnisotropy;}
 	public JTable getTableFileCziToTiff(){return tableFileCziToTiff;}
 	public JTextField getTextFieldCurrentFileAnalysis(){return textFieldCurrentFileAnalysis;}
-
+	public JTextField getTextFieldOutputAnalysis(){return textFieldOutputAnalysis;}
+	public JButton getButtonSelectOutputAnalysis(){return buttonSelectOutputAnalysis;}
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
@@ -429,7 +430,6 @@ public class MainView extends JFrame {
 
 				//---- buttonTabCzi2Tif ----
 				buttonTabCzi2Tif.setText("CZI to TIFF");
-				buttonTabCzi2Tif.setBorderPainted(false);
 				panelGroupButtonTab.add(buttonTabCzi2Tif, "cell 0 0");
 				panelGroupButtonTab.add(separator1, "cell 0 1");
 
@@ -441,7 +441,6 @@ public class MainView extends JFrame {
 
 				//---- buttonTabVesselSegmentation ----
 				buttonTabVesselSegmentation.setText("<html>1. Vessel<br>   Segmentation</html>");
-				buttonTabVesselSegmentation.setBorderPainted(false);
 				buttonTabVesselSegmentation.setHorizontalAlignment(SwingConstants.LEFT);
 				panelGroupButtonTab.add(buttonTabVesselSegmentation, "cell 0 3");
 
@@ -452,7 +451,6 @@ public class MainView extends JFrame {
 
 				//---- buttonTabRadialProjection ----
 				buttonTabRadialProjection.setText("2. Radial Projection");
-				buttonTabRadialProjection.setBorderPainted(false);
 				buttonTabRadialProjection.setHorizontalAlignment(SwingConstants.LEFT);
 				panelGroupButtonTab.add(buttonTabRadialProjection, "cell 0 5");
 
@@ -463,7 +461,6 @@ public class MainView extends JFrame {
 
 				//---- buttonTabAnalysis ----
 				buttonTabAnalysis.setText("3. Analysis");
-				buttonTabAnalysis.setBorderPainted(false);
 				buttonTabAnalysis.setHorizontalAlignment(SwingConstants.LEFT);
 				panelGroupButtonTab.add(buttonTabAnalysis, "cell 0 7");
 				panelGroupButtonTab.add(separator2, "cell 0 8");
@@ -472,11 +469,13 @@ public class MainView extends JFrame {
 				label2.setText("Batch Processing");
 				label2.setHorizontalAlignment(SwingConstants.CENTER);
 				label2.setFont(new Font("sansserif", Font.BOLD, 24));
+				label2.setVisible(false);
 				panelGroupButtonTab.add(label2, "cell 0 9");
 
 				//---- buttonTabBatchMode ----
 				buttonTabBatchMode.setText("Batch Mode");
 				buttonTabBatchMode.setBorderPainted(false);
+				buttonTabBatchMode.setVisible(false);
 				panelGroupButtonTab.add(buttonTabBatchMode, "cell 0 10");
 			}
 			panelLeftMenu.add(panelGroupButtonTab);
@@ -611,6 +610,7 @@ public class MainView extends JFrame {
 
 					//---- textFieldOutputPath ----
 					textFieldOutputPath.setEditable(false);
+					textFieldOutputPath.setText("unselected");
 					panelImageListVesselSegmentation.add(textFieldOutputPath, "cell 2 1 2 1");
 
 					//======== scrollPaneVesselSegmentation ========
@@ -799,6 +799,9 @@ public class MainView extends JFrame {
 					//---- labelCurrentFileAnalysis ----
 					labelCurrentFileAnalysis.setText("Current File: ");
 					panelImageForAnalysis.add(labelCurrentFileAnalysis, "cell 0 0");
+
+					//---- textFieldCurrentFileAnalysis ----
+					textFieldCurrentFileAnalysis.setEditable(false);
 					panelImageForAnalysis.add(textFieldCurrentFileAnalysis, "cell 1 0 2 1");
 
 					//======== scrollPaneAnalysisInputImage ========
