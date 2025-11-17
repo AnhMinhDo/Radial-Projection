@@ -33,12 +33,15 @@ public class SaveImageSegmentationWorker extends SwingWorker<Void, Void> {
     private final DatasetIOService datasetIOService;
     private final DatasetService datasetService;
     private final LogService logService;
+    private Path imageOutputPath;
 
     public SaveImageSegmentationWorker(MainView mainView,
                                        VesselsSegmentationModel vesselsSegmentationModel,
+                                       Path imageOutputPath,
                                        Context context) {
         this.mainview=mainView;
         this.vesselsSegmentationModel = vesselsSegmentationModel;
+        this.imageOutputPath = imageOutputPath;
         this.context=context;
         this.datasetIOService=context.service(DatasetIOService.class);
         this.datasetService=context.service(DatasetService.class);
@@ -58,15 +61,17 @@ public class SaveImageSegmentationWorker extends SwingWorker<Void, Void> {
         double scaleX = (double) ((int) mainview.getSpinnerXYPixelSizeCreateSideView().getValue()) /1000;
         double scaleY = (double) ((int) mainview.getSpinnerXYPixelSizeCreateSideView().getValue()) /1000;
         double scaleZ = (double) ((int) mainview.getSpinnerZPixelSizeCreateSideView().getValue()) /1000;
-        Path outputParentDir = Paths.get(mainview.getTextFieldOutputPath().getText());
-        if(outputParentDir.toAbsolutePath().toString().isEmpty()){
-            outputParentDir = vesselsSegmentationModel.getImageData().getImagePath().getParent();
-        }
-        String filename = RadialProjectionUtils.filenameWithoutExtension(vesselsSegmentationModel.getFilePath().getFileName().toString());
-        Path outputDir = outputParentDir.resolve(filename+"_Out");
-        Files.createDirectories(outputDir);
-        String outputFileNameXylemWaterView = "Xylem_Water_View-"+filename+".tif";
-        Path completeOutPutPath = outputDir.resolve(outputFileNameXylemWaterView);
+//        Path outputParentDir = Paths.get(mainview.getTextFieldOutputPath().getText());
+//        if(outputParentDir.toAbsolutePath().toString().isEmpty()){
+//            outputParentDir = vesselsSegmentationModel.getImageData().getImagePath().getParent();
+//        }
+//        String filename = RadialProjectionUtils.filenameWithoutExtension(vesselsSegmentationModel.getFilePath().getFileName().toString());
+//        Path outputDir = outputParentDir.resolve(filename+"_Out");
+//        Files.createDirectories(outputDir);
+//        String outputFileNameXylemWaterView = "Xylem_Water_View-"+filename+".tif";
+//        Path completeOutPutPath = outputDir.resolve(outputFileNameXylemWaterView);
+//        this.imageOutputPath = completeOutPutPath;
+        Path completeOutPutPath = imageOutputPath;
         int noOfChannels = 4;
         ImgPlus<UnsignedShortType> merge = createEmptyImgPlusForMultipleChannels(
                 width, scaleX,

@@ -1,5 +1,6 @@
 package schneiderlab.tools.radialprojection.controllers.uiaction.vesselsegmentation;
 
+import ij.IJ;
 import ij.ImagePlus;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.FloatType;
@@ -7,6 +8,7 @@ import org.scijava.Context;
 import org.scijava.ui.UIService;
 import schneiderlab.tools.radialprojection.controllers.workers.SaveImageSegmentationWorker;
 import schneiderlab.tools.radialprojection.imageprocessor.core.ImageData;
+import schneiderlab.tools.radialprojection.imageprocessor.core.utils.RadialProjectionUtils;
 import schneiderlab.tools.radialprojection.models.radialprojection.RadialProjectionModel;
 import schneiderlab.tools.radialprojection.models.radialprojection.VesselsSegmentationModel;
 import schneiderlab.tools.radialprojection.views.userinterfacecomponents.MainView;
@@ -16,7 +18,12 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class MoveCurrentFileToRadialProjectionStep implements ActionListener {
     private final JTable table;
@@ -67,9 +74,29 @@ public class MoveCurrentFileToRadialProjectionStep implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         // combine the non-smooth side view to stack
         // save the result of the segmentation step
+        Path outputParentDir = Paths.get(mainview.getTextFieldOutputPath().getText());
+        IJ.log("output folder: " + outputParentDir);
+        if("unselected".equals(outputParentDir.toString())){
+            IJ.log("Output textfield is unselected;");
+            IJ.log("create output folder at: " + vesselsSegmentationModel.getImageData().getImagePath().getParent().toAbsolutePath());
+            outputParentDir = vesselsSegmentationModel.getImageData().getImagePath().toAbsolutePath().getParent();
+        }
+        String filename = RadialProjectionUtils.filenameWithoutExtension(vesselsSegmentationModel.getFilePath().getFileName().toString());
+        Path outputDir = outputParentDir.resolve(filename+"_Out");
+        try {
+            Files.createDirectories(outputDir);
+            IJ.log("output dir at: " + outputDir);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        String outputFileNameXylemWaterView = "Xylem_Water_View-"+filename+".tif";
+        Path completeOutPutPath = outputDir.resolve(outputFileNameXylemWaterView);
+        vesselsSegmentationModel.getImageData().setImageOutputPath(outputDir); // update the outputPath
+        IJ.log("Saving Segmentation result at: " + outputDir);
         SaveImageSegmentationWorker saveImageWorker = new SaveImageSegmentationWorker(
                 mainview,
                 vesselsSegmentationModel,
+                completeOutPutPath,
                 this.context);
         saveImageWorker.execute();
         DefaultTableModel model = (DefaultTableModel) table.getModel();

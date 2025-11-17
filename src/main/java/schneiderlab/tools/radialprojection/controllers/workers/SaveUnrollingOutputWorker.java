@@ -25,9 +25,7 @@ public class SaveUnrollingOutputWorker extends SwingWorker<Void, Void> {
     @Override
     protected Void doInBackground() throws Exception {
         List<Vessel> vesselList = imageData.getVesselList();
-        Path dirPath = imageData.getOutputDirPath();
-        String filename = RadialProjectionUtils.filenameWithoutExtension(imageData.getImagePath().getFileName().toString());
-        Path finalOutputDir = dirPath.resolve(filename+"_Out");
+        Path dirPath = imageData.getImageOutputPath();
         int index = 0;
         for (Vessel vessel : vesselList){
             index+=1;
@@ -47,7 +45,7 @@ public class SaveUnrollingOutputWorker extends SwingWorker<Void, Void> {
             imageStack.addSlice(shortProcessor);
             ImagePlus imagePlus = new ImagePlus("Unrolled_Vessel_"+index,imageStack);
             FileSaver radialProjectionHybridSaver = new FileSaver(imagePlus);
-            radialProjectionHybridSaver.saveAsTiff(finalOutputDir.resolve("_Unrolled_Vessel_"+index).toString());
+            radialProjectionHybridSaver.saveAsTiff(dirPath.resolve("_Unrolled_Vessel_"+index).toString());
         }
         return null;
     }

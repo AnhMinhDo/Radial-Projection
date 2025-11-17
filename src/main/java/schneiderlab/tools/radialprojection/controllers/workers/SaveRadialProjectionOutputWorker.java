@@ -23,9 +23,7 @@ public class SaveRadialProjectionOutputWorker extends SwingWorker<Void, Void> {
     @Override
     protected Void doInBackground() throws Exception {
         List<Vessel> vesselList = imageData.getVesselList();
-        Path dirPath = imageData.getOutputDirPath();
-        String filename = RadialProjectionUtils.filenameWithoutExtension(imageData.getImagePath().getFileName().toString());
-        Path finalOutputDir = dirPath.resolve(filename+"_Out");
+        Path dirPath = imageData.getImageOutputPath();
         int index = 0;
         for (Vessel vessel : vesselList){
             index+=1;
@@ -35,7 +33,7 @@ public class SaveRadialProjectionOutputWorker extends SwingWorker<Void, Void> {
             imageStack.addSlice(vessel.getRadialProjectionHybrid().getProcessor());
             ImagePlus imagePlus = new ImagePlus("RadialProjection_Vessel_"+index,imageStack);
             FileSaver radialProjectionHybridSaver = new FileSaver(imagePlus);
-            radialProjectionHybridSaver.saveAsTiff(finalOutputDir.resolve("_RadialProjection_Vessel_"+index).toString());
+            radialProjectionHybridSaver.saveAsTiff(dirPath.resolve("_RadialProjection_Vessel_"+index).toString());
         }
 
         return null;
