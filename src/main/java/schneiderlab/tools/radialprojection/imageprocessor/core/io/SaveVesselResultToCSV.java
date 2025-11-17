@@ -39,11 +39,11 @@ public class SaveVesselResultToCSV {
             // --- INDIVIDUAL MODE: one CSV file per image ---
             // loop through all ImageData Object and save the analysis Info
             for (ImageData<UnsignedShortType, FloatType> imageData : imagesToExport) {
-                Path dirOutputPath = imageData.getOutputDirPath();
+                Path dirOutputPath = imageData.getImageOutputPath();
                 String imageName = RadialProjectionUtils.filenameWithoutExtension(imageData.getImagePath().getFileName().toString());
-                Path finalDirPath = dirOutputPath.resolve(imageName + "_Out");
-                Files.createDirectories(finalDirPath);
-                Path finalCsvPath = finalDirPath.resolve("Vessel_Analysis.csv");
+//                Path finalDirPath = dirOutputPath.resolve(imageName + "_Out");
+//                Files.createDirectories(finalDirPath);
+                Path finalCsvPath = dirOutputPath.resolve("Vessel_Analysis.csv");
 //            Path finalCsvPath = dirOutputPath.resolve("Vessel_Analysis.csv");
                 List<Vessel> vesselList = imageData.getVesselList();
                 // performing saving the csv file to the designated directory
@@ -87,7 +87,7 @@ public class SaveVesselResultToCSV {
     }
         if(combine){
             // --- COMBINED MODE: one CSV file for all images ---
-            Path combinedPath = imagesToExport.get(0).getOutputDirPath().resolve("Combined_Vessel_Analysis.csv");
+            Path combinedPath = imagesToExport.get(imagesToExport.size()-1).getImageOutputPath().getParent().resolve("Combined_Vessel_Analysis.csv");
             try (
                     BufferedWriter writer = Files.newBufferedWriter(combinedPath);
                     CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
@@ -96,7 +96,7 @@ public class SaveVesselResultToCSV {
                                     .toArray(String[]::new)))
             ) {
                 for (ImageData<UnsignedShortType, FloatType> imageData : imagesToExport) {
-                    Path dirOutputPath = imageData.getOutputDirPath();
+                    Path dirOutputPath = imageData.getImageOutputPath().getParent();
                     String imageName = RadialProjectionUtils.filenameWithoutExtension(
                             imageData.getImagePath().getFileName().toString());
                     List<Vessel> vesselList = imageData.getVesselList();

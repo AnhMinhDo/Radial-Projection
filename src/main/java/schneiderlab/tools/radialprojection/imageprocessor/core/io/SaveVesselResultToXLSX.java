@@ -34,11 +34,11 @@ public class SaveVesselResultToXLSX {
         if (!combine){
             // --- INDIVIDUAL MODE: one XLSX per image ---
             for (ImageData<UnsignedShortType, FloatType> imageData : imagesToExport) {
-                Path dirOutputPath = imageData.getOutputDirPath();
+                Path dirOutputPath = imageData.getImageOutputPath();
                 String imageName = RadialProjectionUtils.filenameWithoutExtension(imageData.getImagePath().getFileName().toString());
-                Path finalDirPath = dirOutputPath.resolve(imageName + "_Out");
-                Files.createDirectories(finalDirPath);
-                Path finalXlsxPath = finalDirPath.resolve("Vessel_Analysis.xlsx");
+//                Path finalDirPath = dirOutputPath.resolve(imageName + "_Out");
+//                Files.createDirectories(finalDirPath);
+                Path finalXlsxPath = dirOutputPath.resolve("Vessel_Analysis.xlsx");
 
                 List<Vessel> vesselList = imageData.getVesselList();
                 XSSFWorkbook workbook = new XSSFWorkbook();
@@ -103,7 +103,7 @@ public class SaveVesselResultToXLSX {
             }
             int rowNum = 1;
             for (ImageData<UnsignedShortType, FloatType> imageData : imagesToExport) {
-                Path dirOutputPath = imageData.getOutputDirPath();
+                Path dirOutputPath = imageData.getImageOutputPath();
                 String imageName = RadialProjectionUtils.filenameWithoutExtension(
                         imageData.getImagePath().getFileName().toString());
                 List<Vessel> vesselList = imageData.getVesselList();
@@ -137,7 +137,7 @@ public class SaveVesselResultToXLSX {
                 }
             }
             // Save combined file to parent directory
-            Path combinedPath = imagesToExport.get(imagesToExport.size()-1).getOutputDirPath().resolve("Combined_Vessel_Analysis.xlsx"); // save the combine in the parent dir of the last Image in the list
+            Path combinedPath = imagesToExport.get(imagesToExport.size()-1).getImageOutputPath().getParent().resolve("Combined_Vessel_Analysis.xlsx"); // save the combine in the parent dir of the last Image in the list
             try (FileOutputStream out = new FileOutputStream(combinedPath.toFile())) {
                 workbookCombine.write(out);
             }
