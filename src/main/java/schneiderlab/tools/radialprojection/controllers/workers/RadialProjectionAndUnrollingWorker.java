@@ -48,6 +48,7 @@ public class RadialProjectionAndUnrollingWorker extends SwingWorker<Void, Void> 
         int increment = (int) 100.0/(vesselArrayList.size()*3);
         setProgress(currentProgress);
         for (int i = 0; i < vesselArrayList.size(); i++) { // for each vessel
+            vesselArrayList.get(i).resetCroppedRange(); // reset the range, in case the user has applied a range before, this give the user the option to redo the range selection
             PolarProjection polarProjectionHybrid = new PolarProjection(hybridSmoothedStack,
                     hybridRawStack,
                     edgeBinaryMaskEdge,
