@@ -16,6 +16,7 @@ import java.util.List;
 public class ImageData<T extends NumericType<T>,
                         K extends NumericType<K>> {
     private Path imagePath; // Path to image file
+    private Path imageOutputPath; // Path to output dir of Segmentation and Radial Projection
     private Path outputDirPath; // Path to the Directory of output file
     private int numberOfChannels;
     private int originalWidth;
@@ -61,9 +62,18 @@ public class ImageData<T extends NumericType<T>,
         this.imagePath = imagePath;
     }
 
+    public Path getImageOutputPath() {
+        return imageOutputPath;
+    }
+
+    public void setImageOutputPath(Path imageOutputPath) {
+        this.imageOutputPath = imageOutputPath;
+    }
+
     public Path getOutputDirPath() {
         return outputDirPath;
     }
+
 
     public void setOutputDirPath(Path outputDirPath) {
         this.outputDirPath = outputDirPath;
