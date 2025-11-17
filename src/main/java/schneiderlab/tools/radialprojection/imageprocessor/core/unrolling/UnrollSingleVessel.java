@@ -4,6 +4,7 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.gui.Line;
 import ij.gui.ProfilePlot;
+import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
 
@@ -51,8 +52,9 @@ public class UnrollSingleVessel {
         for (int i = 1; i < binaryMaskEdgeImageStack.getSize()+1; i++) { // for each slice in the binary mask stack
             int cx = centroidList.get(i-1).x; // get the x value of centroid at slice i
             int cy = centroidList.get(i-1).y; // get the y value of centroid at slice i
-//            System.err.println("before unrolling1Vessel1Slide");
-            unrolling1Vessel1Slide(binaryMaskEdgeImageStack.getProcessor(i),
+            ByteProcessor binaryMaskWithBorderByteProcessor = (ByteProcessor) binaryMaskEdgeImageStack.getProcessor(i).duplicate();
+            maskTheBorderOfBinaryImage(binaryMaskWithBorderByteProcessor);
+            unrolling1Vessel1Slide(binaryMaskWithBorderByteProcessor,
                     cx,cy,
                     maxRadius,
                     intermediateResult,
@@ -161,6 +163,22 @@ public class UnrollSingleVessel {
                     }
                 }
             }
+        }
+    }
+
+    private static void maskTheBorderOfBinaryImage(ByteProcessor binaryImage){
+        byte[] imagePixelArray = (byte[]) binaryImage.getPixels();
+        int width = binaryImage.getWidth();
+        int height = binaryImage.getHeight();
+        for (int x = 0; x < width; x++) {
+            imagePixelArray[x] = (byte)255;
+            imagePixelArray[(width*(height-1)) + x] = (byte)255;
+        }
+
+        // mark the left edge and right edge
+        for (int y = 0; y < height; y++) {
+            imagePixelArray[y*width] = (byte)255; // left border
+            imagePixelArray[y*width + (width-1)] = (byte)255; // right border
         }
     }
 
