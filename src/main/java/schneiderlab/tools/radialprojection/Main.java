@@ -21,7 +21,7 @@ public class Main implements Command {
     }
 
     public void launchUI(){
-            CurrentOSSystem currentOSSystem = CurrentOSSystem.getCurrent();
+            UserOS userOS = UserOS.getCurrent();
 //            try {
 //                if (currentOSSystem==CurrentOSSystem.MAC) {
 //                    com.formdev.flatlaf.themes.FlatMacLightLaf.setup();
@@ -35,7 +35,7 @@ public class Main implements Command {
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 //            RadialProjectionModel radialProjectionModel = new RadialProjectionModel();
             MainView form = new MainView(context, frame);
-            MainController mainController = new MainController(form, context, currentOSSystem);
+            MainController mainController = new MainController(form, context, userOS);
             frame.setContentPane(form.getContentPane());
             frame.pack();
             frame.setVisible(true);

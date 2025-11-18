@@ -14,7 +14,7 @@ import net.imglib2.view.Views;
 import org.scijava.Context;
 import org.scijava.log.LogService;
 import org.scijava.ui.UIService;
-import schneiderlab.tools.radialprojection.CurrentOSSystem;
+import schneiderlab.tools.radialprojection.UserOS;
 import schneiderlab.tools.radialprojection.controllers.uiaction.czitotif.BrowseButtonCZIToTif;
 import schneiderlab.tools.radialprojection.controllers.uiaction.generalcomponentactionandeffect.RemoveFilePathFromTable;
 import schneiderlab.tools.radialprojection.controllers.uiaction.generalcomponentactionandeffect.ShowContentOfTextFieldInToolTip;
@@ -28,12 +28,10 @@ import schneiderlab.tools.radialprojection.imageprocessor.core.convertczitotif.R
 import schneiderlab.tools.radialprojection.imageprocessor.core.io.SaveVesselResultToCSV;
 import schneiderlab.tools.radialprojection.imageprocessor.core.io.SaveVesselResultToXLSX;
 import schneiderlab.tools.radialprojection.imageprocessor.core.segmentation.Reconstruction;
-import schneiderlab.tools.radialprojection.imageprocessor.core.utils.RadialProjectionUtils;
 import schneiderlab.tools.radialprojection.models.czitotifmodel.CziToTifModel;
 import schneiderlab.tools.radialprojection.models.radialprojection.AnalysisModel;
 import schneiderlab.tools.radialprojection.models.radialprojection.RadialProjectionModel;
 import schneiderlab.tools.radialprojection.models.radialprojection.VesselsSegmentationModel;
-import schneiderlab.tools.radialprojection.views.userinterfacecomponents.ImageWindowGroupController;
 import schneiderlab.tools.radialprojection.views.userinterfacecomponents.MainView;
 
 import javax.swing.*;
@@ -41,7 +39,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
@@ -50,8 +47,6 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class MainController {
@@ -62,17 +57,17 @@ public class MainController {
     private LogService logService;
     private DatasetService datasetService;
     private UIService uiService;
-    private CurrentOSSystem currentOSSystem;
+    private UserOS userOS;
 
     public MainController(MainView mainView,
                           Context context,
-                          CurrentOSSystem currentOSSystem) {
+                          UserOS userOS) {
         this.mainView = mainView;
         this.context= context;
         logService = context.getService(LogService.class);
         datasetService = context.getService(DatasetService.class);
         uiService = context.getService(UIService.class);
-        this.currentOSSystem=currentOSSystem;
+        this.userOS = userOS;
 
         //----------Create the Model each step in pipeline--------------------
         // create an instance of the czi to TIF model
