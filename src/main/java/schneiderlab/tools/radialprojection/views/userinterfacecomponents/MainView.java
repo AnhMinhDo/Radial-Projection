@@ -475,7 +475,6 @@ public class MainView extends JFrame {
 				//---- buttonTabBatchMode ----
 				buttonTabBatchMode.setText("Batch Mode");
 				buttonTabBatchMode.setBorderPainted(false);
-				buttonTabBatchMode.setVisible(false);
 				panelGroupButtonTab.add(buttonTabBatchMode, "cell 0 10");
 			}
 			panelLeftMenu.add(panelGroupButtonTab);
