@@ -176,17 +176,17 @@ public class MainController {
         mainView.getCheckBoxRotateConvertCzi2Tif().addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                mainView.getComboBoxRoateDirectionConvertCzi2Tif()
+                mainView.getComboBoxRotateDirectionConvertCzi2Tif()
                         .setEnabled(mainView.getCheckBoxRotateConvertCzi2Tif().isSelected());
                 cziToTifModel.setRotate(mainView.getCheckBoxRotateConvertCzi2Tif().isSelected());
             }
         });
         // Update the model when another item in the combobox is selected
-        mainView.getComboBoxRoateDirectionConvertCzi2Tif().addItemListener(
+        mainView.getComboBoxRotateDirectionConvertCzi2Tif().addItemListener(
                 new ItemListener() {
                     @Override
                     public void itemStateChanged(ItemEvent e) {
-                        RotateDirection rotateDirectionString = (RotateDirection) mainView.getComboBoxRoateDirectionConvertCzi2Tif()
+                        RotateDirection rotateDirectionString = (RotateDirection) mainView.getComboBoxRotateDirectionConvertCzi2Tif()
                                 .getSelectedItem();
                         cziToTifModel.setRotateDirection(rotateDirectionString);
                     }
@@ -198,7 +198,7 @@ public class MainController {
         mainView.getSpinnerRollingConvertCzi2Tif().setValue(cziToTifModel.getRollingValue());// only at application innitialization
         mainView.getSpinnerSaturateConvertCzi2Tif().setValue(cziToTifModel.getSaturationValue());// only at application innitialization
         mainView.getCheckBoxRotateConvertCzi2Tif().setSelected(cziToTifModel.isRotate());// only at application innitialization
-        mainView.getComboBoxRoateDirectionConvertCzi2Tif().setSelectedItem(cziToTifModel.getRotateDirection());
+        mainView.getComboBoxRotateDirectionConvertCzi2Tif().setSelectedItem(cziToTifModel.getRotateDirection());
         // prepare the model for the file table in czitotif step
         mainView.getTableFileCziToTiff().setModel(new DefaultTableModel(new String[]{"File Name"}, 0));
 

@@ -4,10 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 import net.miginfocom.swing.*;
 import org.jdesktop.swingx.*;
-import javax.swing.table.DefaultTableModel;
 
-import ij.process.AutoThresholder;
-import net.miginfocom.swing.*;
 import org.scijava.Context;
 import schneiderlab.tools.radialprojection.imageprocessor.core.convertczitotif.RotateDirection;
 /*
@@ -25,7 +22,7 @@ public class MainView extends JFrame {
 	public MainView(Context context, JFrame parentFrame) {
 		initComponents();
 		this.parentFrame=parentFrame;
-		this.getComboBoxRoateDirectionConvertCzi2Tif().setSelectedIndex(0);
+		this.getComboBoxRotateDirectionConvertCzi2Tif().setSelectedIndex(0);
 	}
 	public JFrame getParentFrame() {
 		return parentFrame;
@@ -91,7 +88,7 @@ public class MainView extends JFrame {
 		return checkBoxRotateConvertCzi2Tif;
 	}
 
-	public JComboBox<String> getComboBoxRoateDirectionConvertCzi2Tif() {
+	public JComboBox<String> getComboBoxRotateDirectionConvertCzi2Tif() {
 		return comboBoxRoateDirectionConvertCzi2Tif;
 	}
 
