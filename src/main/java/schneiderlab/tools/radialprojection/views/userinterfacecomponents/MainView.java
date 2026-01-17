@@ -289,6 +289,195 @@ public class MainView extends JFrame {
 	public JTextField getTextFieldOutputAnalysis(){return textFieldOutputAnalysis;}
 	public JButton getButtonSelectOutputAnalysis(){return buttonSelectOutputAnalysis;}
 
+	// batch mode components
+	public JPanel getPanelBatch() {
+		return panelBatch;
+	}
+
+	public JButton getButtonStartBatch() {
+		return buttonStartBatch;
+	}
+
+	public JLabel getLabel1RightArrow() {
+		return label1RightArrow;
+	}
+
+	public JButton getButtonCentroidSelectionBatch() {
+		return buttonCentroidSelectionBatch;
+	}
+
+	public JLabel getLabel2RightArrow() {
+		return label2RightArrow;
+	}
+
+	public JButton getButtonWaterShedBatch() {
+		return buttonWaterShedBatch;
+	}
+
+	public JLabel getLabelDiagonalBottomRightArrow() {
+		return labelDiagonalBottomRightArrow;
+	}
+
+	public JLabel getLabelStartQueueCounter() {
+		return labelStartQueueCounter;
+	}
+
+	public JLabel getLabelCentroidSelectionCounter() {
+		return labelCentroidSelectionCounter;
+	}
+
+	public JLabel getLabelWatershedCounter() {
+		return labelWatershedCounter;
+	}
+
+	public JButton getButtonRadialProjectionBatch() {
+		return buttonRadialProjectionBatch;
+	}
+
+	public JLabel getLabelRadialProjectionCounter() {
+		return labelRadialProjectionCounter;
+	}
+
+	public JButton getButtonCompleteBatch() {
+		return buttonCompleteBatch;
+	}
+
+	public JLabel getLabel1LeftArrow() {
+		return label1LeftArrow;
+	}
+
+	public JButton getButtonAnalysisBatch() {
+		return buttonAnalysisBatch;
+	}
+
+	public JLabel getLabel2LeftArrow() {
+		return label2LeftArrow;
+	}
+
+	public JButton getButtonRefineVesselBatch() {
+		return buttonRefineVesselBatch;
+	}
+
+	public JLabel getLabelDiagonalBottomLeftArrow() {
+		return labelDiagonalBottomLeftArrow;
+	}
+
+	public JLabel getLabelCompleteCounter() {
+		return labelCompleteCounter;
+	}
+
+	public JLabel getLabelAnalysisCounter() {
+		return labelAnalysisCounter;
+	}
+
+	public JLabel getLabelRefineVesselCounter() {
+		return labelRefineVesselCounter;
+	}
+
+	public JLabel getLabelXYbatch() {
+		return labelXYbatch;
+	}
+
+	public JSpinner getSpinnerXYBatch() {
+		return spinnerXYBatch;
+	}
+
+	public JLabel getLabelZbatch() {
+		return labelZbatch;
+	}
+
+	public JSpinner getSpinnerZbatch() {
+		return spinnerZbatch;
+	}
+
+	public JLabel getLabelAnalysisWindowBatch() {
+		return labelAnalysisWindowBatch;
+	}
+
+	public JSpinner getSpinnerAnalysisWindowBatch() {
+		return spinnerAnalysisWindowBatch;
+	}
+
+	public JLabel getLabelSmoothingBatch() {
+		return labelSmoothingBatch;
+	}
+
+	public JSpinner getSpinnerSmoothing() {
+		return spinnerSmoothingBatch;
+	}
+
+	public JLabel getLabelInnerVesselRadiusBatch() {
+		return labelInnerVesselRadiusBatch;
+	}
+
+	public JSpinner getSpinnerInnerVesselRadiusBatch() {
+		return spinnerInnerVesselRadiusBatch;
+	}
+
+	public JLabel getLabelLigninPercentageBatch() {
+		return labelLigninPercentageBatch;
+	}
+
+	public JSlider getSliderLigninCelluoseBatch() {
+		return sliderLigninCelluoseBatch;
+	}
+
+	public JLabel getLabelCellulosePercentageBatch() {
+		return labelCellulosePercentageBatch;
+	}
+
+	public JSpinner getSpinnerNumberLinescanBatch() {
+		return spinnerNumberLinescanBatch;
+	}
+
+	public JSpinner getSpinnerLinescanLengthBatch() {
+		return spinnerLinescanLengthBatch;
+	}
+
+	public JSpinner getSpinnerNumberRandomBoxesBatch() {
+		return spinnerNumberRandomBoxesBatch;
+	}
+
+	public JSpinner getSpinnerRandomBoxWidthBatch() {
+		return spinnerRandomBoxWidthBatch;
+	}
+
+	public JButton getButtonSelectionDirPathBatch() {
+		return buttonSelectionDirPathBatch;
+	}
+
+	public JTextField getTextFieldDirPathBatch() {
+		return textFieldDirPathBatch;
+	}
+
+	public JProgressBar getProgressBarStartButtonBatch() {
+		return progressBarStartButtonBatch;
+	}
+
+	public JProgressBar getProgressBarCentroidSelectionBatch() {
+		return progressBarCentroidSelectionBatch;
+	}
+
+	public JProgressBar getProgressBarWatershedBatch() {
+		return progressBarWatershedBatch;
+	}
+
+	public JProgressBar getProgressBarRadialProjectionBatch() {
+		return progressBarRadialProjectionBatch;
+	}
+
+	public JProgressBar getProgressBarCompleteBatch() {
+		return progressBarCompleteBatch;
+	}
+
+	public JProgressBar getProgressBarAnalysisBatch() {
+		return progressBarAnalysisBatch;
+	}
+
+	public JProgressBar getProgressBarRefineVesselBatch() {
+		return progressBarRefineVesselBatch;
+	}
+
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
 		// Generated using JFormDesigner Educational license - Anh Minh Do
@@ -397,6 +586,58 @@ public class MainView extends JFrame {
 		checkBoxCombineResultXLSX = new JCheckBox();
 		buttonExportResultToCSV = new JButton();
 		checkBoxCombineResultCSV = new JCheckBox();
+		panelBatch = new JPanel();
+		buttonSelectionDirPathBatch = new JButton();
+		textFieldDirPathBatch = new JTextField();
+		buttonStartBatch = new JButton();
+		label1RightArrow = new JLabel();
+		buttonCentroidSelectionBatch = new JButton();
+		label2RightArrow = new JLabel();
+		buttonWaterShedBatch = new JButton();
+		labelDiagonalBottomRightArrow = new JLabel();
+		labelStartQueueCounter = new JLabel();
+		labelCentroidSelectionCounter = new JLabel();
+		labelWatershedCounter = new JLabel();
+		progressBarStartButtonBatch = new JProgressBar();
+		progressBarCentroidSelectionBatch = new JProgressBar();
+		progressBarWatershedBatch = new JProgressBar();
+		buttonRadialProjectionBatch = new JButton();
+		labelRadialProjectionCounter = new JLabel();
+		progressBarRadialProjectionBatch = new JProgressBar();
+		buttonCompleteBatch = new JButton();
+		label1LeftArrow = new JLabel();
+		buttonAnalysisBatch = new JButton();
+		label2LeftArrow = new JLabel();
+		buttonRefineVesselBatch = new JButton();
+		labelDiagonalBottomLeftArrow = new JLabel();
+		labelCompleteCounter = new JLabel();
+		labelAnalysisCounter = new JLabel();
+		labelRefineVesselCounter = new JLabel();
+		progressBarCompleteBatch = new JProgressBar();
+		progressBarAnalysisBatch = new JProgressBar();
+		progressBarRefineVesselBatch = new JProgressBar();
+		labelXYbatch = new JLabel();
+		spinnerXYBatch = new JSpinner();
+		labelZbatch = new JLabel();
+		spinnerZbatch = new JSpinner();
+		labelAnalysisWindowBatch = new JLabel();
+		spinnerAnalysisWindowBatch = new JSpinner();
+		labelSmoothingBatch = new JLabel();
+		spinnerSmoothingBatch = new JSpinner();
+		labelInnerVesselRadiusBatch = new JLabel();
+		spinnerInnerVesselRadiusBatch = new JSpinner();
+		label21 = new JLabel();
+		labelLigninPercentageBatch = new JLabel();
+		sliderLigninCelluoseBatch = new JSlider();
+		labelCellulosePercentageBatch = new JLabel();
+		label23 = new JLabel();
+		spinnerNumberLinescanBatch = new JSpinner();
+		label24 = new JLabel();
+		spinnerLinescanLengthBatch = new JSpinner();
+		label25 = new JLabel();
+		spinnerNumberRandomBoxesBatch = new JSpinner();
+		label26 = new JLabel();
+		spinnerRandomBoxWidthBatch = new JSpinner();
 
 		//======== this ========
 		Container contentPane = getContentPane();
@@ -471,7 +712,6 @@ public class MainView extends JFrame {
 
 				//---- buttonTabBatchMode ----
 				buttonTabBatchMode.setText("Batch Mode");
-				buttonTabBatchMode.setBorderPainted(false);
 				panelGroupButtonTab.add(buttonTabBatchMode, "cell 0 10");
 			}
 			panelLeftMenu.add(panelGroupButtonTab);
@@ -700,7 +940,7 @@ public class MainView extends JFrame {
 					panelParametersVesselSegmentation.add(buttonProjAndSmooth, "cell 1 7");
 
 					//---- buttonSelectCentroid ----
-					buttonSelectCentroid.setText("Slect Centroid");
+					buttonSelectCentroid.setText("Select Centroid");
 					buttonSelectCentroid.setEnabled(false);
 					panelParametersVesselSegmentation.add(buttonSelectCentroid, "cell 0 8");
 
@@ -945,6 +1185,219 @@ public class MainView extends JFrame {
 				tabbedPaneAnalysis.addTab("Export Result", panelExportResult);
 			}
 			panelMainRight.add(tabbedPaneAnalysis, "card4");
+
+			//======== panelBatch ========
+			{
+				panelBatch.setLayout(new MigLayout(
+					"hidemode 3,align center top",
+					// columns
+					"[fill]" +
+					"[fill]" +
+					"[fill]" +
+					"[fill]" +
+					"[fill]" +
+					"[fill]" +
+					"[fill]",
+					// rows
+					"[]" +
+					"[]" +
+					"[]" +
+					"[]" +
+					"[]" +
+					"[]" +
+					"[]" +
+					"[]" +
+					"[]" +
+					"[]" +
+					"[]" +
+					"[]" +
+					"[]" +
+					"[]" +
+					"[]" +
+					"[]"));
+
+				//---- buttonSelectionDirPathBatch ----
+				buttonSelectionDirPathBatch.setText("Browse");
+				panelBatch.add(buttonSelectionDirPathBatch, "cell 0 0");
+
+				//---- textFieldDirPathBatch ----
+				textFieldDirPathBatch.setEditable(false);
+				panelBatch.add(textFieldDirPathBatch, "cell 1 0 4 1");
+
+				//---- buttonStartBatch ----
+				buttonStartBatch.setText("Start");
+				buttonStartBatch.setEnabled(false);
+				panelBatch.add(buttonStartBatch, "cell 0 1,growy");
+				panelBatch.add(label1RightArrow, "cell 1 1,alignx center,growx 0");
+
+				//---- buttonCentroidSelectionBatch ----
+				buttonCentroidSelectionBatch.setText("<html>Centroid  <br> Selection<html/>");
+				buttonCentroidSelectionBatch.setEnabled(false);
+				panelBatch.add(buttonCentroidSelectionBatch, "cell 2 1,growy");
+				panelBatch.add(label2RightArrow, "cell 3 1,alignx center,growx 0");
+
+				//---- buttonWaterShedBatch ----
+				buttonWaterShedBatch.setText("<html>Watershed<html/>");
+				buttonWaterShedBatch.setEnabled(false);
+				panelBatch.add(buttonWaterShedBatch, "cell 4 1,alignx center,grow 0 100");
+				panelBatch.add(labelDiagonalBottomRightArrow, "cell 5 1 1 2");
+
+				//---- labelStartQueueCounter ----
+				labelStartQueueCounter.setText("0/0");
+				labelStartQueueCounter.setHorizontalAlignment(SwingConstants.CENTER);
+				panelBatch.add(labelStartQueueCounter, "cell 0 2");
+
+				//---- labelCentroidSelectionCounter ----
+				labelCentroidSelectionCounter.setText("0");
+				labelCentroidSelectionCounter.setHorizontalAlignment(SwingConstants.CENTER);
+				panelBatch.add(labelCentroidSelectionCounter, "cell 2 2");
+
+				//---- labelWatershedCounter ----
+				labelWatershedCounter.setText("0");
+				labelWatershedCounter.setHorizontalAlignment(SwingConstants.CENTER);
+				panelBatch.add(labelWatershedCounter, "cell 4 2");
+				panelBatch.add(progressBarStartButtonBatch, "cell 0 3");
+				panelBatch.add(progressBarCentroidSelectionBatch, "cell 2 3");
+				panelBatch.add(progressBarWatershedBatch, "cell 4 3");
+
+				//---- buttonRadialProjectionBatch ----
+				buttonRadialProjectionBatch.setText("<html>Radial <br> Projection<html/>");
+				buttonRadialProjectionBatch.setEnabled(false);
+				panelBatch.add(buttonRadialProjectionBatch, "cell 5 4,growy");
+
+				//---- labelRadialProjectionCounter ----
+				labelRadialProjectionCounter.setText("0");
+				labelRadialProjectionCounter.setHorizontalAlignment(SwingConstants.CENTER);
+				panelBatch.add(labelRadialProjectionCounter, "cell 5 5");
+				panelBatch.add(progressBarRadialProjectionBatch, "cell 5 6");
+
+				//---- buttonCompleteBatch ----
+				buttonCompleteBatch.setText("<html>Complete<html/>");
+				buttonCompleteBatch.setEnabled(false);
+				panelBatch.add(buttonCompleteBatch, "cell 0 7,growy");
+				panelBatch.add(label1LeftArrow, "cell 1 7,alignx center,growx 0");
+
+				//---- buttonAnalysisBatch ----
+				buttonAnalysisBatch.setText("<html>Analysis<html/>");
+				buttonAnalysisBatch.setEnabled(false);
+				panelBatch.add(buttonAnalysisBatch, "cell 2 7,growy");
+				panelBatch.add(label2LeftArrow, "cell 3 7,alignx center,growx 0");
+
+				//---- buttonRefineVesselBatch ----
+				buttonRefineVesselBatch.setText("<html> Refine <br> Vessel<html/>");
+				buttonRefineVesselBatch.setEnabled(false);
+				panelBatch.add(buttonRefineVesselBatch, "cell 4 7,growy");
+				panelBatch.add(labelDiagonalBottomLeftArrow, "cell 5 7");
+
+				//---- labelCompleteCounter ----
+				labelCompleteCounter.setText("0/0");
+				labelCompleteCounter.setHorizontalAlignment(SwingConstants.CENTER);
+				panelBatch.add(labelCompleteCounter, "cell 0 8");
+
+				//---- labelAnalysisCounter ----
+				labelAnalysisCounter.setText("0");
+				labelAnalysisCounter.setHorizontalAlignment(SwingConstants.CENTER);
+				panelBatch.add(labelAnalysisCounter, "cell 2 8");
+
+				//---- labelRefineVesselCounter ----
+				labelRefineVesselCounter.setText("0");
+				labelRefineVesselCounter.setHorizontalAlignment(SwingConstants.CENTER);
+				panelBatch.add(labelRefineVesselCounter, "cell 4 8");
+				panelBatch.add(progressBarCompleteBatch, "cell 0 9");
+				panelBatch.add(progressBarAnalysisBatch, "cell 2 9");
+				panelBatch.add(progressBarRefineVesselBatch, "cell 4 9");
+
+				//---- labelXYbatch ----
+				labelXYbatch.setText("xy pixel size(nm)");
+				panelBatch.add(labelXYbatch, "cell 0 11,alignx right,growx 0");
+
+				//---- spinnerXYBatch ----
+				spinnerXYBatch.setModel(new SpinnerNumberModel(200, 1, null, 1));
+				panelBatch.add(spinnerXYBatch, "cell 1 11");
+
+				//---- labelZbatch ----
+				labelZbatch.setText("z pixel size(nm)");
+				panelBatch.add(labelZbatch, "cell 2 11,alignx right,growx 0");
+
+				//---- spinnerZbatch ----
+				spinnerZbatch.setModel(new SpinnerNumberModel(200, 1, null, 1));
+				panelBatch.add(spinnerZbatch, "cell 3 11");
+
+				//---- labelAnalysisWindowBatch ----
+				labelAnalysisWindowBatch.setText("<html>Analysis<br>window(\u00b5m)</html>");
+				panelBatch.add(labelAnalysisWindowBatch, "cell 0 12,alignx right,growx 0");
+
+				//---- spinnerAnalysisWindowBatch ----
+				spinnerAnalysisWindowBatch.setModel(new SpinnerNumberModel(15, 1, null, 1));
+				panelBatch.add(spinnerAnalysisWindowBatch, "cell 1 12");
+
+				//---- labelSmoothingBatch ----
+				labelSmoothingBatch.setText("<html>Pre-watershed<br>Smoothing</html>");
+				panelBatch.add(labelSmoothingBatch, "cell 2 12,alignx right,growx 0");
+
+				//---- spinnerSmoothingBatch ----
+				spinnerSmoothingBatch.setModel(new SpinnerNumberModel(2, 0, null, 1));
+				panelBatch.add(spinnerSmoothingBatch, "cell 3 12");
+
+				//---- labelInnerVesselRadiusBatch ----
+				labelInnerVesselRadiusBatch.setText("<html>Inner Vessel<br>Radius (\u00b5m)</html>");
+				panelBatch.add(labelInnerVesselRadiusBatch, "cell 4 12,alignx right,growx 0");
+
+				//---- spinnerInnerVesselRadiusBatch ----
+				spinnerInnerVesselRadiusBatch.setModel(new SpinnerNumberModel(1, null, null, 1));
+				panelBatch.add(spinnerInnerVesselRadiusBatch, "cell 5 12");
+
+				//---- label21 ----
+				label21.setText("<html>Hybrid-weighting of<br>lignin-to-cellulose(%)</html>");
+				panelBatch.add(label21, "cell 0 13,alignx right,growx 0");
+
+				//---- labelLigninPercentageBatch ----
+				labelLigninPercentageBatch.setText("Lignin 75%");
+				panelBatch.add(labelLigninPercentageBatch, "cell 1 13,alignx right,growx 0");
+
+				//---- sliderLigninCelluoseBatch ----
+				sliderLigninCelluoseBatch.setPaintTicks(true);
+				sliderLigninCelluoseBatch.setMajorTickSpacing(25);
+				sliderLigninCelluoseBatch.setValue(25);
+				panelBatch.add(sliderLigninCelluoseBatch, "cell 2 13 3 1");
+
+				//---- labelCellulosePercentageBatch ----
+				labelCellulosePercentageBatch.setText("Cellulose 25%");
+				panelBatch.add(labelCellulosePercentageBatch, "cell 5 13,alignx left,growx 0");
+
+				//---- label23 ----
+				label23.setText("Number of line scan");
+				panelBatch.add(label23, "cell 0 14,alignx right,growx 0");
+
+				//---- spinnerNumberLinescanBatch ----
+				spinnerNumberLinescanBatch.setModel(new SpinnerNumberModel(100, 1, null, 1));
+				panelBatch.add(spinnerNumberLinescanBatch, "cell 1 14");
+
+				//---- label24 ----
+				label24.setText("Linescan length(\u00b5m)");
+				panelBatch.add(label24, "cell 2 14,alignx right,growx 0");
+
+				//---- spinnerLinescanLengthBatch ----
+				spinnerLinescanLengthBatch.setModel(new SpinnerNumberModel(25, 0, null, 1));
+				panelBatch.add(spinnerLinescanLengthBatch, "cell 3 14");
+
+				//---- label25 ----
+				label25.setText("<html>Number of<br>random boxes</html>");
+				panelBatch.add(label25, "cell 0 15,alignx right,growx 0");
+
+				//---- spinnerNumberRandomBoxesBatch ----
+				spinnerNumberRandomBoxesBatch.setModel(new SpinnerNumberModel(100, 1, null, 1));
+				panelBatch.add(spinnerNumberRandomBoxesBatch, "cell 1 15");
+
+				//---- label26 ----
+				label26.setText("Random box width");
+				panelBatch.add(label26, "cell 2 15,alignx right,growx 0");
+
+				//---- spinnerRandomBoxWidthBatch ----
+				spinnerRandomBoxWidthBatch.setModel(new SpinnerNumberModel(70, 1, null, 1));
+				panelBatch.add(spinnerRandomBoxWidthBatch, "cell 3 15");
+			}
+			panelMainRight.add(panelBatch, "card5");
 		}
 		contentPane.add(panelMainRight);
 		pack();
@@ -1059,5 +1512,57 @@ public class MainView extends JFrame {
 	private JCheckBox checkBoxCombineResultXLSX;
 	private JButton buttonExportResultToCSV;
 	private JCheckBox checkBoxCombineResultCSV;
+	private JPanel panelBatch;
+	private JButton buttonSelectionDirPathBatch;
+	private JTextField textFieldDirPathBatch;
+	private JButton buttonStartBatch;
+	private JLabel label1RightArrow;
+	private JButton buttonCentroidSelectionBatch;
+	private JLabel label2RightArrow;
+	private JButton buttonWaterShedBatch;
+	private JLabel labelDiagonalBottomRightArrow;
+	private JLabel labelStartQueueCounter;
+	private JLabel labelCentroidSelectionCounter;
+	private JLabel labelWatershedCounter;
+	private JProgressBar progressBarStartButtonBatch;
+	private JProgressBar progressBarCentroidSelectionBatch;
+	private JProgressBar progressBarWatershedBatch;
+	private JButton buttonRadialProjectionBatch;
+	private JLabel labelRadialProjectionCounter;
+	private JProgressBar progressBarRadialProjectionBatch;
+	private JButton buttonCompleteBatch;
+	private JLabel label1LeftArrow;
+	private JButton buttonAnalysisBatch;
+	private JLabel label2LeftArrow;
+	private JButton buttonRefineVesselBatch;
+	private JLabel labelDiagonalBottomLeftArrow;
+	private JLabel labelCompleteCounter;
+	private JLabel labelAnalysisCounter;
+	private JLabel labelRefineVesselCounter;
+	private JProgressBar progressBarCompleteBatch;
+	private JProgressBar progressBarAnalysisBatch;
+	private JProgressBar progressBarRefineVesselBatch;
+	private JLabel labelXYbatch;
+	private JSpinner spinnerXYBatch;
+	private JLabel labelZbatch;
+	private JSpinner spinnerZbatch;
+	private JLabel labelAnalysisWindowBatch;
+	private JSpinner spinnerAnalysisWindowBatch;
+	private JLabel labelSmoothingBatch;
+	private JSpinner spinnerSmoothingBatch;
+	private JLabel labelInnerVesselRadiusBatch;
+	private JSpinner spinnerInnerVesselRadiusBatch;
+	private JLabel label21;
+	private JLabel labelLigninPercentageBatch;
+	private JSlider sliderLigninCelluoseBatch;
+	private JLabel labelCellulosePercentageBatch;
+	private JLabel label23;
+	private JSpinner spinnerNumberLinescanBatch;
+	private JLabel label24;
+	private JSpinner spinnerLinescanLengthBatch;
+	private JLabel label25;
+	private JSpinner spinnerNumberRandomBoxesBatch;
+	private JLabel label26;
+	private JSpinner spinnerRandomBoxWidthBatch;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
 }

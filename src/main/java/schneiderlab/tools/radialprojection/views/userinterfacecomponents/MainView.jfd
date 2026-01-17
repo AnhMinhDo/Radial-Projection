@@ -86,7 +86,6 @@ new FormModel {
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "buttonTabBatchMode"
 						"text": "Batch Mode"
-						"borderPainted": false
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 0 10"
 					} )
@@ -374,7 +373,7 @@ new FormModel {
 						} )
 						add( new FormComponent( "javax.swing.JButton" ) {
 							name: "buttonSelectCentroid"
-							"text": "Slect Centroid"
+							"text": "Select Centroid"
 							"enabled": false
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 							"value": "cell 0 8"
@@ -660,10 +659,354 @@ new FormModel {
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "card4"
 				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+					"$layoutConstraints": "hidemode 3,align center top"
+					"$columnConstraints": "[fill][fill][fill][fill][fill][fill][fill]"
+					"$rowConstraints": "[][][][][][][][][][][][][][][][]"
+				} ) {
+					name: "panelBatch"
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "buttonSelectionDirPathBatch"
+						"text": "Browse"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 0"
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "textFieldDirPathBatch"
+						"editable": false
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 1 0 4 1"
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "buttonStartBatch"
+						"text": "Start"
+						"enabled": false
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 1,growy"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label1RightArrow"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 1 1,alignx center,growx 0"
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "buttonCentroidSelectionBatch"
+						"text": "<html>Centroid  <br> Selection<html/>"
+						"enabled": false
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 2 1,growy"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label2RightArrow"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 3 1,alignx center,growx 0"
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "buttonWaterShedBatch"
+						"text": "<html>Watershed<html/>"
+						"enabled": false
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 4 1,alignx center,grow 0 100"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelDiagonalBottomRightArrow"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 5 1 1 2"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelStartQueueCounter"
+						"text": "0/0"
+						"horizontalAlignment": 0
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 2"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelCentroidSelectionCounter"
+						"text": "0"
+						"horizontalAlignment": 0
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 2 2"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelWatershedCounter"
+						"text": "0"
+						"horizontalAlignment": 0
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 4 2"
+					} )
+					add( new FormComponent( "javax.swing.JProgressBar" ) {
+						name: "progressBarStartButtonBatch"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 3"
+					} )
+					add( new FormComponent( "javax.swing.JProgressBar" ) {
+						name: "progressBarCentroidSelectionBatch"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 2 3"
+					} )
+					add( new FormComponent( "javax.swing.JProgressBar" ) {
+						name: "progressBarWatershedBatch"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 4 3"
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "buttonRadialProjectionBatch"
+						"text": "<html>Radial <br> Projection<html/>"
+						"enabled": false
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 5 4,growy"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelRadialProjectionCounter"
+						"text": "0"
+						"horizontalAlignment": 0
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 5 5"
+					} )
+					add( new FormComponent( "javax.swing.JProgressBar" ) {
+						name: "progressBarRadialProjectionBatch"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 5 6"
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "buttonCompleteBatch"
+						"text": "<html>Complete<html/>"
+						"enabled": false
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 7,growy"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label1LeftArrow"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 1 7,alignx center,growx 0"
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "buttonAnalysisBatch"
+						"text": "<html>Analysis<html/>"
+						"enabled": false
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 2 7,growy"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label2LeftArrow"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 3 7,alignx center,growx 0"
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "buttonRefineVesselBatch"
+						"text": "<html> Refine <br> Vessel<html/>"
+						"enabled": false
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 4 7,growy"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelDiagonalBottomLeftArrow"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 5 7"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelCompleteCounter"
+						"text": "0/0"
+						"horizontalAlignment": 0
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 8"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelAnalysisCounter"
+						"text": "0"
+						"horizontalAlignment": 0
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 2 8"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelRefineVesselCounter"
+						"text": "0"
+						"horizontalAlignment": 0
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 4 8"
+					} )
+					add( new FormComponent( "javax.swing.JProgressBar" ) {
+						name: "progressBarCompleteBatch"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 9"
+					} )
+					add( new FormComponent( "javax.swing.JProgressBar" ) {
+						name: "progressBarAnalysisBatch"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 2 9"
+					} )
+					add( new FormComponent( "javax.swing.JProgressBar" ) {
+						name: "progressBarRefineVesselBatch"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 4 9"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelXYbatch"
+						"text": "xy pixel size(nm)"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 11,alignx right,growx 0"
+					} )
+					add( new FormComponent( "javax.swing.JSpinner" ) {
+						name: "spinnerXYBatch"
+						"model": new javax.swing.SpinnerNumberModel {
+							minimum: 1
+							value: 200
+						}
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 1 11"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelZbatch"
+						"text": "z pixel size(nm)"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 2 11,alignx right,growx 0"
+					} )
+					add( new FormComponent( "javax.swing.JSpinner" ) {
+						name: "spinnerZbatch"
+						"model": new javax.swing.SpinnerNumberModel {
+							minimum: 1
+							value: 200
+						}
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 3 11"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelAnalysisWindowBatch"
+						"text": "<html>Analysis<br>window(µm)</html>"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 12,alignx right,growx 0"
+					} )
+					add( new FormComponent( "javax.swing.JSpinner" ) {
+						name: "spinnerAnalysisWindowBatch"
+						"model": new javax.swing.SpinnerNumberModel {
+							minimum: 1
+							value: 15
+						}
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 1 12"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelSmoothingBatch"
+						"text": "<html>Pre-watershed<br>Smoothing</html>"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 2 12,alignx right,growx 0"
+					} )
+					add( new FormComponent( "javax.swing.JSpinner" ) {
+						name: "spinnerSmoothingBatch"
+						"model": new javax.swing.SpinnerNumberModel {
+							minimum: 0
+							value: 2
+						}
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 3 12"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelInnerVesselRadiusBatch"
+						"text": "<html>Inner Vessel<br>Radius (µm)</html>"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 4 12,alignx right,growx 0"
+					} )
+					add( new FormComponent( "javax.swing.JSpinner" ) {
+						name: "spinnerInnerVesselRadiusBatch"
+						"model": new javax.swing.SpinnerNumberModel {
+							value: 1
+						}
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 5 12"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label21"
+						"text": "<html>Hybrid-weighting of<br>lignin-to-cellulose(%)</html>"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 13,alignx right,growx 0"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelLigninPercentageBatch"
+						"text": "Lignin 75%"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 1 13,alignx right,growx 0"
+					} )
+					add( new FormComponent( "javax.swing.JSlider" ) {
+						name: "sliderLigninCelluoseBatch"
+						"paintTicks": true
+						"majorTickSpacing": 25
+						"value": 25
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 2 13 3 1"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelCellulosePercentageBatch"
+						"text": "Cellulose 25%"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 5 13,alignx left,growx 0"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label23"
+						"text": "Number of line scan"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 14,alignx right,growx 0"
+					} )
+					add( new FormComponent( "javax.swing.JSpinner" ) {
+						name: "spinnerNumberLinescanBatch"
+						"model": new javax.swing.SpinnerNumberModel {
+							minimum: 1
+							value: 100
+						}
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 1 14"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label24"
+						"text": "Linescan length(µm)"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 2 14,alignx right,growx 0"
+					} )
+					add( new FormComponent( "javax.swing.JSpinner" ) {
+						name: "spinnerLinescanLengthBatch"
+						"model": new javax.swing.SpinnerNumberModel {
+							minimum: 0
+							value: 25
+						}
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 3 14"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label25"
+						"text": "<html>Number of<br>random boxes</html>"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 15,alignx right,growx 0"
+					} )
+					add( new FormComponent( "javax.swing.JSpinner" ) {
+						name: "spinnerNumberRandomBoxesBatch"
+						"model": new javax.swing.SpinnerNumberModel {
+							minimum: 1
+							value: 100
+						}
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 1 15"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label26"
+						"text": "Random box width"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 2 15,alignx right,growx 0"
+					} )
+					add( new FormComponent( "javax.swing.JSpinner" ) {
+						name: "spinnerRandomBoxWidthBatch"
+						"model": new javax.swing.SpinnerNumberModel {
+							minimum: 1
+							value: 70
+						}
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 3 15"
+					} )
+				}, new FormLayoutConstraints( class java.lang.String ) {
+					"value": "card5"
+				} )
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 5 )
-			"size": new java.awt.Dimension( 865, 550 )
+			"size": new java.awt.Dimension( 1105, 550 )
 		} )
 	}
 }
