@@ -64,7 +64,7 @@ public class ProjectionAndSmoothingWorker extends SwingWorker<RandomAccessibleIn
 
     @Override
     protected RandomAccessibleInterval<FloatType> doInBackground() throws Exception {
-        windowSizeinSlideNumber = Math.round(windowSizeinMicroMeter/0.2f);
+        windowSizeinSlideNumber = Math.round(windowSizeinMicroMeter/0.2f); //TODO: replace 0.2 f with a user-defined number
         CreateHybridStack chs = new CreateHybridStack(context,
                 sideView,
                 ligninToCelluloseWeight,
