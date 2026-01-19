@@ -38,6 +38,7 @@ public class Reconstruction {
     private ImagePlus edgeBinaryMaskImagePlus;
     private ImagePlus edgeCentroidMaskImgPlus;
     private List<Vessel> vesselsArray;
+    private ImagePlus rawSegmentation;
 
     public Reconstruction(RandomAccessibleInterval<FloatType> smoothedStack,
                           int width,
@@ -103,6 +104,10 @@ public class Reconstruction {
 
     public ImagePlus getEdgeCentroidMaskImgPlus() {
         return edgeCentroidMaskImgPlus;
+    }
+
+    public ImagePlus getRawSegmentation() {
+        return rawSegmentation;
     }
 
     public Overlay process1Slide() {
@@ -208,7 +213,8 @@ public class Reconstruction {
         this.edgeBinaryMaskImagePlus = new ImagePlus("edge mask ", edgesStack);
         this.edgeCentroidMaskImgPlus = new ImagePlus("edge and centroid mask", edgesCentroidStack);
         this.generateCentroidHashMap();
-        return new ImagePlus("Segmentation Stack", finalStack);
+        rawSegmentation = new ImagePlus("Segmentation Stack", finalStack);
+        return rawSegmentation;
     }
 
     private List<Point> centroidsCoordinatesGivenSegmentedImage(ImagePlus segmentedImg) {
