@@ -20,12 +20,14 @@ import schneiderlab.tools.radialprojection.controllers.workers.ProjectionAndSmoo
 import schneiderlab.tools.radialprojection.imageprocessor.core.ImageData;
 import schneiderlab.tools.radialprojection.imageprocessor.core.createsideview.CreateSideView;
 import schneiderlab.tools.radialprojection.imageprocessor.core.segmentation.CreateHybridStack;
+import schneiderlab.tools.radialprojection.imageprocessor.core.utils.RadialProjectionUtils;
 import schneiderlab.tools.radialprojection.models.batch.BatchModeModel;
 
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, Void> {
@@ -88,7 +90,8 @@ public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, V
                 imageData.setXyPixelSize(targetXYpixelSize);
                 imageData.setzPixelSize(targetZpixelSize);
                 imageData.setImagePath(filePath);
-                imageData.setImageOutputPath(filePath.getParent());
+                Path outputDirForThisImage = this.createOutputDir(filePath);
+                imageData.setImageOutputPath(outputDirForThisImage);
                 imageData.setSideView(sideViewImgPlus);
 
                 // projection and smoothing
@@ -124,6 +127,19 @@ public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, V
             }
         }
         return null;
+    }
+
+    public Path createOutputDir(Path filePath){
+        Path outputParentDir =  filePath.getParent();
+        String filename = RadialProjectionUtils.filenameWithoutExtension(filePath.getFileName().toString());
+        Path outputDir = outputParentDir.resolve(filename+"_Out");
+        try {
+            Files.createDirectories(outputDir);
+            IJ.log("Create output dir at: " + outputDir);
+        } catch (IOException ex) {
+            IJ.log("Fail to create the output dir for image: " + filename);
+        }
+        return outputDir;
     }
 
 }
