@@ -1,5 +1,7 @@
 package schneiderlab.tools.radialprojection.controllers.uiaction.czitotif;
 
+import ij.io.OpenDialog;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
@@ -27,6 +29,7 @@ public class BrowseButtonCZIToTif implements ActionListener {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File selectedDir = chooser.getSelectedFile();
             textFieldFolderPath.setText(selectedDir.getAbsolutePath());
+            OpenDialog.setDefaultDirectory(selectedDir.getAbsolutePath());
             File[] filesList = selectedDir.listFiles(((dir, name) -> name.toLowerCase().endsWith(".czi")));
             if(filesList==null){
                 return;
