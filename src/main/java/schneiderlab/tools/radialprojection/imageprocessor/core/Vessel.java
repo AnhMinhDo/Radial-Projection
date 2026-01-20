@@ -90,7 +90,7 @@ public class Vessel {
     }
 
     public int getNoOfSlice(){
-        return (this.sliceCroppedRange.start-this.sliceCroppedRange.end+1);
+        return Math.abs(this.sliceCroppedRange.start-this.sliceCroppedRange.end+1);
 //        return vesselSliceDataArrayList.size();
     }
 
