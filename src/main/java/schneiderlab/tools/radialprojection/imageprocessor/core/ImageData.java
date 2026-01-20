@@ -30,6 +30,8 @@ public class ImageData<T extends NumericType<T>,
     private int sliceIndexForTuning;
     private double innerVesselRadius;
     private int CelluloseToLigninRatio;
+    // user select centroids
+    private List<Point> userSelectedCentroidsList = new ArrayList<>();
     // output from the vessel Segmentation step
     // output-create side view
     private ImgPlus<T> sideView;// Side view
@@ -165,6 +167,10 @@ public class ImageData<T extends NumericType<T>,
 
     public void setCelluloseToLigninRatio(int celluloseToLigninRatio) {
         CelluloseToLigninRatio = celluloseToLigninRatio;
+    }
+
+    public List<Point> getUserSelectedCentroidsList() {
+        return userSelectedCentroidsList;
     }
 
     public ImgPlus<T> getSideView() {
