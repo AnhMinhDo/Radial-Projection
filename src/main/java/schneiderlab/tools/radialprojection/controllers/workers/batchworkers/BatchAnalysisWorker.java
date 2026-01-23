@@ -101,6 +101,7 @@ public class BatchAnalysisWorker extends SwingWorker<Void, Void> {
                 IJ.log("Mean gap width and std: " + vessel.getMeanGapWidth() + " " + vessel.getSdGapWidth());
                 IJ.log("Orientation and std: " + vessel.getMeanBandOrientation() + " " + vessel.getSdBandOrientation());
             }
+            batchModeModel.setNumberOfImageDataInAnalysisBatchStep(batchModeModel.getNumberOfImageDataInAnalysisBatchStep()-1);
         }
         // perform saving of all the analysis to csv file
         boolean combine = true;
