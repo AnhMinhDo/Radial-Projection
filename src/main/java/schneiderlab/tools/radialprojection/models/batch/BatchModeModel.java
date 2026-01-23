@@ -52,6 +52,10 @@ public class BatchModeModel {
     private int numberOfLineScan=100;
     private int linescanLength=25;
 
+    // Complete
+    private List<ImageData<UnsignedShortType,FloatType>> completeBatchList = new ArrayList<>();
+    private int numberOfImageDataInCompleteBatchStep = 0;
+
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
 
     public void addPropertyChangeListener(PropertyChangeListener l) {
@@ -225,6 +229,25 @@ public class BatchModeModel {
         support.firePropertyChange("numberOfImageDataInAnalysisBatchStep", oldValue, numberOfImageDataInAnalysisBatchStep );
     }
 
+    // complete
+    public List<ImageData<UnsignedShortType, FloatType>> getCompleteBatchList() {
+        return completeBatchList;
+    }
+
+    public void addImageDataToCompleteBatchList(ImageData<UnsignedShortType, FloatType> imageData) {
+        this.completeBatchList.add(imageData);
+        setNumberOfImageDataInCompleteBatchStep(getNumberOfImageDataInCompleteBatchStep()+1);
+    }
+
+    public int getNumberOfImageDataInCompleteBatchStep() {
+        return numberOfImageDataInCompleteBatchStep;
+    }
+
+    public void setNumberOfImageDataInCompleteBatchStep(int numberOfImageDataInCompleteStep) {
+        int oldValue = this.numberOfImageDataInCompleteBatchStep;
+        this.numberOfImageDataInCompleteBatchStep = numberOfImageDataInCompleteBatchStep;
+        support.firePropertyChange("numberOfImageDataInAnalysisBatchStep", oldValue, numberOfImageDataInCompleteBatchStep );
+    }
 
     // UI user input parameters
 
