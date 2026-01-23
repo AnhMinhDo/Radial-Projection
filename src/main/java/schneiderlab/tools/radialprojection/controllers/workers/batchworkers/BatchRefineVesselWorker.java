@@ -56,6 +56,7 @@ public class BatchRefineVesselWorker extends SwingWorker<Void, Void> {
                 countDownLatch.await();
             }
             batchModeModel.addImageDataToAnalysisBatchList(imageData);
+            batchModeModel.setNumberOfImageDataInRefineVesselStep(batchModeModel.getNumberOfImageDataInRefineVesselStep()-1);
         }
 
         return null;
