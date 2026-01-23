@@ -1,0 +1,39 @@
+package schneiderlab.tools.radialprojection.controllers.workers.batchworkers;
+
+import ij.ImagePlus;
+import ij.ImageStack;
+import ij.io.FileSaver;
+import net.imglib2.type.numeric.integer.UnsignedShortType;
+import net.imglib2.type.numeric.real.FloatType;
+import schneiderlab.tools.radialprojection.imageprocessor.core.ImageData;
+import schneiderlab.tools.radialprojection.imageprocessor.core.Vessel;
+
+import javax.swing.*;
+import java.nio.file.Path;
+import java.util.List;
+
+public class SaveRadialProjectedImageWithoutRefining extends SwingWorker<Void, Void> {
+    private ImageData<UnsignedShortType, FloatType> imageData;
+
+    public SaveRadialProjectedImageWithoutRefining(ImageData<UnsignedShortType, FloatType> imageData) {
+        this.imageData = imageData;
+    }
+
+    @Override
+    protected Void doInBackground() throws Exception {
+        List<Vessel> vesselList = imageData.getVesselList();
+        Path dirPath = imageData.getImageOutputPath();
+        int index = 0;
+        for (Vessel vessel : vesselList){
+            index+=1;
+            ImageStack imageStack = new ImageStack(vessel.getRadialProjectionHybrid().getWidth(), vessel.getRadialProjectionHybrid().getHeight());
+            imageStack.addSlice(vessel.getRadialProjectionLignin().getProcessor());
+            imageStack.addSlice(vessel.getRadialProjectionCellulose().getProcessor());
+            imageStack.addSlice(vessel.getRadialProjectionHybrid().getProcessor());
+            ImagePlus imagePlus = new ImagePlus("RadialProjection_Vessel_"+index,imageStack);
+            FileSaver radialProjectionHybridSaver = new FileSaver(imagePlus);
+            radialProjectionHybridSaver.saveAsTiff(dirPath.resolve("_RadialProjection_Vessel_"+index).toString());
+        }
+        return null;
+    }
+}

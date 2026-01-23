@@ -71,12 +71,14 @@ public class BatchRadialProjectionWorker extends SwingWorker<Void, Void> {
                         // need to update the counter variable
                         setProgress(counter.incrementAndGet());
                         // show the image
-                        for (int i = 0; i < imageData.getVesselList().size(); i++) {
-                            Vessel vessel = imageData.getVesselList().get(i);
-                            ImagePlus previewRadialProjection = vessel.getRadialProjectionHybrid();
-                            previewRadialProjection.setTitle("Vessel " + i + " " + imageData.getImagePath().getFileName().toString());
-                            previewRadialProjection.show();
-                        }
+//                        for (int i = 0; i < imageData.getVesselList().size(); i++) {
+//                            Vessel vessel = imageData.getVesselList().get(i);
+//                            ImagePlus previewRadialProjection = vessel.getRadialProjectionHybrid();
+//                            previewRadialProjection.setTitle("Vessel " + i + " " + imageData.getImagePath().getFileName().toString());
+//                            previewRadialProjection.show();
+//                        }
+                        SaveRadialProjectedImageWithoutRefining srpiwr = new SaveRadialProjectedImageWithoutRefining(imageData);
+                        srpiwr.execute();
                         batchModeModel.addImageDataToRefineVesselList(imageData);
                     }
                 }
