@@ -78,11 +78,13 @@ public class BatchProcessWholeStackWorker extends SwingWorker<Void, Void> {
             imageData.setEdgeCentroidMaskImagePlus(edgeCentroidImagePlus);
             batchModeModel.addImageDataToRadialProjectionList(imageData);
             IJ.log("Complete vessel detection of file: " + imageData.getImagePath().getFileName().toString());
-            ImagePlus previewImage = imageData.getEdgeCentroidMaskImagePlus().duplicate();
-            previewImage.setTitle(imageData.getImagePath().getFileName().toString());
-            previewImage.show();
+//            ImagePlus previewImage = imageData.getEdgeCentroidMaskImagePlus().duplicate();
+//            previewImage.setTitle(imageData.getImagePath().getFileName().toString());
+//            previewImage.show();
             setProgress(counter+=1);
         }
+        SaveImageSideViewEdgeCentroid sisvec = new SaveImageSideViewEdgeCentroid(batchModeModel);
+        sisvec.execute();
         return null;
     }
 }
