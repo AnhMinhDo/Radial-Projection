@@ -3,11 +3,13 @@ package schneiderlab.tools.radialprojection.controllers.controllers;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.*;
+import ij.io.OpenDialog;
 import net.imagej.DatasetService;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
@@ -23,11 +25,14 @@ import schneiderlab.tools.radialprojection.controllers.uiaction.mainwindow.AddSa
 import schneiderlab.tools.radialprojection.controllers.uiaction.radialprojection.RadialProjectionAndUnrollingButtonAction;
 import schneiderlab.tools.radialprojection.controllers.uiaction.vesselsegmentation.*;
 import schneiderlab.tools.radialprojection.controllers.workers.*;
+import schneiderlab.tools.radialprojection.controllers.workers.batchworkers.*;
+import schneiderlab.tools.radialprojection.imageprocessor.core.ImageData;
 import schneiderlab.tools.radialprojection.imageprocessor.core.Vessel;
 import schneiderlab.tools.radialprojection.imageprocessor.core.convertczitotif.RotateDirection;
 import schneiderlab.tools.radialprojection.imageprocessor.core.io.SaveVesselResultToCSV;
 import schneiderlab.tools.radialprojection.imageprocessor.core.io.SaveVesselResultToXLSX;
 import schneiderlab.tools.radialprojection.imageprocessor.core.segmentation.Reconstruction;
+import schneiderlab.tools.radialprojection.models.batch.BatchModeModel;
 import schneiderlab.tools.radialprojection.models.czitotifmodel.CziToTifModel;
 import schneiderlab.tools.radialprojection.models.radialprojection.AnalysisModel;
 import schneiderlab.tools.radialprojection.models.radialprojection.RadialProjectionModel;
@@ -47,6 +52,8 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class MainController {
@@ -78,6 +85,8 @@ public class MainController {
         RadialProjectionModel radialProjectionModel = new RadialProjectionModel();
         // initial the model for Analysis step
         AnalysisModel analysisModel = new AnalysisModel();
+        // initial the model for Batch mode
+        BatchModeModel batchModeModel = new BatchModeModel();
         mainView.getTableAnalysisInputImage().setModel(new DefaultTableModel(new String[]{"Image Path"}, 0));
         // add the card changing to left menu buttons
         mainView.getButtonTabCzi2Tif().addActionListener(new ActionListener() {
@@ -115,10 +124,21 @@ public class MainController {
                 card.show(mainView.getPanelMainRight(),"card5");
             }
         });
+        // insert Icons
         Icon downArrow = new ImageIcon(getClass().getResource("/icons/arrow-down-solid-full.png"));
+        Icon rightArrow = new ImageIcon(getClass().getResource("/icons/right_arrow.png"));
+        Icon leftArrow = new ImageIcon(getClass().getResource("/icons/left_arrow.png"));
+        Icon rightToBottomArrow = new ImageIcon(getClass().getResource("/icons/right_to_bottom_arrow.png"));
+        Icon topToRightArrow = new ImageIcon(getClass().getResource("/icons/top_to_right_arrow.png"));
+        Icon loadingGIFIcon = new ImageIcon(getClass().getResource("/icons/loading-animation-24px.gif"));
         mainView.getLabelIconArrow1().setIcon(downArrow);
         mainView.getLabelIconArrow2().setIcon(downArrow);
-
+        mainView.getLabel1RightArrow().setIcon(rightArrow);
+        mainView.getLabel2RightArrow().setIcon(rightArrow);
+        mainView.getLabel1LeftArrow().setIcon(leftArrow);
+        mainView.getLabel2LeftArrow().setIcon(leftArrow);
+        mainView.getLabelDiagonalBottomRightArrow().setIcon(rightToBottomArrow);
+        mainView.getLabelDiagonalBottomLeftArrow().setIcon(topToRightArrow);
         //-----------0.CZI to TIF converting Steps-------------------------------
 
         // get initial values from properties file
@@ -284,14 +304,14 @@ public class MainController {
             public void changedUpdate(DocumentEvent e) {update();}
         });
 
-        // spinner xy pixel size
-        mainView.getSpinnerXYPixelSizeCreateSideView().addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                int value = (int) mainView.getSpinnerXYPixelSizeCreateSideView().getValue();
-                vesselsSegmentationModel.setXyPixelSize(value);
-            }
-        });
+//        // spinner xy pixel size
+//        mainView.getSpinnerXYPixelSizeCreateSideView().addChangeListener(new ChangeListener() {
+//            @Override
+//            public void stateChanged(ChangeEvent e) {
+//                int value = (int) mainView.getSpinnerXYPixelSizeCreateSideView().getValue();
+//                vesselsSegmentationModel.setXyPixelSize(value);
+//            }
+//        });
         // spinner xy pixel size
         mainView.getSpinnerXYPixelSizeCreateSideView().addChangeListener(new ChangeListener() {
             @Override
@@ -647,6 +667,279 @@ public class MainController {
             }
         });
 
+        //------------Batch Mode-------------------------------------------
+
+        // browse input folder
+        mainView.getButtonSelectionDirPathBatch().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser chooser = new JFileChooser(IJ.getDirectory("current"));
+//                File dirPathFromCziToTifStep = new File(mainView.getTextFieldConvertCzi2Tif().getText());
+//                boolean isDirPathFromCziToTifStepValid = dirPathFromCziToTifStep.exists();
+//                if(isDirPathFromCziToTifStepValid){
+//                    chooser.setCurrentDirectory(dirPathFromCziToTifStep);
+//                }
+                chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                int returnVal = chooser.showOpenDialog(mainView.getParent());
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File dir = chooser.getSelectedFile();
+                    File[] files = dir.listFiles((d, name) -> name.toLowerCase().endsWith(".tif"));
+                    if (files != null) {
+                        batchModeModel.removeAllFilePathList(); // clear before new path objects
+                        for (File file : files) {
+                            batchModeModel.addPathToPathList(file.toPath());
+                        }
+//                        Collections.reverse(batchModeModel.getFilePathList());
+                    }
+                    mainView.getTextFieldDirPathBatch().setText(dir.getPath());
+                    OpenDialog.setDefaultDirectory(dir.getAbsolutePath());
+                    IJ.log("selected files: ");
+                    for(Path path:batchModeModel.getFilePathList()){
+                        IJ.log(path.toString());
+                    }
+                }
+            }
+        });
+
+        // button start
+        mainView.getButtonStartBatch().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mainView.getLabelStartQueueCounter().setIcon(loadingGIFIcon);
+                BatchStartWorker batchStartWorker = new BatchStartWorker(
+                        batchModeModel,
+                        context);
+                batchStartWorker.addPropertyChangeListener(new PropertyChangeListener() {
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        if("state".equals(evt.getPropertyName()) &&
+                                evt.getNewValue() == SwingWorker.StateValue.DONE){
+                            mainView.getLabelStartQueueCounter().setIcon(null);
+                        }
+                    }
+                });
+                batchStartWorker.execute();
+            }
+        });
+        // update the startQueue label
+        batchModeModel.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if("totalNumberOfFiles".equals(evt.getPropertyName())){
+                    int total = batchModeModel.getTotalNumberOfFiles();
+                    int unprocessedFiles = batchModeModel.getNumberOfUnprocessedFilePath();
+                    mainView.getLabelStartQueueCounter().setText(total + " / " + unprocessedFiles);
+                    if(unprocessedFiles > 0 ){
+                        mainView.getButtonStartBatch().setEnabled(true);
+                    }
+                }
+                if("numberOfUnprocessedFilePath".equals(evt.getPropertyName())){
+                    int total = batchModeModel.getTotalNumberOfFiles();
+                    int unprocessedFiles = batchModeModel.getNumberOfUnprocessedFilePath();
+                    mainView.getLabelStartQueueCounter().setText(total + " / " + unprocessedFiles);
+                    mainView.getProgressBarStartButtonBatch().setValue(100-(unprocessedFiles*100/total));
+                    if(unprocessedFiles > 0 ){
+                        mainView.getButtonStartBatch().setEnabled(true);
+                    } else {
+                        mainView.getButtonStartBatch().setEnabled(false);
+                    }
+                }
+            }
+        });
+
+        // centroid Selection
+        batchModeModel.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if("numberOfImageDataInCentroidSelectionStep".equals(evt.getPropertyName())){
+                    int total = batchModeModel.getTotalNumberOfFiles();
+                    mainView.getLabelCentroidSelectionCounter().setText(evt.getNewValue().toString());
+                    if((int)evt.getNewValue() > 0){
+                        mainView.getButtonCentroidSelectionBatch().setEnabled(true);
+                    } else {
+                        mainView.getButtonCentroidSelectionBatch().setEnabled(false);
+                    }
+                }
+            }
+        });
+        batchModeModel.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if("totalNumberOfFiles".equals(evt.getPropertyName())) {
+                    mainView.getLabelCentroidSelectionCounter().setText(String.valueOf(batchModeModel.getNumberOfImageDataInCentroidSelectionStep()));
+                }
+            }
+        });
+        // button centroid selection
+        mainView.getButtonCentroidSelectionBatch().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mainView.getLabelCentroidSelectionCounter().setIcon(loadingGIFIcon);
+                CentroidSelectionWorker centroidSelectionWorker = new CentroidSelectionWorker(batchModeModel, context);
+                centroidSelectionWorker.addPropertyChangeListener(new PropertyChangeListener() {
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        if("progress".equals(evt.getPropertyName())){
+                            mainView.getLabelCentroidSelectionCounter().setText(String.valueOf((int)evt.getNewValue()));
+                            mainView.getProgressBarCentroidSelectionBatch().setValue(100-(100/batchModeModel.getTotalNumberOfFiles()*(int)evt.getNewValue()));
+                        }
+                        else if ("state".equals(evt.getPropertyName()) &&
+                                                        evt.getNewValue() == SwingWorker.StateValue.DONE){
+                            mainView.getLabelCentroidSelectionCounter().setIcon(null);
+                            mainView.getButtonWaterShedBatch().setEnabled(true);
+                        }
+                    }
+                });
+                centroidSelectionWorker.execute();
+            }
+        });
+
+        // watershed step
+        batchModeModel.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if("numberOfImageDataInWatershedStep".equals(evt.getPropertyName())){
+                    mainView.getLabelWatershedCounter().setText(String.valueOf((int)evt.getNewValue()));
+                }
+            }
+        });
+        mainView.getButtonWaterShedBatch().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mainView.getLabelWatershedCounter().setIcon(loadingGIFIcon);
+                int total = batchModeModel.getWatershedList().size();
+                BatchProcessWholeStackWorker bpwsw = new BatchProcessWholeStackWorker(batchModeModel);
+                bpwsw.addPropertyChangeListener(new PropertyChangeListener() {
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        if("singleFileProgress".equals(evt.getPropertyName())){
+                            mainView.getProgressBarWatershedBatch().setValue((int)evt.getNewValue());
+                        }
+                        else if("progress".equals(evt.getPropertyName())){
+//                            int percent = (int)evt.getNewValue()/total*100;
+//                            mainView.getProgressBarWatershedBatch().setValue(percent);
+                            mainView.getLabelWatershedCounter().setText(String.valueOf(total-(int)evt.getNewValue()));
+                            batchModeModel.setNumberOfImageDataInRadialProjectionStep((int)evt.getNewValue());
+                        } else if("state".equals(evt.getPropertyName()) &&
+                                                        evt.getNewValue() == SwingWorker.StateValue.DONE){
+                            mainView.getLabelWatershedCounter().setIcon(null);
+                            mainView.getButtonRadialProjectionBatch().setEnabled(true);
+                        }
+                    }
+                });
+                bpwsw.execute();
+            }
+        });
+
+        // Radial projection step
+        batchModeModel.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if("numberOfImageDataInRadialProjectionStep".equals(evt.getPropertyName())){
+                    mainView.getLabelRadialProjectionCounter().setText(String.valueOf((int)evt.getNewValue()));
+                }
+            }
+        });
+        mainView.getButtonRadialProjectionBatch().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mainView.getLabelRadialProjectionCounter().setIcon(loadingGIFIcon);
+                int total = batchModeModel.getRadialProjectionList().size();
+                BatchRadialProjectionWorker brpw = new BatchRadialProjectionWorker(batchModeModel, context);
+                brpw.addPropertyChangeListener(new PropertyChangeListener() {
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        if("singleFileProgress".equals(evt.getPropertyName())){
+                            mainView.getProgressBarRadialProjectionBatch().setValue((int)evt.getNewValue());
+                        } else if("progress".equals(evt.getPropertyName())){
+//                            int percent = (int)evt.getNewValue()/total*100;
+//                            mainView.getProgressBarWatershedBatch().setValue(percent);
+                            int index = (int)evt.getNewValue();
+                            mainView.getLabelRadialProjectionCounter().setText(String.valueOf(total-(int)evt.getNewValue()));
+                            mainView.getProgressBarRadialProjectionBatch().setValue(100/total*index);
+                        } else if("state".equals(evt.getPropertyName()) &&
+                                                        evt.getNewValue() == SwingWorker.StateValue.DONE){
+                            mainView.getLabelRadialProjectionCounter().setIcon(null);
+                            mainView.getButtonRefineVesselBatch().setEnabled(true);
+                        }
+                    }
+                });
+                brpw.execute();
+            }
+        });
+
+        // refine vessels
+        batchModeModel.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if("numberOfImageDataInRefineVesselStep".equals(evt.getPropertyName())){
+                    mainView.getLabelRefineVesselCounter().setText(String.valueOf((int)evt.getNewValue()));
+                }
+            }
+        });
+        mainView.getButtonRefineVesselBatch().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // start a worker for selecting the range of the Vessel
+                BatchRefineVesselWorker brvw = new BatchRefineVesselWorker(batchModeModel);
+                brvw.addPropertyChangeListener(new PropertyChangeListener() {
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        if("state".equals(evt.getPropertyName()) &&
+                                                        evt.getNewValue() == SwingWorker.StateValue.DONE){
+                            mainView.getButtonAnalysisBatch().setEnabled(true);
+                        }
+                    }
+                });
+                brvw.execute();
+            }
+        });
+
+        // analysis batch
+        batchModeModel.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if("numberOfImageDataInAnalysisBatchStep".equals(evt.getPropertyName())){
+                    mainView.getLabelAnalysisCounter().setText(String.valueOf((int)evt.getNewValue()));
+                }
+            }
+        });
+        mainView.getButtonAnalysisBatch().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                BatchAnalysisWorker baw = new BatchAnalysisWorker(batchModeModel);
+                baw.execute();
+            }
+        });
+
+        // spinner xy pixel size
+        mainView.getSpinnerXYBatch().addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int value = (int) mainView.getSpinnerXYBatch().getValue();
+                batchModeModel.setXyPixelSize(value);
+            }
+        });
+        // spinner z pixel size
+        mainView.getSpinnerZbatch().addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int value = (int) mainView.getSpinnerZbatch().getValue();
+                batchModeModel.setzPixelSize(value);
+            }
+        });
+
+        // Slider update the percentage when the value change
+        mainView.getSliderLigninCelluoseBatch().addChangeListener(new ChangeListener(){
+            @Override
+            public void stateChanged(ChangeEvent e){
+                int currentValue = mainView.getSliderLigninCelluoseBatch().getValue();
+                mainView.getLabelLigninPercentageBatch().setText("Lignin " + (100-currentValue) + "%");
+                mainView.getLabelCellulosePercentageBatch().setText("Cellulose " + currentValue + "%");
+                batchModeModel.setCelluloseToLigninRatio(currentValue);
+//                vesselsSegmentationModel.setCelluloseToLigninRatio(currentValue);
+            }
+        });
 
 
         //--------------MAIN WINDOW-----------------------------------------
