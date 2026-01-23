@@ -15,6 +15,10 @@ import java.util.List;
 
 public class ImageData<T extends NumericType<T>,
                         K extends NumericType<K>> {
+    // pixel type in principle is non-negative Integer, 8-bit 0-255, 16-bit 0 65535
+    // However, during image processing, calculations are performed and results with decimal number are unavoidable
+    // Type T is for the sideView Pixel type, for viewing and saving image, type T can be UnsignedInteger
+    // Type K is for calculation only but should be converted to type T after, type K should be FloatType
     private Path imagePath; // Path to image file
     private Path imageOutputPath; // Path to output dir of Segmentation and Radial Projection
     private Path outputDirPath; // Path to the Directory of output file
