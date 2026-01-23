@@ -126,6 +126,10 @@ public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, V
                 logService.error("IO error; fail to import image file");
             }
         }
+        //TODO: start a new worker here to save the images in this step
+        SaveImageSideViewWithoutEdgeCentroid sisvwdc = new SaveImageSideViewWithoutEdgeCentroid(batchModeModel);
+        IJ.log("Saving the result in this step ");
+        sisvwdc.execute();
         return null;
     }
 
