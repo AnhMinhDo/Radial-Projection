@@ -662,7 +662,7 @@ new FormModel {
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
 					"$layoutConstraints": "hidemode 3,align center top"
 					"$columnConstraints": "[fill][fill][fill][fill][fill][fill][fill]"
-					"$rowConstraints": "[][][][][][][][][][][][][][][][]"
+					"$rowConstraints": "[][][][][][][][][][][][][][][]"
 				} ) {
 					name: "panelBatch"
 					add( new FormComponent( "javax.swing.JButton" ) {
@@ -682,7 +682,7 @@ new FormModel {
 						"text": "Start"
 						"enabled": false
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 0 1,growy"
+						"value": "cell 0 1,alignx center,grow 0 100"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "label1RightArrow"
@@ -694,7 +694,7 @@ new FormModel {
 						"text": "<html>Centroid  <br> Selection<html/>"
 						"enabled": false
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 2 1,growy"
+						"value": "cell 2 1,alignx center,grow 0 100"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "label2RightArrow"
@@ -707,11 +707,6 @@ new FormModel {
 						"enabled": false
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 4 1,alignx center,grow 0 100"
-					} )
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "labelDiagonalBottomRightArrow"
-					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 5 1 1 2"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelStartQueueCounter"
@@ -749,102 +744,83 @@ new FormModel {
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 4 3"
 					} )
-					add( new FormComponent( "javax.swing.JButton" ) {
-						name: "buttonRadialProjectionBatch"
-						"text": "<html>Radial <br> Projection<html/>"
-						"enabled": false
-					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 5 4,growy"
-					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "labelRadialProjectionCounter"
-						"text": "0"
-						"horizontalAlignment": 0
+						name: "label1DownArrow"
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 5 5"
-					} )
-					add( new FormComponent( "javax.swing.JProgressBar" ) {
-						name: "progressBarRadialProjectionBatch"
-					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 5 6"
-					} )
-					add( new FormComponent( "javax.swing.JButton" ) {
-						name: "buttonCompleteBatch"
-						"text": "<html>Complete<html/>"
-						"enabled": false
-					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 0 7,growy"
-					} )
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label1LeftArrow"
-					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 1 7,alignx center,growx 0"
+						"value": "cell 4 4,alignx center,growx 0"
 					} )
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "buttonAnalysisBatch"
 						"text": "<html>Analysis<html/>"
 						"enabled": false
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 2 7,growy"
+						"value": "cell 0 5,alignx center,grow 0 100"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label2LeftArrow"
+						name: "label1LeftArrow"
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 3 7,alignx center,growx 0"
+						"value": "cell 1 5,alignx center,growx 0"
 					} )
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "buttonRefineVesselBatch"
 						"text": "<html> Refine <br> Vessel<html/>"
 						"enabled": false
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 4 7,growy"
+						"value": "cell 2 5,alignx center,grow 0 100"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "labelDiagonalBottomLeftArrow"
+						name: "label2LeftArrow"
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 5 7"
+						"value": "cell 3 5,alignx center,growx 0"
 					} )
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "labelCompleteCounter"
-						"text": "0/0"
-						"horizontalAlignment": 0
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "buttonRadialProjectionBatch"
+						"text": "<html>Radial <br> Projection<html/>"
+						"enabled": false
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 0 8"
+						"value": "cell 4 5,alignx center,grow 0 100"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelAnalysisCounter"
 						"text": "0"
 						"horizontalAlignment": 0
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 2 8"
+						"value": "cell 0 6"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelRefineVesselCounter"
 						"text": "0"
 						"horizontalAlignment": 0
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 4 8"
+						"value": "cell 2 6"
 					} )
-					add( new FormComponent( "javax.swing.JProgressBar" ) {
-						name: "progressBarCompleteBatch"
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelRadialProjectionCounter"
+						"text": "0"
+						"horizontalAlignment": 0
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 0 9"
+						"value": "cell 4 6"
 					} )
 					add( new FormComponent( "javax.swing.JProgressBar" ) {
 						name: "progressBarAnalysisBatch"
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 2 9"
+						"value": "cell 0 7"
 					} )
 					add( new FormComponent( "javax.swing.JProgressBar" ) {
 						name: "progressBarRefineVesselBatch"
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 4 9"
+						"value": "cell 2 7"
+					} )
+					add( new FormComponent( "javax.swing.JProgressBar" ) {
+						name: "progressBarRadialProjectionBatch"
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 4 7"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelXYbatch"
 						"text": "xy pixel size(nm)"
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 0 11,alignx right,growx 0"
+						"value": "cell 0 9,alignx right,growx 0"
 					} )
 					add( new FormComponent( "javax.swing.JSpinner" ) {
 						name: "spinnerXYBatch"
@@ -853,13 +829,13 @@ new FormModel {
 							value: 200
 						}
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 1 11"
+						"value": "cell 1 9"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelZbatch"
 						"text": "z pixel size(nm)"
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 2 11,alignx right,growx 0"
+						"value": "cell 2 9,alignx right,growx 0"
 					} )
 					add( new FormComponent( "javax.swing.JSpinner" ) {
 						name: "spinnerZbatch"
@@ -868,13 +844,13 @@ new FormModel {
 							value: 200
 						}
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 3 11"
+						"value": "cell 3 9"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelAnalysisWindowBatch"
 						"text": "<html>Analysis<br>window(µm)</html>"
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 0 12,alignx right,growx 0"
+						"value": "cell 0 10,alignx right,growx 0"
 					} )
 					add( new FormComponent( "javax.swing.JSpinner" ) {
 						name: "spinnerAnalysisWindowBatch"
@@ -883,13 +859,13 @@ new FormModel {
 							value: 15
 						}
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 1 12"
+						"value": "cell 1 10"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelSmoothingBatch"
 						"text": "<html>Pre-watershed<br>Smoothing</html>"
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 2 12,alignx right,growx 0"
+						"value": "cell 2 10,alignx right,growx 0"
 					} )
 					add( new FormComponent( "javax.swing.JSpinner" ) {
 						name: "spinnerSmoothingBatch"
@@ -898,13 +874,13 @@ new FormModel {
 							value: 2
 						}
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 3 12"
+						"value": "cell 3 10"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelInnerVesselRadiusBatch"
 						"text": "<html>Inner Vessel<br>Radius (µm)</html>"
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 4 12,alignx right,growx 0"
+						"value": "cell 4 10,alignx right,growx 0"
 					} )
 					add( new FormComponent( "javax.swing.JSpinner" ) {
 						name: "spinnerInnerVesselRadiusBatch"
@@ -912,19 +888,19 @@ new FormModel {
 							value: 1
 						}
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 5 12"
+						"value": "cell 5 10"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "label21"
 						"text": "<html>Hybrid-weighting of<br>lignin-to-cellulose(%)</html>"
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 0 13,alignx right,growx 0"
+						"value": "cell 0 11,alignx right,growx 0"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelLigninPercentageBatch"
 						"text": "Lignin 75%"
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 1 13,alignx right,growx 0"
+						"value": "cell 1 11,alignx right,growx 0"
 					} )
 					add( new FormComponent( "javax.swing.JSlider" ) {
 						name: "sliderLigninCelluoseBatch"
@@ -932,19 +908,19 @@ new FormModel {
 						"majorTickSpacing": 25
 						"value": 25
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 2 13 3 1"
+						"value": "cell 2 11 3 1"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelCellulosePercentageBatch"
 						"text": "Cellulose 25%"
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 5 13,alignx left,growx 0"
+						"value": "cell 5 11,alignx left,growx 0"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "label23"
 						"text": "Number of line scan"
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 0 14,alignx right,growx 0"
+						"value": "cell 0 12,alignx right,growx 0"
 					} )
 					add( new FormComponent( "javax.swing.JSpinner" ) {
 						name: "spinnerNumberLinescanBatch"
@@ -953,13 +929,13 @@ new FormModel {
 							value: 100
 						}
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 1 14"
+						"value": "cell 1 12"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "label24"
 						"text": "Linescan length(µm)"
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 2 14,alignx right,growx 0"
+						"value": "cell 2 12,alignx right,growx 0"
 					} )
 					add( new FormComponent( "javax.swing.JSpinner" ) {
 						name: "spinnerLinescanLengthBatch"
@@ -968,13 +944,13 @@ new FormModel {
 							value: 25
 						}
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 3 14"
+						"value": "cell 3 12"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "label25"
 						"text": "<html>Number of<br>random boxes</html>"
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 0 15,alignx right,growx 0"
+						"value": "cell 0 13,alignx right,growx 0"
 					} )
 					add( new FormComponent( "javax.swing.JSpinner" ) {
 						name: "spinnerNumberRandomBoxesBatch"
@@ -983,13 +959,13 @@ new FormModel {
 							value: 100
 						}
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 1 15"
+						"value": "cell 1 13"
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "label26"
 						"text": "Random box width"
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 2 15,alignx right,growx 0"
+						"value": "cell 2 13,alignx right,growx 0"
 					} )
 					add( new FormComponent( "javax.swing.JSpinner" ) {
 						name: "spinnerRandomBoxWidthBatch"
@@ -998,7 +974,7 @@ new FormModel {
 							value: 70
 						}
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-						"value": "cell 3 15"
+						"value": "cell 3 13"
 					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "card5"
