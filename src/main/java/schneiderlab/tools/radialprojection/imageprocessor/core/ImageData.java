@@ -22,6 +22,7 @@ public class ImageData<T extends NumericType<T>,
     private Path imagePath; // Path to image file
     private Path imageOutputPath; // Path to output dir of Segmentation and Radial Projection
     private Path outputDirPath; // Path to the Directory of output file
+    private Path tempDirPath; // directory to store all the temporary files
     private int numberOfChannels;
     private int originalWidth;
     private int originalHeight;
@@ -40,13 +41,17 @@ public class ImageData<T extends NumericType<T>,
     // output-create side view
     private ImgPlus<T> sideView;// Side view
     private RandomAccessibleInterval<K> lignin;
+    private Path sideViewLigninPath;
     private RandomAccessibleInterval<K> cellulose;
+    private Path sideViewCellulosePath;
     private RandomAccessibleInterval<K> hybridStackNonSmoothed;
+    private Path sideViewHybridPath;
     private ImagePlus ligninImagePlus;
     private ImagePlus celluloseImagePlus;
     private ImagePlus hybridStackNonSmoothedImagePlus;
     // output-projection and smoothing
     private RandomAccessibleInterval<K> hybridStackSmoothed;
+    private Path sideViewHybridSmoothedPath;
     private ImgPlus<K> projectedAndSmoothedHybrid;// projected and smooth hybrid
     private int hybridStackSmoothedWidth;
     private int hybridStackSmoothedHeight;
@@ -81,9 +86,11 @@ public class ImageData<T extends NumericType<T>,
     }
 
 
-    public void setOutputDirPath(Path outputDirPath) {
-        this.outputDirPath = outputDirPath;
-    }
+    public void setOutputDirPath(Path outputDirPath) { this.outputDirPath = outputDirPath; }
+
+    public Path getTempDirPath() { return tempDirPath; }
+
+    public void setTempDirPath(Path tempDirPath) { this.tempDirPath = tempDirPath; }
 
     public int getNumberOfChannels() {
         return numberOfChannels;
@@ -113,9 +120,8 @@ public class ImageData<T extends NumericType<T>,
         return originalNumberOfSlice;
     }
 
-    public void setOriginalNumberOfSlice(int originalNumberOfSlice) {
-        this.originalNumberOfSlice = originalNumberOfSlice;
-    }
+    public void setOriginalNumberOfSlice(int originalNumberOfSlice) { this.originalNumberOfSlice = originalNumberOfSlice; }
+
 
     public int getXyPixelSize() {
         return xyPixelSize;
@@ -193,12 +199,26 @@ public class ImageData<T extends NumericType<T>,
         this.lignin = lignin;
     }
 
+    public Path getSideViewLigninPath() {
+        return sideViewLigninPath;
+    }
+
+    public void setSideViewLigninPath(Path sideViewLigninPath) {
+        this.sideViewLigninPath = sideViewLigninPath;
+    }
+
     public RandomAccessibleInterval<K> getCellulose() {
         return cellulose;
     }
 
-    public void setCellulose(RandomAccessibleInterval<K> cellulose) {
-        this.cellulose = cellulose;
+    public void setCellulose(RandomAccessibleInterval<K> cellulose) {this.cellulose = cellulose;}
+
+    public Path getSideViewCellulosePath() {
+        return sideViewCellulosePath;
+    }
+
+    public void setSideViewCellulosePath(Path sideViewCellulosePath) {
+        this.sideViewCellulosePath = sideViewCellulosePath;
     }
 
     public RandomAccessibleInterval<K> getHybridStackNonSmoothed() {
@@ -207,6 +227,14 @@ public class ImageData<T extends NumericType<T>,
 
     public void setHybridStackNonSmoothed(RandomAccessibleInterval<K> hybridStackNonSmoothed) {
         this.hybridStackNonSmoothed = hybridStackNonSmoothed;
+    }
+
+    public Path getSideViewHybridPath() {
+        return sideViewHybridPath;
+    }
+
+    public void setSideViewHybridPath(Path sideViewHybridPath) {
+        this.sideViewHybridPath = sideViewHybridPath;
     }
 
     public ImagePlus getLigninImagePlus() {
@@ -239,6 +267,14 @@ public class ImageData<T extends NumericType<T>,
 
     public void setHybridStackSmoothed(RandomAccessibleInterval<K> hybridStackSmoothed) {
         this.hybridStackSmoothed = hybridStackSmoothed;
+    }
+
+    public Path getSideViewHybridSmoothedPath() {
+        return sideViewHybridSmoothedPath;
+    }
+
+    public void setSideViewHybridSmoothedPath(Path sideViewHybridSmoothedPath) {
+        this.sideViewHybridSmoothedPath = sideViewHybridSmoothedPath;
     }
 
     public ImgPlus<K> getProjectedAndSmoothedHybrid() {
