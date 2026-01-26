@@ -130,6 +130,7 @@ public class MainController {
         Icon leftArrow = new ImageIcon(getClass().getResource("/icons/left_arrow.png"));
         Icon rightToBottomArrow = new ImageIcon(getClass().getResource("/icons/right_to_bottom_arrow.png"));
         Icon topToRightArrow = new ImageIcon(getClass().getResource("/icons/top_to_right_arrow.png"));
+        Icon downArrow2 = new ImageIcon(getClass().getResource("/icons/down_arrow.png"));
         Icon loadingGIFIcon = new ImageIcon(getClass().getResource("/icons/loading-animation-24px.gif"));
         mainView.getLabelIconArrow1().setIcon(downArrow);
         mainView.getLabelIconArrow2().setIcon(downArrow);
@@ -137,8 +138,7 @@ public class MainController {
         mainView.getLabel2RightArrow().setIcon(rightArrow);
         mainView.getLabel1LeftArrow().setIcon(leftArrow);
         mainView.getLabel2LeftArrow().setIcon(leftArrow);
-        mainView.getLabelDiagonalBottomRightArrow().setIcon(rightToBottomArrow);
-        mainView.getLabelDiagonalBottomLeftArrow().setIcon(topToRightArrow);
+        mainView.getLabel1DownArrow().setIcon(downArrow2);
         //-----------0.CZI to TIF converting Steps-------------------------------
 
         // get initial values from properties file
@@ -885,7 +885,13 @@ public class MainController {
                 brvw.addPropertyChangeListener(new PropertyChangeListener() {
                     @Override
                     public void propertyChange(PropertyChangeEvent evt) {
-                        if("state".equals(evt.getPropertyName()) &&
+                        if("progress".equals(evt.getPropertyName())){
+                            int value = (int) evt.getNewValue();
+                            int total = batchModeModel.getRefineVesselList().size();
+                            int percentage = value/total * 100;
+                            mainView.getProgressBarRefineVesselBatch().setValue(percentage);
+                        }
+                        else if("state".equals(evt.getPropertyName()) &&
                                                         evt.getNewValue() == SwingWorker.StateValue.DONE){
                             mainView.getButtonAnalysisBatch().setEnabled(true);
                         }
