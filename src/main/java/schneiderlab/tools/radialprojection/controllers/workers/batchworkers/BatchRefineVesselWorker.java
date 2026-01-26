@@ -31,7 +31,8 @@ public class BatchRefineVesselWorker extends SwingWorker<Void, Void> {
 
     @Override
     protected Void doInBackground() throws Exception {
-        int total = imageDataList.size();
+        double total = imageDataList.size();
+        double imageDataIndex = 0;
         for(ImageData<UnsignedShortType, FloatType> imageData : imageDataList){
             for (int i = 0; i < imageData.getVesselList().size(); i++) {
                 Vessel vessel = imageData.getVesselList().get(i);
@@ -57,6 +58,8 @@ public class BatchRefineVesselWorker extends SwingWorker<Void, Void> {
             }
             batchModeModel.addImageDataToAnalysisBatchList(imageData);
             batchModeModel.setNumberOfImageDataInRefineVesselStep(batchModeModel.getNumberOfImageDataInRefineVesselStep()-1);
+            setProgress((int)Math.floor((imageDataIndex / total)*100));
+            imageDataIndex+=1;
         }
 
         return null;
