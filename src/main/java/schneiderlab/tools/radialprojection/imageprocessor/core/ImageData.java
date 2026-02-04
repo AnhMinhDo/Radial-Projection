@@ -19,10 +19,12 @@ public class ImageData<T extends NumericType<T>,
     // However, during image processing, calculations are performed and results with decimal number are unavoidable
     // Type T is for the sideView Pixel type, for viewing and saving image, type T can be UnsignedInteger
     // Type K is for calculation only but should be converted to type T after, type K should be FloatType
+    private String imageName;
     private Path imagePath; // Path to image file
     private Path imageOutputPath; // Path to output dir of Segmentation and Radial Projection
     private Path outputDirPath; // Path to the Directory of output file
     private Path tempDirPath; // directory to store all the temporary files
+    private Path serializedObjectPath; // path to the serialized ImageData object
     private int numberOfChannels;
     private int originalWidth;
     private int originalHeight;
@@ -49,6 +51,7 @@ public class ImageData<T extends NumericType<T>,
     private ImagePlus ligninImagePlus;
     private ImagePlus celluloseImagePlus;
     private ImagePlus hybridStackNonSmoothedImagePlus;
+    private ImagePlus hybridStackSmoothedImagePlus;
     // output-projection and smoothing
     private RandomAccessibleInterval<K> hybridStackSmoothed;
     private Path sideViewHybridSmoothedPath;
@@ -64,6 +67,10 @@ public class ImageData<T extends NumericType<T>,
     private ImagePlus impInByte;
     private HashMap<Integer, List<Point>> centroidHashMap;
     private List<Vessel> vesselList = new ArrayList<>() ; // Vessel objects
+
+    public String getImageName() { return imageName; }
+
+    public void setImageName(String imageName) { this.imageName = imageName; }
 
     public Path getImagePath() {
         return imagePath;
@@ -91,6 +98,14 @@ public class ImageData<T extends NumericType<T>,
     public Path getTempDirPath() { return tempDirPath; }
 
     public void setTempDirPath(Path tempDirPath) { this.tempDirPath = tempDirPath; }
+
+    public Path getSerializedObjectPath() {
+        return serializedObjectPath;
+    }
+
+    public void setSerializedObjectPath(Path serializedObjectPath) {
+        this.serializedObjectPath = serializedObjectPath;
+    }
 
     public int getNumberOfChannels() {
         return numberOfChannels;
@@ -271,6 +286,14 @@ public class ImageData<T extends NumericType<T>,
 
     public Path getSideViewHybridSmoothedPath() {
         return sideViewHybridSmoothedPath;
+    }
+
+    public ImagePlus getHybridStackSmoothedImagePlus() {
+        return hybridStackSmoothedImagePlus;
+    }
+
+    public void setHybridStackSmoothedImagePlus(ImagePlus hybridStackSmoothedImagePlus) {
+        this.hybridStackSmoothedImagePlus = hybridStackSmoothedImagePlus;
     }
 
     public void setSideViewHybridSmoothedPath(Path sideViewHybridSmoothedPath) {
