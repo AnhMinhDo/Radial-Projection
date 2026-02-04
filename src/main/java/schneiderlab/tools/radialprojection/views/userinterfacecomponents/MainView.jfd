@@ -703,7 +703,7 @@ new FormModel {
 					} )
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "buttonWaterShedBatch"
-						"text": "<html>Watershed<html/>"
+						"text": "<html>Watershed &<br>Radial Projection<html/>"
 						"enabled": false
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 4 1,alignx center,grow 0 100"
@@ -777,6 +777,7 @@ new FormModel {
 						name: "buttonRadialProjectionBatch"
 						"text": "<html>Radial <br> Projection<html/>"
 						"enabled": false
+						"visible": false
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 4 5,alignx center,grow 0 100"
 					} )
@@ -798,6 +799,7 @@ new FormModel {
 						name: "labelRadialProjectionCounter"
 						"text": "0"
 						"horizontalAlignment": 0
+						"visible": false
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 4 6"
 					} )
@@ -813,6 +815,7 @@ new FormModel {
 					} )
 					add( new FormComponent( "javax.swing.JProgressBar" ) {
 						name: "progressBarRadialProjectionBatch"
+						"visible": false
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 4 7"
 					} )

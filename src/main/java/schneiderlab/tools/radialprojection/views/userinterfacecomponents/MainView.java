@@ -1219,7 +1219,7 @@ public class MainView extends JFrame {
 				panelBatch.add(label2RightArrow, "cell 3 1,alignx center,growx 0");
 
 				//---- buttonWaterShedBatch ----
-				buttonWaterShedBatch.setText("<html>Watershed<html/>");
+				buttonWaterShedBatch.setText("<html>Watershed &<br>Radial Projection<html/>");
 				buttonWaterShedBatch.setEnabled(false);
 				panelBatch.add(buttonWaterShedBatch, "cell 4 1,alignx center,grow 0 100");
 
@@ -1257,6 +1257,7 @@ public class MainView extends JFrame {
 				//---- buttonRadialProjectionBatch ----
 				buttonRadialProjectionBatch.setText("<html>Radial <br> Projection<html/>");
 				buttonRadialProjectionBatch.setEnabled(false);
+				buttonRadialProjectionBatch.setVisible(false);
 				panelBatch.add(buttonRadialProjectionBatch, "cell 4 5,alignx center,grow 0 100");
 
 				//---- labelAnalysisCounter ----
@@ -1272,9 +1273,13 @@ public class MainView extends JFrame {
 				//---- labelRadialProjectionCounter ----
 				labelRadialProjectionCounter.setText("0");
 				labelRadialProjectionCounter.setHorizontalAlignment(SwingConstants.CENTER);
+				labelRadialProjectionCounter.setVisible(false);
 				panelBatch.add(labelRadialProjectionCounter, "cell 4 6");
 				panelBatch.add(progressBarAnalysisBatch, "cell 0 7");
 				panelBatch.add(progressBarRefineVesselBatch, "cell 2 7");
+
+				//---- progressBarRadialProjectionBatch ----
+				progressBarRadialProjectionBatch.setVisible(false);
 				panelBatch.add(progressBarRadialProjectionBatch, "cell 4 7");
 
 				//---- labelXYbatch ----
