@@ -1,9 +1,13 @@
 package schneiderlab.tools.radialprojection.imageprocessor.core.imagedataserialized;
 
-import java.io.Serializable;
+import ij.IJ;
+
+import java.io.*;
+import java.nio.file.Path;
 
 public class ImageDataSerializable implements Serializable {
 
+    private String serializedObjectPath;
     private String imagePath; // Path to image file
     private String tempDir;
 //    private String imageOutputPath; // Path to output dir of Segmentation and Radial Projection
@@ -27,6 +31,27 @@ public class ImageDataSerializable implements Serializable {
     private String sideViewHybridSmoothedPath;
 
     public ImageDataSerializable() {
+    }
+
+    public void serializeObject(){
+        try{
+            FileOutputStream file = new FileOutputStream(serializedObjectPath);
+            ObjectOutputStream out = new ObjectOutputStream(file);
+            out.writeObject(this);
+            out.close();
+            file.close();
+            IJ.log("Successfully save the ImageData object to storage");
+        } catch (IOException e){
+            IJ.log("IO error while serializing the object");
+        }
+    }
+
+    public String getSerializedObjectPath() {
+        return serializedObjectPath;
+    }
+
+    public void setSerializedObjectPath(String serializedObjectPath) {
+        this.serializedObjectPath = serializedObjectPath;
     }
 
     public String getImagePath() {
