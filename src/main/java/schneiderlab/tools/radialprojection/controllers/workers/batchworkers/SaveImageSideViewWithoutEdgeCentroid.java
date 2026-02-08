@@ -4,7 +4,6 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.io.FileSaver;
-import ij.plugin.ContrastEnhancer;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
@@ -17,23 +16,27 @@ import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
+import org.scijava.Context;
 import schneiderlab.tools.radialprojection.imageprocessor.core.ImageData;
 import schneiderlab.tools.radialprojection.models.batch.BatchModeModel;
 
-import javax.swing.*;
-import java.io.IOException;
 import java.nio.file.Path;
 
-public class SaveImageSideViewWithoutEdgeCentroid extends SwingWorker<Void, Void> {
-    BatchModeModel batchModeModel;
+public class SaveImageSideViewWithoutEdgeCentroid {
+//    BatchModeModel batchModeModel;
+    private ImageData<UnsignedShortType, FloatType> imageData;
+    private Context context;
 
-    public SaveImageSideViewWithoutEdgeCentroid(BatchModeModel batchModeModel) {
-        this.batchModeModel = batchModeModel;
+    public SaveImageSideViewWithoutEdgeCentroid(ImageData<UnsignedShortType, FloatType> imageData, Context context) {
+//        this.batchModeModel = batchModeModel;
+        this.imageData = imageData;
+        this.context = context;
     }
 
-    @Override
+    public  void execute () throws Exception {
+        this.doInBackground();
+    }
     protected Void doInBackground() throws Exception {
-        for(ImageData<UnsignedShortType, FloatType> imageData : batchModeModel.getCentroidelectionList()){
             RandomAccessibleInterval<FloatType> hybridStackNonSmoothed = imageData.getHybridStackNonSmoothed();
             RandomAccessibleInterval<FloatType> ligninStackNonSmoothed = imageData.getLignin();
             RandomAccessibleInterval<FloatType> celluloseStackNonSmoothed = imageData.getCellulose();
@@ -41,15 +44,15 @@ public class SaveImageSideViewWithoutEdgeCentroid extends SwingWorker<Void, Void
             int width = imageData.getHybridStackSmoothedWidth();
             int height = imageData.getHybridStackSmoothedHeight();
             int slices = imageData.getHybridStackSmoothedSlicesNumber();
-            double scaleX = (double) ((int) batchModeModel.getXyPixelSize()) /1000;
-            double scaleY = (double) ((int) batchModeModel.getXyPixelSize()) /1000;
-            double scaleZ = (double) ((int) batchModeModel.getzPixelSize()) /1000;
+            double scaleX = (double) ((int) imageData.getXyPixelSize()) /1000;
+            double scaleY = (double) ((int) imageData.getXyPixelSize()) /1000;
+            double scaleZ = (double) ((int) imageData.getzPixelSize()) /1000;
             // build the path for the output
-            String filename = imageData.getImagePath().getFileName().toString();
+            String filename = imageData.getImageName();
             IJ.log("filename: " + filename);
-            Path outputDir = imageData.getImageOutputPath();
-            String outputFileNameXylemWaterView = "Xylem_Water_View-"+filename;
-            Path completeOutPutPath = outputDir.resolve(outputFileNameXylemWaterView);
+//            Path outputDir = imageData.getImageOutputPath();
+//            String outputFileNameXylemWaterView = "Xylem_Water_View-"+filename;
+            Path completeOutPutPath = imageData.getSideViewPathWithoutEdgeCentroid();
             IJ.log("image output path: " + completeOutPutPath);
             int noOfChannels = 3;
             ImgPlus<UnsignedShortType> merge = createEmptyImgPlusForMultipleChannels(
@@ -66,8 +69,8 @@ public class SaveImageSideViewWithoutEdgeCentroid extends SwingWorker<Void, Void
             ImagePlus mergeImagePlus= ImageJFunctions.wrapUnsignedShort(merge, merge.getName());
             FileSaver mergeImagePlusSaver = new FileSaver(mergeImagePlus);
             mergeImagePlusSaver.saveAsTiff(completeOutPutPath.toAbsolutePath().toString());
-            IJ.log("Saving SideView Complete: " + imageData.getImagePath().getFileName());
-        }
+            IJ.log("Saving ImagePlus SideView Complete: " + imageData.getImagePath().getFileName());
+            // save the same result into the temp dir
 
         return null;
     }
