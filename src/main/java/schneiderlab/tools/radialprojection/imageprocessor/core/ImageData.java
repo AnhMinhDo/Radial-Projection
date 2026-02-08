@@ -25,6 +25,9 @@ public class ImageData<T extends NumericType<T>,
     private Path outputDirPath; // Path to the Directory of output file
     private Path tempDirPath; // directory to store all the temporary files
     private Path serializedObjectPath; // path to the serialized ImageData object
+    private Path sideViewPathWithoutEdgeCentroid;
+    private Path sideViewTempPathWithoutEdgeCentroid;
+    // parameters
     private int numberOfChannels;
     private int originalWidth;
     private int originalHeight;
@@ -43,18 +46,18 @@ public class ImageData<T extends NumericType<T>,
     // output-create side view
     private ImgPlus<T> sideView;// Side view
     private RandomAccessibleInterval<K> lignin;
-    private Path sideViewLigninPath;
+//    private Path sideViewLigninPath;
     private RandomAccessibleInterval<K> cellulose;
-    private Path sideViewCellulosePath;
+//    private Path sideViewCellulosePath;
     private RandomAccessibleInterval<K> hybridStackNonSmoothed;
-    private Path sideViewHybridPath;
+//    private Path sideViewHybridPath;
     private ImagePlus ligninImagePlus;
     private ImagePlus celluloseImagePlus;
     private ImagePlus hybridStackNonSmoothedImagePlus;
     private ImagePlus hybridStackSmoothedImagePlus;
     // output-projection and smoothing
     private RandomAccessibleInterval<K> hybridStackSmoothed;
-    private Path sideViewHybridSmoothedPath;
+//    private Path sideViewHybridSmoothedPath;
     private ImgPlus<K> projectedAndSmoothedHybrid;// projected and smooth hybrid
     private int hybridStackSmoothedWidth;
     private int hybridStackSmoothedHeight;
@@ -105,6 +108,26 @@ public class ImageData<T extends NumericType<T>,
 
     public void setSerializedObjectPath(Path serializedObjectPath) {
         this.serializedObjectPath = serializedObjectPath;
+    }
+
+    public Path getSideViewPathWithoutEdgeCentroid() {
+        return sideViewPathWithoutEdgeCentroid;
+    }
+
+    public void setSideViewPathWithoutEdgeCentroid(Path sideViewWithoutEdgeCentroid) {
+        this.sideViewPathWithoutEdgeCentroid = sideViewWithoutEdgeCentroid;
+    }
+
+    public Path getSideViewTempPathWithoutEdgeCentroid() {
+        return sideViewTempPathWithoutEdgeCentroid;
+    }
+
+    public void setSideViewTempPathWithoutEdgeCentroid(Path sideViewTempPathWithoutEdgeCentroid) {
+        this.sideViewTempPathWithoutEdgeCentroid = sideViewTempPathWithoutEdgeCentroid;
+    }
+
+    public void setUserSelectedCentroidsList(List<Point> userSelectedCentroidsList) {
+        this.userSelectedCentroidsList = userSelectedCentroidsList;
     }
 
     public int getNumberOfChannels() {
@@ -214,13 +237,13 @@ public class ImageData<T extends NumericType<T>,
         this.lignin = lignin;
     }
 
-    public Path getSideViewLigninPath() {
-        return sideViewLigninPath;
-    }
-
-    public void setSideViewLigninPath(Path sideViewLigninPath) {
-        this.sideViewLigninPath = sideViewLigninPath;
-    }
+//    public Path getSideViewLigninPath() {
+//        return sideViewLigninPath;
+//    }
+//
+//    public void setSideViewLigninPath(Path sideViewLigninPath) {
+//        this.sideViewLigninPath = sideViewLigninPath;
+//    }
 
     public RandomAccessibleInterval<K> getCellulose() {
         return cellulose;
@@ -228,13 +251,13 @@ public class ImageData<T extends NumericType<T>,
 
     public void setCellulose(RandomAccessibleInterval<K> cellulose) {this.cellulose = cellulose;}
 
-    public Path getSideViewCellulosePath() {
-        return sideViewCellulosePath;
-    }
-
-    public void setSideViewCellulosePath(Path sideViewCellulosePath) {
-        this.sideViewCellulosePath = sideViewCellulosePath;
-    }
+//    public Path getSideViewCellulosePath() {
+//        return sideViewCellulosePath;
+//    }
+//
+//    public void setSideViewCellulosePath(Path sideViewCellulosePath) {
+//        this.sideViewCellulosePath = sideViewCellulosePath;
+//    }
 
     public RandomAccessibleInterval<K> getHybridStackNonSmoothed() {
         return hybridStackNonSmoothed;
@@ -244,13 +267,13 @@ public class ImageData<T extends NumericType<T>,
         this.hybridStackNonSmoothed = hybridStackNonSmoothed;
     }
 
-    public Path getSideViewHybridPath() {
-        return sideViewHybridPath;
-    }
-
-    public void setSideViewHybridPath(Path sideViewHybridPath) {
-        this.sideViewHybridPath = sideViewHybridPath;
-    }
+//    public Path getSideViewHybridPath() {
+//        return sideViewHybridPath;
+//    }
+//
+//    public void setSideViewHybridPath(Path sideViewHybridPath) {
+//        this.sideViewHybridPath = sideViewHybridPath;
+//    }
 
     public ImagePlus getLigninImagePlus() {
         return ligninImagePlus;
@@ -284,9 +307,13 @@ public class ImageData<T extends NumericType<T>,
         this.hybridStackSmoothed = hybridStackSmoothed;
     }
 
-    public Path getSideViewHybridSmoothedPath() {
-        return sideViewHybridSmoothedPath;
-    }
+//    public Path getSideViewHybridSmoothedPath() {
+//        return sideViewHybridSmoothedPath;
+//    }
+//
+//    public void setSideViewHybridSmoothedPath(Path sideViewHybridSmoothedPath) {
+//        this.sideViewHybridSmoothedPath = sideViewHybridSmoothedPath;
+//    }
 
     public ImagePlus getHybridStackSmoothedImagePlus() {
         return hybridStackSmoothedImagePlus;
@@ -296,9 +323,7 @@ public class ImageData<T extends NumericType<T>,
         this.hybridStackSmoothedImagePlus = hybridStackSmoothedImagePlus;
     }
 
-    public void setSideViewHybridSmoothedPath(Path sideViewHybridSmoothedPath) {
-        this.sideViewHybridSmoothedPath = sideViewHybridSmoothedPath;
-    }
+
 
     public ImgPlus<K> getProjectedAndSmoothedHybrid() {
         return projectedAndSmoothedHybrid;
