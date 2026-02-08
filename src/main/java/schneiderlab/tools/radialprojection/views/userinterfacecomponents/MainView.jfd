@@ -1,4 +1,4 @@
-JFDML JFormDesigner: "8.2.2.0.382" Java: "21.0.9" encoding: "UTF-8"
+JFDML JFormDesigner: "8.2.2.0.382" Java: "21.0.10" encoding: "UTF-8"
 
 new FormModel {
 	contentType: "form/swing"
@@ -873,8 +873,9 @@ new FormModel {
 					add( new FormComponent( "javax.swing.JSpinner" ) {
 						name: "spinnerSmoothingBatch"
 						"model": new javax.swing.SpinnerNumberModel {
-							minimum: 0
-							value: 2
+							minimum: 0.0
+							stepSize: 0.1
+							value: 2.0
 						}
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 3 10"
@@ -888,7 +889,9 @@ new FormModel {
 					add( new FormComponent( "javax.swing.JSpinner" ) {
 						name: "spinnerInnerVesselRadiusBatch"
 						"model": new javax.swing.SpinnerNumberModel {
-							value: 1
+							minimum: 0.1
+							stepSize: 0.05
+							value: 1.0
 						}
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 5 10"

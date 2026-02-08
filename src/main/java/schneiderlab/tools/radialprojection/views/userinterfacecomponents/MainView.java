@@ -465,6 +465,11 @@ public class MainView extends JFrame {
 		return label1LeftArrow;
 	}
 
+	public JSpinner getSpinnerSmoothingBatch(){ return spinnerSmoothingBatch;}
+
+	public JSpinner getSpinnerNumberRandomBoxes(){return spinnerNumberRandomBoxesBatch;}
+
+
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
 		// Generated using JFormDesigner Educational license - Anh Minh Do
@@ -1311,7 +1316,7 @@ public class MainView extends JFrame {
 				panelBatch.add(labelSmoothingBatch, "cell 2 10,alignx right,growx 0");
 
 				//---- spinnerSmoothingBatch ----
-				spinnerSmoothingBatch.setModel(new SpinnerNumberModel(2, 0, null, 1));
+				spinnerSmoothingBatch.setModel(new SpinnerNumberModel(2.0, 0.0, null, 0.1));
 				panelBatch.add(spinnerSmoothingBatch, "cell 3 10");
 
 				//---- labelInnerVesselRadiusBatch ----
@@ -1319,7 +1324,7 @@ public class MainView extends JFrame {
 				panelBatch.add(labelInnerVesselRadiusBatch, "cell 4 10,alignx right,growx 0");
 
 				//---- spinnerInnerVesselRadiusBatch ----
-				spinnerInnerVesselRadiusBatch.setModel(new SpinnerNumberModel(1, null, null, 1));
+				spinnerInnerVesselRadiusBatch.setModel(new SpinnerNumberModel(1.0, 0.1, null, 0.05));
 				panelBatch.add(spinnerInnerVesselRadiusBatch, "cell 5 10");
 
 				//---- label21 ----
