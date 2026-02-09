@@ -38,15 +38,14 @@ public class CentroidSelectionWorker extends SwingWorker<Void, Void> {
     @Override
     protected Void doInBackground() throws Exception {
         IJ.log("start the centroid selection worker");
-        int totalTaskNumber = batchModeModel.getCentroidelectionList().size();
         while(!batchModeGlobalStateModel.getCentroidSelectionQueue().isEmpty())
             {
-                String serFile = batchModeGlobalStateModel.getFirstCentroidSelectionQueue();
-                IJ.log("serialized object path: " + serFile);
-                ImageDataSerializable imageDataSerializable = ImageDataSerializableUtils.imageDataDeserializeObject(Paths.get(serFile));
-                IJ.log("complete deserialization");
-                ImageData<UnsignedShortType, FloatType> imageData = ImageDataSerializableUtils.converSerializableToImageData(imageDataSerializable, context);
-                IJ.log("complete conversion to ImageData object");
+            String serFile = batchModeGlobalStateModel.getFirstCentroidSelectionQueue();
+            IJ.log("serialized object path: " + serFile);
+            ImageDataSerializable imageDataSerializable = ImageDataSerializableUtils.imageDataDeserializeObject(Paths.get(serFile));
+            IJ.log("complete deserialization");
+            ImageData<UnsignedShortType, FloatType> imageData = ImageDataSerializableUtils.converSerializableToImageData(imageDataSerializable, context);
+            IJ.log("complete conversion to ImageData object");
 //            imageData = imageDataRetrieved;
             RandomAccessibleInterval<FloatType> smoothedStack  = imageData.getHybridStackSmoothed();
             int slideForTuning = 0;
@@ -73,12 +72,15 @@ public class CentroidSelectionWorker extends SwingWorker<Void, Void> {
                 }
             });
             latch.await();
-            setProgress(totalTaskNumber-=1);
+
+            // serialize the imageData object to ser file, include the centroid coordinates
+            imageDataSerializable.setUserSelectedCentroidsList(imageData.getUserSelectedCentroidsList());
+            imageDataSerializable.serializeObject();
+            int totalTaskNumber = batchModeGlobalStateModel.getCentroidSelectionQueue().size();
+            setProgress(totalTaskNumber-1);
             batchModeGlobalStateModel.addLastWatershedRadialProjectionQueue(serFile);
             batchModeGlobalStateModel.removeFirstCentroidSelectionQueue();
-            // serialize the imageData object to ser file, include the centroid coordinates
-                imageDataSerializable.setUserSelectedCentroidsList(imageData.getUserSelectedCentroidsList());
-                imageDataSerializable.serializeObject();
+
         }
         return null;
     }
