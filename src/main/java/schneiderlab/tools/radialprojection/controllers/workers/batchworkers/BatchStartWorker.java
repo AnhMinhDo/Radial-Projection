@@ -1,34 +1,34 @@
 package schneiderlab.tools.radialprojection.controllers.workers.batchworkers;
 
 import ij.IJ;
-import ij.ImagePlus;
 import io.scif.services.DatasetIOService;
 import net.imagej.Dataset;
+import net.imagej.DatasetService;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 import net.imagej.axis.DefaultLinearAxis;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
-import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.FloatType;
 import org.scijava.Context;
 import org.scijava.log.LogService;
 import org.scijava.ui.UIService;
-import schneiderlab.tools.radialprojection.controllers.workers.ProjectionAndSmoothingWorker;
 import schneiderlab.tools.radialprojection.imageprocessor.core.ImageData;
 import schneiderlab.tools.radialprojection.imageprocessor.core.createsideview.CreateSideView;
+import schneiderlab.tools.radialprojection.imageprocessor.core.imagedataserialized.ImageDataSerializable;
+import schneiderlab.tools.radialprojection.imageprocessor.core.imagedataserialized.ImageDataSerializableFactory;
 import schneiderlab.tools.radialprojection.imageprocessor.core.segmentation.CreateHybridStack;
 import schneiderlab.tools.radialprojection.imageprocessor.core.utils.RadialProjectionUtils;
+import schneiderlab.tools.radialprojection.models.batch.BatchModeGlobalStateModel;
 import schneiderlab.tools.radialprojection.models.batch.BatchModeModel;
 
 import javax.swing.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, Void> {
     private final int targetXYpixelSize;
@@ -41,8 +41,9 @@ public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, V
     private final Context context;
     private ImgPlus<UnsignedShortType> sideViewImgPlus;
     private BatchModeModel batchModeModel;
+    private BatchModeGlobalStateModel batchModeGlobalStateModel;
 
-    public BatchStartWorker(BatchModeModel batchModeModel, Context context) {
+    public BatchStartWorker(BatchModeModel batchModeModel, BatchModeGlobalStateModel batchModeGlobalStateModel, Context context) {
         this.targetXYpixelSize = batchModeModel.getXyPixelSize();
         this.targetZpixelSize = batchModeModel.getzPixelSize();
         this.ligninToCelluloseWeight = batchModeModel.getCelluloseToLigninRatio();
@@ -52,6 +53,7 @@ public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, V
 //        this.filePath = filePath;
         this.context = context;
         this.batchModeModel = batchModeModel;
+        this.batchModeGlobalStateModel = batchModeGlobalStateModel;
     }
 
     public ImgPlus<UnsignedShortType> getSideViewImgPlus() {
@@ -59,7 +61,7 @@ public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, V
     }
 
     @Override
-    protected Void doInBackground() {
+    protected Void doInBackground() throws Exception {
         // Get DatasetService and UIService from context
 //        StatusService statusService = context.getService(StatusService.class);
         DatasetIOService ioService = context.getService(DatasetIOService.class);
@@ -75,6 +77,9 @@ public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, V
                 IJ.log("image is imported successfully");
                 ImgPlus<T> genericImgPlus = (ImgPlus<T>) img.getImgPlus();
                 IJ.log("Creating side view...");
+                // add the file to the batch global state model
+                batchModeGlobalStateModel.addLastStartQueue(filePath.toString());
+                IJ.log("add file path to the global state model");
                 CreateSideView createSideView = new CreateSideView(context,
                         genericImgPlus,
                         targetXYpixelSize,
@@ -86,14 +91,40 @@ public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, V
                 sideViewImgPlus.setAxis(new DefaultLinearAxis(Axes.Y, "micron", targetXYpixelSize * 0.001), 1);
                 sideViewImgPlus.setAxis(new DefaultLinearAxis(Axes.Z, "micron", targetZpixelSize * 0.001), 3);
                 sideViewImgPlus.setAxis(new DefaultLinearAxis(Axes.CHANNEL, "", 1.0), 2);
+                // create an ImageData Object correspond to the image
                 ImageData<UnsignedShortType, FloatType> imageData = new ImageData<>();
                 imageData.setXyPixelSize(targetXYpixelSize);
                 imageData.setzPixelSize(targetZpixelSize);
                 imageData.setImagePath(filePath);
                 Path outputDirForThisImage = this.createOutputDir(filePath);
                 imageData.setImageOutputPath(outputDirForThisImage);
+                // create paths for the hierarchy structure of the outputs and temp files of this image
+                // Image name
+                String filename = imageData.getImagePath().getFileName().toString();
+                imageData.setImageName(filename);
+                // side view result path
+                Path outputDir = imageData.getImageOutputPath();
+                String outputFileNameXylemWaterView = "Xylem_Water_View-"+filename;
+                Path outputXylemWaterViewPath = outputDir.resolve(outputFileNameXylemWaterView);
+                imageData.setSideViewPathWithoutEdgeCentroid(outputXylemWaterViewPath);
+                // temp dir path
+                Path tempPath = imageData.getImageOutputPath().resolve("temp");
+                imageData.setTempDirPath(tempPath);
+                // temp ser file path
+                String serFileName = "temp.ser";
+                Path serPath = imageData.getTempDirPath().resolve(serFileName);
+                imageData.setSerializedObjectPath(serPath);
+                IJ.log("Path of .ser file: " + serPath);
+                // temp side view result path
+                Path sideViewTempPathWithoutEdgeCentroid = tempPath.resolve(outputFileNameXylemWaterView);
+                imageData.setSideViewTempPathWithoutEdgeCentroid(sideViewTempPathWithoutEdgeCentroid);
+                // get the file name of the image
+                String fileNameWithExtension = imageData.getImagePath().getFileName().toString();
+                int extDotIndex = fileNameWithExtension.lastIndexOf(".");
+                String nameOnly = fileNameWithExtension.substring(0,extDotIndex);
+                imageData.setImageName(nameOnly);
+                IJ.log("get the name of the image: " + nameOnly);
                 imageData.setSideView(sideViewImgPlus);
-
                 // projection and smoothing
                 int windowSizeinSlideNumber = Math.round(windowSizeinMicroMeter/0.2f); //TODO: replace 0.2 f with a user-defined number
                 CreateHybridStack chs = new CreateHybridStack(context,
@@ -119,18 +150,63 @@ public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, V
                 imageData.setCellulose(cellulose);
                 imageData.setLignin(lignin);
                 imageData.setHybridStackSmoothedSlicesNumber(slicesNumber);
+                imageData.setInnerVesselRadius(radius);
+                IJ.log("Complete setting fields for imageData object");
+                // create the file paths for the side view temp files
+
+//                Path sideviewligninPath = tempPath.resolve("sideview_lignin.tif");
+//                Path sideviewcellulosePath = tempPath.resolve("sideview_cellulose.tif");
+//                Path sideviewhybridPath = tempPath.resolve("sideview_hybrid.tif");
+//                Path sideviewsmoothedHybridPath = tempPath.resolve("sideview_smoothedHybrid.tif");
+//                imageData.setSideViewLigninPath(sideviewligninPath);
+//                imageData.setSideViewCellulosePath(sideviewcellulosePath);
+//                imageData.setSideViewHybridPath(sideviewhybridPath);
+//                imageData.setSideViewHybridSmoothedPath(sideviewsmoothedHybridPath);
+                try {
+                    if(Files.notExists(imageData.getTempDirPath())){
+                        IJ.log("the temp directory does not exist, creating a new one...");
+                        Files.createDirectories(imageData.getTempDirPath());
+                        IJ.log("temp dir is created at: " + tempPath);
+                    } else {
+                        IJ.log("the temp directory exists");
+                    }
+                    // save the side view channels
+//                    saveRandomAccessInterval(imageData.getLignin(),imageData.getSideViewLigninPath(),context);
+//                    saveRandomAccessInterval(imageData.getCellulose(),imageData.getSideViewCellulosePath(),context);
+//                    saveRandomAccessInterval(imageData.getHybridStackNonSmoothed(),imageData.getSideViewHybridPath(),context);
+//                    saveRandomAccessInterval(imageData.getHybridStackSmoothed(),imageData.getSideViewHybridSmoothedPath(),context);
+                    // create the serializable object using the factory class
+                ImageDataSerializable imageDataSerializable = ImageDataSerializableFactory.convertImageDataToSerializable(imageData);
+
+                IJ.log("serializable file path: " + imageDataSerializable.getSerializedObjectPath());
+                imageDataSerializable.serializeObject();
+                } catch (IOException ex) {
+                    IJ.log("IO error in creating and saving temp files: " + imageData.getImageName());
+                }
                 batchModeModel.addCentroidSelectionList(imageData);
                 batchModeModel.setNumberOfUnprocessedFilePath(batchModeModel.getNumberOfUnprocessedFilePath()-1);
+                // worker to save the output in this step
+                SaveImageSideViewWithoutEdgeCentroid sisvwdc = new SaveImageSideViewWithoutEdgeCentroid(imageData, context);
+                IJ.log("Saving the side view result  ");
+                sisvwdc.execute();
+                SavingSideViewTemp savingSideViewTemp = new SavingSideViewTemp(imageData,context);
+                IJ.log("Saving side view to temp dir");
+                savingSideViewTemp.execute();
+                batchModeGlobalStateModel.addLastCentroidSelectionQueue(imageData.getSerializedObjectPath().toString());
             } catch (IOException e) {
-                System.err.println("fail to import image file");
-                logService.error("IO error; fail to import image file");
+                logService.error("Input Output error");
             }
         }
-        //TODO: start a new worker here to save the images in this step
-        SaveImageSideViewWithoutEdgeCentroid sisvwdc = new SaveImageSideViewWithoutEdgeCentroid(batchModeModel);
-        IJ.log("Saving the result in this step ");
-        sisvwdc.execute();
+
         return null;
+    }
+
+    public static void saveRandomAccessInterval(RandomAccessibleInterval<FloatType> rai, Path filepath, Context context) throws IOException {
+        DatasetService datasetService = context.getService(DatasetService.class);
+        DatasetIOService datasetIOService = context.getService(DatasetIOService.class);
+        Dataset dataset = datasetService.create(rai);
+        Files.deleteIfExists(filepath);
+        datasetIOService.save(dataset, filepath.toAbsolutePath().toString());
     }
 
     public Path createOutputDir(Path filePath){
