@@ -1,6 +1,5 @@
 package schneiderlab.tools.radialprojection.models.batch;
 
-import ij.IJ;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.FloatType;
 import schneiderlab.tools.radialprojection.imageprocessor.core.ImageData;
