@@ -9,7 +9,6 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.display.imagej.ImageJFunctions;
-import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
@@ -26,12 +25,12 @@ import schneiderlab.tools.radialprojection.controllers.uiaction.radialprojection
 import schneiderlab.tools.radialprojection.controllers.uiaction.vesselsegmentation.*;
 import schneiderlab.tools.radialprojection.controllers.workers.*;
 import schneiderlab.tools.radialprojection.controllers.workers.batchworkers.*;
-import schneiderlab.tools.radialprojection.imageprocessor.core.ImageData;
 import schneiderlab.tools.radialprojection.imageprocessor.core.Vessel;
 import schneiderlab.tools.radialprojection.imageprocessor.core.convertczitotif.RotateDirection;
 import schneiderlab.tools.radialprojection.imageprocessor.core.io.SaveVesselResultToCSV;
 import schneiderlab.tools.radialprojection.imageprocessor.core.io.SaveVesselResultToXLSX;
 import schneiderlab.tools.radialprojection.imageprocessor.core.segmentation.Reconstruction;
+import schneiderlab.tools.radialprojection.models.batch.BatchModeGlobalStateModel;
 import schneiderlab.tools.radialprojection.models.batch.BatchModeModel;
 import schneiderlab.tools.radialprojection.models.czitotifmodel.CziToTifModel;
 import schneiderlab.tools.radialprojection.models.radialprojection.AnalysisModel;
@@ -52,8 +51,6 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class MainController {
@@ -81,13 +78,17 @@ public class MainController {
         CziToTifModel cziToTifModel = new CziToTifModel();
         // create an instance of the Vessel segmentation model
         VesselsSegmentationModel vesselsSegmentationModel = new VesselsSegmentationModel();
-        // initial the model for radial projection step
+        // initialize the model for radial projection step
         RadialProjectionModel radialProjectionModel = new RadialProjectionModel();
-        // initial the model for Analysis step
+        // initialize the model for Analysis step
         AnalysisModel analysisModel = new AnalysisModel();
-        // initial the model for Batch mode
+        // initialize the model for Batch mode
         BatchModeModel batchModeModel = new BatchModeModel();
         mainView.getTableAnalysisInputImage().setModel(new DefaultTableModel(new String[]{"Image Path"}, 0));
+        // initialize the simple global model for batch mode
+        BatchModeGlobalStateModel batchModeGlobalStateModel = new BatchModeGlobalStateModel();
+        // fetch data from the Fiji log for this plugin, if there is available data, add to the global object
+//        batchModeGlobalStateModel.loadFromPref(); // dont need it now, will uncomment later
         // add the card changing to left menu buttons
         mainView.getButtonTabCzi2Tif().addActionListener(new ActionListener() {
             @Override
@@ -669,6 +670,7 @@ public class MainController {
 
         //------------Batch Mode-------------------------------------------
 
+
         // browse input folder
         mainView.getButtonSelectionDirPathBatch().addActionListener(new ActionListener() {
             @Override
@@ -708,6 +710,7 @@ public class MainController {
                 mainView.getLabelStartQueueCounter().setIcon(loadingGIFIcon);
                 BatchStartWorker batchStartWorker = new BatchStartWorker(
                         batchModeModel,
+                        batchModeGlobalStateModel,
                         context);
                 batchStartWorker.addPropertyChangeListener(new PropertyChangeListener() {
                     @Override
@@ -748,11 +751,10 @@ public class MainController {
         });
 
         // centroid Selection
-        batchModeModel.addPropertyChangeListener(new PropertyChangeListener() {
+        batchModeGlobalStateModel.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if("numberOfImageDataInCentroidSelectionStep".equals(evt.getPropertyName())){
-                    int total = batchModeModel.getTotalNumberOfFiles();
                     mainView.getLabelCentroidSelectionCounter().setText(evt.getNewValue().toString());
                     if((int)evt.getNewValue() > 0){
                         mainView.getButtonCentroidSelectionBatch().setEnabled(true);
@@ -775,7 +777,7 @@ public class MainController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 mainView.getLabelCentroidSelectionCounter().setIcon(loadingGIFIcon);
-                CentroidSelectionWorker centroidSelectionWorker = new CentroidSelectionWorker(batchModeModel, context);
+                CentroidSelectionWorker centroidSelectionWorker = new CentroidSelectionWorker(batchModeModel,batchModeGlobalStateModel, context);
                 centroidSelectionWorker.addPropertyChangeListener(new PropertyChangeListener() {
                     @Override
                     public void propertyChange(PropertyChangeEvent evt) {
@@ -795,7 +797,7 @@ public class MainController {
         });
 
         // watershed step
-        batchModeModel.addPropertyChangeListener(new PropertyChangeListener() {
+        batchModeGlobalStateModel.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if("numberOfImageDataInWatershedStep".equals(evt.getPropertyName())){
@@ -808,7 +810,7 @@ public class MainController {
             public void actionPerformed(ActionEvent e) {
                 mainView.getLabelWatershedCounter().setIcon(loadingGIFIcon);
                 int total = batchModeModel.getWatershedList().size();
-                BatchProcessWholeStackWorker bpwsw = new BatchProcessWholeStackWorker(batchModeModel);
+                BatchProcessWholeStackWorker bpwsw = new BatchProcessWholeStackWorker(batchModeModel, batchModeGlobalStateModel ,context);
                 bpwsw.addPropertyChangeListener(new PropertyChangeListener() {
                     @Override
                     public void propertyChange(PropertyChangeEvent evt) {
@@ -824,6 +826,7 @@ public class MainController {
                                                         evt.getNewValue() == SwingWorker.StateValue.DONE){
                             mainView.getLabelWatershedCounter().setIcon(null);
                             mainView.getButtonRadialProjectionBatch().setEnabled(true);
+                            mainView.getButtonRefineVesselBatch().setEnabled(true);
                         }
                     }
                 });
@@ -924,6 +927,7 @@ public class MainController {
             public void stateChanged(ChangeEvent e) {
                 int value = (int) mainView.getSpinnerXYBatch().getValue();
                 batchModeModel.setXyPixelSize(value);
+                IJ.log("xy pixel size update: " + batchModeModel.getXyPixelSize());
             }
         });
         // spinner z pixel size
@@ -932,6 +936,7 @@ public class MainController {
             public void stateChanged(ChangeEvent e) {
                 int value = (int) mainView.getSpinnerZbatch().getValue();
                 batchModeModel.setzPixelSize(value);
+                IJ.log("z pixel size update: " + batchModeModel.getzPixelSize());
             }
         });
 
@@ -944,6 +949,77 @@ public class MainController {
                 mainView.getLabelCellulosePercentageBatch().setText("Cellulose " + currentValue + "%");
                 batchModeModel.setCelluloseToLigninRatio(currentValue);
 //                vesselsSegmentationModel.setCelluloseToLigninRatio(currentValue);
+                IJ.log("slider lignin cellulose ratio update: " + batchModeModel.getCelluloseToLigninRatio());
+            }
+        });
+
+        // analysis window update
+        mainView.getSpinnerAnalysisWindowBatch().addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int currentValue = (int) mainView.getSpinnerAnalysisWindowBatch().getValue();
+                batchModeModel.setAnalysisWindow(currentValue);
+                IJ.log("analysis window update: " + batchModeModel.getAnalysisWindow());
+            }
+        });
+
+        // smoothing sigma value
+        mainView.getSpinnerSmoothingBatch().addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                double currentValue = (double) mainView.getSpinnerSmoothingBatch().getValue();
+                batchModeModel.setSmoothingSigma(currentValue);
+                IJ.log("smoothing sigma value update : " + batchModeModel.getSmoothingSigma());
+            }
+        });
+
+        // inner vessel radius
+        mainView.getSpinnerInnerVesselRadiusBatch().addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                double currenValue = (double) mainView.getSpinnerInnerVesselRadiusBatch().getValue();
+                batchModeModel.setInnerVesselRadius(currenValue);
+                IJ.log("inner vessel radius: " + batchModeModel.getInnerVesselRadius());
+            }
+        });
+
+        // number of random boxes
+        mainView.getSpinnerNumberRandomBoxes().addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int currentValue = (int) mainView.getSpinnerNumberRandomBoxes().getValue();
+                batchModeModel.setNumberOfRandomBoxes(currentValue);
+                IJ.log("random boxes number update: " + batchModeModel.getNumberOfRandomBoxes());
+            }
+        });
+
+        // random box width
+        mainView.getSpinnerRandomBoxWidthBatch().addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int currentValue = (int) mainView.getSpinnerRandomBoxWidthBatch().getValue();
+                batchModeModel.setRandomBoxWidth(currentValue);
+                IJ.log("random box width update: " + batchModeModel.getRandomBoxWidth());
+            }
+        });
+
+        // number of line scan
+        mainView.getSpinnerNumberLinescanBatch().addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int  currentValue = (int) mainView.getSpinnerNumberLinescanBatch().getValue();
+                batchModeModel.setNumberOfLineScan(currentValue);
+                IJ.log("line scan number update: " + batchModeModel.getNumberOfLineScan());
+            }
+        });
+
+        // Line scan length
+        mainView.getSpinnerLinescanLengthBatch().addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int currentValue = (int) mainView.getSpinnerLinescanLengthBatch().getValue();
+                batchModeModel.setLinescanLength(currentValue);
+                IJ.log("line scan length update: " + batchModeModel.getLinescanLength());
             }
         });
 
