@@ -3,7 +3,6 @@ package schneiderlab.tools.radialprojection.imageprocessor.core.imagedataseriali
 import ij.IJ;
 import io.scif.services.DatasetIOService;
 import net.imagej.Dataset;
-import net.imagej.DatasetService;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 import net.imagej.ops.OpService;
@@ -20,7 +19,7 @@ import java.io.ObjectInputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class ImageDataSerializableFactory {
+public class ImageDataSerializableUtils {
     public static ImageDataSerializable
     convertImageDataToSerializable(ImageData<UnsignedShortType, FloatType> imageData) {
         ImageDataSerializable imageDataSerializable = new ImageDataSerializable();
