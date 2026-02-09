@@ -2,8 +2,11 @@ package schneiderlab.tools.radialprojection.imageprocessor.core.imagedataseriali
 
 import ij.IJ;
 
+import java.awt.*;
 import java.io.*;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ImageDataSerializable implements Serializable {
 
@@ -25,10 +28,13 @@ public class ImageDataSerializable implements Serializable {
     private double innerVesselRadius;
     private int CelluloseToLigninRatio;
     // file path to side view image
-    private String sideViewLigninPath;
-    private String sideViewCellulosePath;
-    private String sideViewHybridPath;
-    private String sideViewHybridSmoothedPath;
+    private String sideViewTempPathWithoutEdgeCentroid;
+    // user select centroids
+    private List<Point> userSelectedCentroidsList = new ArrayList<>();
+//    private String sideViewLigninPath;
+//    private String sideViewCellulosePath;
+//    private String sideViewHybridPath;
+//    private String sideViewHybridSmoothedPath;
 
     public ImageDataSerializable() {
     }
@@ -126,35 +132,51 @@ public class ImageDataSerializable implements Serializable {
         CelluloseToLigninRatio = celluloseToLigninRatio;
     }
 
-    public String getSideViewLigninPath() {
-        return sideViewLigninPath;
+    public String getSideViewTempPathWithoutEdgeCentroid() {
+        return sideViewTempPathWithoutEdgeCentroid;
     }
 
-    public void setSideViewLigninPath(String sideViewLigninPath) {
-        this.sideViewLigninPath = sideViewLigninPath;
+    public void setSideViewTempPathWithoutEdgeCentroid(String sideViewTempPathWithoutEdgeCentroid) {
+        this.sideViewTempPathWithoutEdgeCentroid = sideViewTempPathWithoutEdgeCentroid;
     }
 
-    public String getSideViewCellulosePath() {
-        return sideViewCellulosePath;
+    public List<Point> getUserSelectedCentroidsList() {
+        return userSelectedCentroidsList;
     }
 
-    public void setSideViewCellulosePath(String sideViewCellulosePath) {
-        this.sideViewCellulosePath = sideViewCellulosePath;
+    public void setUserSelectedCentroidsList(List<Point> userSelectedCentroidsList) {
+        this.userSelectedCentroidsList = userSelectedCentroidsList;
     }
 
-    public String getSideViewHybridPath() {
-        return sideViewHybridPath;
-    }
-
-    public void setSideViewHybridPath(String sideViewHybridPath) {
-        this.sideViewHybridPath = sideViewHybridPath;
-    }
-
-    public String getSideViewHybridSmoothedPath() {
-        return sideViewHybridSmoothedPath;
-    }
-
-    public void setSideViewHybridSmoothedPath(String sideViewHybridSmoothedPath) {
-        this.sideViewHybridSmoothedPath = sideViewHybridSmoothedPath;
-    }
+    //    public String getSideViewLigninPath() {
+//        return sideViewLigninPath;
+//    }
+//
+//    public void setSideViewLigninPath(String sideViewLigninPath) {
+//        this.sideViewLigninPath = sideViewLigninPath;
+//    }
+//
+//    public String getSideViewCellulosePath() {
+//        return sideViewCellulosePath;
+//    }
+//
+//    public void setSideViewCellulosePath(String sideViewCellulosePath) {
+//        this.sideViewCellulosePath = sideViewCellulosePath;
+//    }
+//
+//    public String getSideViewHybridPath() {
+//        return sideViewHybridPath;
+//    }
+//
+//    public void setSideViewHybridPath(String sideViewHybridPath) {
+//        this.sideViewHybridPath = sideViewHybridPath;
+//    }
+//
+//    public String getSideViewHybridSmoothedPath() {
+//        return sideViewHybridSmoothedPath;
+//    }
+//
+//    public void setSideViewHybridSmoothedPath(String sideViewHybridSmoothedPath) {
+//        this.sideViewHybridSmoothedPath = sideViewHybridSmoothedPath;
+//    }
 }
