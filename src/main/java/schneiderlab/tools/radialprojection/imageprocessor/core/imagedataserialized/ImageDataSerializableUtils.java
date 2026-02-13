@@ -31,6 +31,8 @@ public class ImageDataSerializableUtils {
         imageDataSerializable.setImagePath(imageData.getImagePath().toAbsolutePath().toString());
         imageDataSerializable.setOutputDirPath(imageData.getImageOutputPath().toAbsolutePath().toString());
         imageDataSerializable.setTempDir(imageData.getTempDirPath().toAbsolutePath().toString());
+        imageDataSerializable.setHybridStackSmoothedWidth(imageData.getHybridStackSmoothedWidth());
+        imageDataSerializable.setHybridStackSmoothedHeight(imageData.getHybridStackSmoothedHeight());
         imageDataSerializable.setXyPixelSize(imageData.getXyPixelSize());
         imageDataSerializable.setzPixelSize(imageData.getzPixelSize());
         imageDataSerializable.setAnalysisWindow(imageData.getAnalysisWindow());
@@ -47,7 +49,7 @@ public class ImageDataSerializableUtils {
     }
 
     public static ImageData<UnsignedShortType, FloatType>
-    converSerializableToImageData(ImageDataSerializable imageDataSerializable, Context context) {
+    converSerializableToImageData(ImageDataSerializable imageDataSerializable, CurrentImageStage currentImageStage , Context context) {
         ImageData<UnsignedShortType, FloatType> imageData = new ImageData<>();
         imageData.setImagePath(Paths.get(imageDataSerializable.getImagePath()));
         imageData.setOutputDirPath(Paths.get(imageDataSerializable.getOutputDirPath()));
@@ -60,6 +62,8 @@ public class ImageDataSerializableUtils {
         imageData.setSmoothingSigma(imageDataSerializable.getSmoothingSigma());
         imageData.setSideViewTempPathWithoutEdgeCentroid(Paths.get(imageDataSerializable.getSideViewTempPathWithoutEdgeCentroid()));
         imageData.setUserSelectedCentroidsList(imageDataSerializable.getUserSelectedCentroidsList());
+        imageData.setHybridStackSmoothedHeight(imageDataSerializable.getHybridStackSmoothedHeight());
+        imageData.setHybridStackSmoothedWidth(imageDataSerializable.getHybridStackSmoothedWidth());
 //        imageData.setSideViewLigninPath(Paths.get(imageDataSerializable.getSideViewLigninPath()));
 //        imageData.setSideViewCellulosePath(Paths.get(imageDataSerializable.getSideViewCellulosePath()));
 //        imageData.setSideViewHybridPath(Paths.get(imageDataSerializable.getSideViewHybridPath()));
@@ -79,6 +83,14 @@ public class ImageDataSerializableUtils {
             ImgPlus<FloatType> imgPlus = (ImgPlus<FloatType>) sideViewTempStack.getImgPlus();
             int channelDim = imgPlus.dimensionIndex(Axes.CHANNEL);
             RandomAccessibleInterval<FloatType> hybridSmoothedRAI = ops.convert().float32(Views.hyperSlice(imgPlus,channelDim,3)); // the hybridSmoothed stack has the channel index=3
+            if(CurrentImageStage.WatershedAndRadialProjection.equals(currentImageStage)){
+                RandomAccessibleInterval<FloatType> hybridNonSmoothedRAI = ops.convert().float32(Views.hyperSlice(imgPlus,channelDim,2)); // the hybridNonSmoothed stack has the channel index=2
+                RandomAccessibleInterval<FloatType> celluloseRAI = ops.convert().float32(Views.hyperSlice(imgPlus,channelDim,1)); // the hybridNonSmoothed stack has the channel index=2
+                RandomAccessibleInterval<FloatType> ligninRAI = ops.convert().float32(Views.hyperSlice(imgPlus,channelDim,0)); // the hybridNonSmoothed stack has the channel index=2
+                imageData.setHybridStackNonSmoothed(hybridNonSmoothedRAI);
+                imageData.setLignin(ligninRAI);
+                imageData.setCellulose(celluloseRAI);
+            }
 
 //            RandomAccessibleInterval<FloatType> ligninRAI = ops.convert().float32((ImgPlus<FloatType>)lignin.getImgPlus());
 //            RandomAccessibleInterval<FloatType> celluloseRAI = ops.convert().float32((ImgPlus<FloatType>)cellulose.getImgPlus());
