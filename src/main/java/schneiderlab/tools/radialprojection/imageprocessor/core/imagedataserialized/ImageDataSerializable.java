@@ -16,9 +16,9 @@ public class ImageDataSerializable implements Serializable {
 //    private String imageOutputPath; // Path to output dir of Segmentation and Radial Projection
     private String outputDirPath; // Path to the Directory of output file
 //    private int numberOfChannels;
-//    private int originalWidth;
-//    private int originalHeight;
-//    private int originalNumberOfSlice;
+    private int hybridStackSmoothedWidth;
+    private int hybridStackSmoothedHeight;
+    private int hybridStackSmoothedNumberOfSlice;
     // parameters
     private int xyPixelSize;
     private int zPixelSize;
@@ -146,6 +146,30 @@ public class ImageDataSerializable implements Serializable {
 
     public void setUserSelectedCentroidsList(List<Point> userSelectedCentroidsList) {
         this.userSelectedCentroidsList = userSelectedCentroidsList;
+    }
+
+    public int getHybridStackSmoothedWidth() {
+        return hybridStackSmoothedWidth;
+    }
+
+    public void setHybridStackSmoothedWidth(int hybridStackSmoothedWidth) {
+        this.hybridStackSmoothedWidth = hybridStackSmoothedWidth;
+    }
+
+    public int getHybridStackSmoothedHeight() {
+        return hybridStackSmoothedHeight;
+    }
+
+    public void setHybridStackSmoothedHeight(int hybridStackSmoothedHeight) {
+        this.hybridStackSmoothedHeight = hybridStackSmoothedHeight;
+    }
+
+    public int getHybridStackSmoothedNumberOfSlice() {
+        return hybridStackSmoothedNumberOfSlice;
+    }
+
+    public void setHybridStackSmoothedNumberOfSlice(int hybridStackSmoothedNumberOfSlice) {
+        this.hybridStackSmoothedNumberOfSlice = hybridStackSmoothedNumberOfSlice;
     }
 
     //    public String getSideViewLigninPath() {
