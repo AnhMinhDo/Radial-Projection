@@ -18,7 +18,7 @@ import org.scijava.ui.UIService;
 import schneiderlab.tools.radialprojection.imageprocessor.core.ImageData;
 import schneiderlab.tools.radialprojection.imageprocessor.core.createsideview.CreateSideView;
 import schneiderlab.tools.radialprojection.imageprocessor.core.imagedataserialized.ImageDataSerializable;
-import schneiderlab.tools.radialprojection.imageprocessor.core.imagedataserialized.ImageDataSerializableFactory;
+import schneiderlab.tools.radialprojection.imageprocessor.core.imagedataserialized.ImageDataSerializableUtils;
 import schneiderlab.tools.radialprojection.imageprocessor.core.segmentation.CreateHybridStack;
 import schneiderlab.tools.radialprojection.imageprocessor.core.utils.RadialProjectionUtils;
 import schneiderlab.tools.radialprojection.models.batch.BatchModeGlobalStateModel;
@@ -28,7 +28,6 @@ import javax.swing.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, Void> {
     private final int targetXYpixelSize;
@@ -154,14 +153,6 @@ public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, V
                 IJ.log("Complete setting fields for imageData object");
                 // create the file paths for the side view temp files
 
-//                Path sideviewligninPath = tempPath.resolve("sideview_lignin.tif");
-//                Path sideviewcellulosePath = tempPath.resolve("sideview_cellulose.tif");
-//                Path sideviewhybridPath = tempPath.resolve("sideview_hybrid.tif");
-//                Path sideviewsmoothedHybridPath = tempPath.resolve("sideview_smoothedHybrid.tif");
-//                imageData.setSideViewLigninPath(sideviewligninPath);
-//                imageData.setSideViewCellulosePath(sideviewcellulosePath);
-//                imageData.setSideViewHybridPath(sideviewhybridPath);
-//                imageData.setSideViewHybridSmoothedPath(sideviewsmoothedHybridPath);
                 try {
                     if(Files.notExists(imageData.getTempDirPath())){
                         IJ.log("the temp directory does not exist, creating a new one...");
@@ -170,13 +161,8 @@ public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, V
                     } else {
                         IJ.log("the temp directory exists");
                     }
-                    // save the side view channels
-//                    saveRandomAccessInterval(imageData.getLignin(),imageData.getSideViewLigninPath(),context);
-//                    saveRandomAccessInterval(imageData.getCellulose(),imageData.getSideViewCellulosePath(),context);
-//                    saveRandomAccessInterval(imageData.getHybridStackNonSmoothed(),imageData.getSideViewHybridPath(),context);
-//                    saveRandomAccessInterval(imageData.getHybridStackSmoothed(),imageData.getSideViewHybridSmoothedPath(),context);
                     // create the serializable object using the factory class
-                ImageDataSerializable imageDataSerializable = ImageDataSerializableFactory.convertImageDataToSerializable(imageData);
+                ImageDataSerializable imageDataSerializable = ImageDataSerializableUtils.convertImageDataToSerializable(imageData);
 
                 IJ.log("serializable file path: " + imageDataSerializable.getSerializedObjectPath());
                 imageDataSerializable.serializeObject();
