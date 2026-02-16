@@ -12,6 +12,7 @@ import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
 import org.scijava.Context;
 import schneiderlab.tools.radialprojection.imageprocessor.core.ImageData;
+import schneiderlab.tools.radialprojection.imageprocessor.core.imagedataserialized.CurrentImageStage;
 import schneiderlab.tools.radialprojection.imageprocessor.core.imagedataserialized.ImageDataSerializable;
 import schneiderlab.tools.radialprojection.imageprocessor.core.imagedataserialized.ImageDataSerializableUtils;
 import schneiderlab.tools.radialprojection.models.batch.BatchModeGlobalStateModel;
@@ -44,7 +45,7 @@ public class CentroidSelectionWorker extends SwingWorker<Void, Void> {
             IJ.log("serialized object path: " + serFile);
             ImageDataSerializable imageDataSerializable = ImageDataSerializableUtils.imageDataDeserializeObject(Paths.get(serFile));
             IJ.log("complete deserialization");
-            ImageData<UnsignedShortType, FloatType> imageData = ImageDataSerializableUtils.converSerializableToImageData(imageDataSerializable, context);
+            ImageData<UnsignedShortType, FloatType> imageData = ImageDataSerializableUtils.convertSerializableToImageData(imageDataSerializable, CurrentImageStage.CentroidSelection, context);
             IJ.log("complete conversion to ImageData object");
 //            imageData = imageDataRetrieved;
             RandomAccessibleInterval<FloatType> smoothedStack  = imageData.getHybridStackSmoothed();
