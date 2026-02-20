@@ -11,11 +11,17 @@ import java.util.List;
 public class Vessel {
     private String fileName;
     private Path directoryPath;
+    private Path serializableObjectPath;
+    private Path radialProjectionsTempPath;
+    private Path radialProjectionPath;
+    private Path unrollingTempPath;
+    private Path unrollingPath;
+    private int numberOfSliceInStack;
 //    private int userSelectedLowerboundSlice;
 //    private int userSelectedUpperboundSlice;
-    private final List<VesselSliceData> vesselSliceDataArrayList;
-    private final List<Point> centroidArrayList ;
-    private final List<Double> perimeterSizeInPixelList ;
+    private List<VesselSliceData> vesselSliceDataArrayList;
+    private List<Point> centroidArrayList ;
+    private List<Double> perimeterSizeInPixelList ;
     private  List<Double> averageDiameterList;
     private  List<Double> circularityList;
     // radial Projection
@@ -55,6 +61,7 @@ public class Vessel {
     private ImagePlus bandHybridMaskImagePlus;
     // anisotropy
     private int noOfRandomBox;
+    private int randomBoxWidth;
     private Double meanAnisotropy;
     private Double sdAnisotropy;
     private Double meanBandOrientation;
@@ -62,6 +69,7 @@ public class Vessel {
     private Double meanSpacing;
 
     public Vessel(int numberOfSliceInStack) {
+        this.numberOfSliceInStack = numberOfSliceInStack;
         this.vesselSliceDataArrayList= new ArrayList<>(numberOfSliceInStack);
         this.centroidArrayList = new ArrayList<>(numberOfSliceInStack);
         this.perimeterSizeInPixelList = new ArrayList<>(numberOfSliceInStack);
@@ -71,6 +79,9 @@ public class Vessel {
 
     public void addVesselSliceData(Point clickPoint, Point centroid, int trueSliceIndex, int trueLabel){
         vesselSliceDataArrayList.add(new VesselSliceData(centroid,clickPoint, trueSliceIndex,trueLabel));
+    }
+    public List<Vessel.VesselSliceData> getVesselSliceDataArrayList(){
+        return this.vesselSliceDataArrayList;
     }
 
     public String getFileName(){
@@ -83,6 +94,50 @@ public class Vessel {
 
     public Path getDirectoryPath(){
         return directoryPath;
+    }
+
+    public Path getSerializableObjectPath() {
+        return serializableObjectPath;
+    }
+
+    public void setSerializableObjectPath(Path serializableObjectPath) {
+        this.serializableObjectPath = serializableObjectPath;
+    }
+
+    public int getNumberOfSliceInStack() {
+        return this.getCentroidArrayList().size();
+    }
+
+    public Path getRadialProjectionsTempPath() {
+        return radialProjectionsTempPath;
+    }
+
+    public void setRadialProjectionsTempPath(Path radialProjectionsTempPath) {
+        this.radialProjectionsTempPath = radialProjectionsTempPath;
+    }
+
+    public Path getRadialProjectionPath() {
+        return radialProjectionPath;
+    }
+
+    public void setRadialProjectionPath(Path radialProjectionPath) {
+        this.radialProjectionPath = radialProjectionPath;
+    }
+
+    public Path getUnrollingTempPath() {
+        return unrollingTempPath;
+    }
+
+    public void setUnrollingTempPath(Path unrollingTempPath) {
+        this.unrollingTempPath = unrollingTempPath;
+    }
+
+    public Path getUnrollingPath() {
+        return unrollingPath;
+    }
+
+    public void setUnrollingPath(Path unrollingPath) {
+        this.unrollingPath = unrollingPath;
     }
 
     public void setDirectoryPath(Path directoryPath) {
@@ -119,6 +174,10 @@ public class Vessel {
         }
     }
 
+    public void setCentroidArrayList(List<Point> centroidArrayList) {
+        this.centroidArrayList = centroidArrayList;
+    }
+
     public void resetCroppedRange(){
         sliceCroppedRange.setStart(0);
         sliceCroppedRange.setEnd(centroidArrayList.size()-1);
@@ -134,17 +193,33 @@ public class Vessel {
         }
     }
 
+
+
     public List<Double> getPerimeterSizeInPixelList() {
         return perimeterSizeInPixelList;
+    }
+
+    public void setPerimeterSizeInPixelList(List<Double> perimeterSizeInPixelList){
+        this.perimeterSizeInPixelList = perimeterSizeInPixelList;
     }
 
     public List<Double> getAverageDiameterList() {
         return averageDiameterList;
     }
 
+    public void setAverageDiameterList(List<Double> averageDiameterList) {
+        this.averageDiameterList = averageDiameterList;
+    }
+
     public List<Double> getCircularityList() {
         return circularityList;
     }
+
+    public void setCircularityList(List<Double> circularityList) {
+        this.circularityList = circularityList;
+    }
+
+
 
     public void generateCentroidArrayList(){
         for (VesselSliceData vesselSliceData:vesselSliceDataArrayList){
@@ -186,29 +261,9 @@ public class Vessel {
         this.sliceCroppedRange= new SliceCroppedRange(start,end);
     }
 
-//    public ImagePlus getCroppedRadialProjectionHybrid() {
-//        return croppedRadialProjectionHybrid!=null?croppedRadialProjectionHybrid:radialProjectionHybrid;
-//    }
-//
-//    public void setCroppedRadialProjectionHybrid(ImagePlus croppedRadialProjectionHybrid) {
-//        this.croppedRadialProjectionHybrid = croppedRadialProjectionHybrid;
-//    }
-//
-//    public ImagePlus getCroppedRadialProjectionCellulose() {
-//        return croppedRadialProjectionCellulose!=null?croppedRadialProjectionCellulose:radialProjectionCellulose;
-//    }
-//
-//    public void setCroppedRadialProjectionCellulose(ImagePlus croppedRadialProjectionCellulose) {
-//        this.croppedRadialProjectionCellulose = croppedRadialProjectionCellulose;
-//    }
-//
-//    public ImagePlus getCroppedRadialProjectionLignin() {
-//        return croppedRadialProjectionLignin!=null?croppedRadialProjectionLignin:radialProjectionLignin;
-//    }
-//
-//    public void setCroppedRadialProjectionLignin(ImagePlus croppedRadialProjectionLignin) {
-//        this.croppedRadialProjectionLignin = croppedRadialProjectionLignin;
-//    }
+    public SliceCroppedRange getSliceCroppedRange(){
+        return this.sliceCroppedRange;
+    }
 
     public ImagePlus getUnrolledVesselHybrid() {
         return croppedImage(unrolledVesselHybrid,sliceCroppedRange.getStart(),sliceCroppedRange.getEnd());
@@ -242,38 +297,6 @@ public class Vessel {
         this.contour = contour;
     }
 
-//    public ImagePlus getCroppedUnrolledVesselHybrid() {
-//        return croppedUnrolledVesselHybrid!=null?croppedUnrolledVesselHybrid:unrolledVesselHybrid;
-//    }
-//
-//    public void setCroppedUnrolledVesselHybrid(ImagePlus croppedUnrolledVesselHybrid) {
-//        this.croppedUnrolledVesselHybrid = croppedUnrolledVesselHybrid;
-//    }
-//
-//    public ImagePlus getCroppedUnrolledVesselCellulose() {
-//        return croppedUnrolledVesselCellulose!=null?croppedUnrolledVesselCellulose:unrolledVesselCellulose;
-//    }
-//
-//    public void setCroppedUnrolledVesselCellulose(ImagePlus croppedUnrolledVesselCellulose) {
-//        this.croppedUnrolledVesselCellulose = croppedUnrolledVesselCellulose;
-//    }
-//
-//    public ImagePlus getCroppedUnrolledVesselLignin() {
-//        return croppedUnrolledVesselLignin!=null?croppedUnrolledVesselLignin:unrolledVesselLignin;
-//    }
-//
-//    public void setCroppedUnrolledVesselLignin(ImagePlus croppedUnrolledVesselLignin) {
-//        this.croppedUnrolledVesselLignin = croppedUnrolledVesselLignin;
-//    }
-//
-//    public ImagePlus getCroppedContour() {
-//        return croppedContour!=null?croppedContour:contour;
-//    }
-//
-//    public void setCroppedContour(ImagePlus croppedContour) {
-//        this.croppedContour = croppedContour;
-//    }
-
     public Double getMeanDiameter(){
         if(meanDiameter != null){
             return meanDiameter;
@@ -281,12 +304,21 @@ public class Vessel {
             return this.meanDiameter();
         }
     }
+
+    public void setMeanDiameter(Double meanDiameter) {
+        this.meanDiameter = meanDiameter;
+    }
+
     public Double getSdDiameter(){
         if(sdDiameter != null){
             return sdDiameter;
         } else {
             return this.sdDiameter();
         }
+    }
+
+    public void setSdDiameter(Double sdDiameter) {
+        this.sdDiameter = sdDiameter;
     }
 
     public Double getMeanCircularity(){
@@ -297,12 +329,20 @@ public class Vessel {
         }
     }
 
+    public void setMeanCircularity(Double meanCircularity) {
+        this.meanCircularity = meanCircularity;
+    }
+
     public Double getSdCircularity(){
         if(sdCircularity != null){
             return sdCircularity;
         } else {
             return this.sdCircularity();
         }
+    }
+
+    public void setSdCircularity(Double sdCircularity) {
+        this.sdCircularity = sdCircularity;
     }
 
     private Double meanDiameter(){
@@ -411,9 +451,6 @@ public class Vessel {
         this.meanGapWidth = meanGapWidth;
     }
 
-    public int getNoOfRandomBox() {
-        return noOfRandomBox;
-    }
 
     public ImagePlus getBandHybridImagePlus() {
         return bandHybridImagePlus;
@@ -435,6 +472,18 @@ public class Vessel {
 
     public void setNoOfRandomBox(int noOfRandomBox) {
         this.noOfRandomBox = noOfRandomBox;
+    }
+
+    public int getNoOfRandomBox() {
+        return noOfRandomBox;
+    }
+
+    public void setRandomBoxWidth(int randomBoxWidth) {
+        this.randomBoxWidth = randomBoxWidth;
+    }
+
+    public int getRandomBoxWidth() {
+        return randomBoxWidth;
     }
 
     public Double getMeanAnisotropy() {
@@ -482,15 +531,7 @@ public class Vessel {
     }
 
 
-    //    public ImagePlus getUnrolledVessel() {
-//        return unrolledVessel;
-//    }
-//
-//    public void setUnrolledVessel(ImagePlus unrolledVessel) {
-//        this.unrolledVessel = unrolledVessel;
-//    }
-
-    private class VesselSliceData{
+    public static class VesselSliceData{
         private final Point centroid;
         private final Point clickPoint;
         private final int trueSliceIndex;
@@ -516,7 +557,7 @@ public class Vessel {
         }
     }
 
-    private class SliceCroppedRange {
+    public static class SliceCroppedRange {
         private int start;
         private int end;
 
