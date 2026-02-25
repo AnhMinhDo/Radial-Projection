@@ -50,7 +50,8 @@ public class VesselSerializableUtils {
         vesselSerializable.setMeanGapWidth(vessel.getMeanGapWidth());
         vesselSerializable.setNoOfRandomLineScan(vessel.getNoOfRandomLineScan());
         vesselSerializable.setLengthOfLineScan(vessel.getLengthOfLineScan());
-
+        vesselSerializable.setNoOfRandomBox(vessel.getNoOfRandomBox());
+        vesselSerializable.setRandomBoxWidth(vessel.getRandomBoxWidth());
         vesselSerializable.setMeanAnisotropy(vessel.getMeanAnisotropy());
         vesselSerializable.setSdAnisotropy(vessel.getSdAnisotropy());
         vesselSerializable.setMeanBandOrientation(vessel.getMeanBandOrientation());
@@ -76,29 +77,28 @@ public class VesselSerializableUtils {
         vessel.setPerimeterSizeInPixelList(vesselSerializable.getPerimeterSizeInPixelList());
         vessel.setAverageDiameterList(vesselSerializable.getAverageDiameterList());
         vessel.setCircularityList(vesselSerializable.getCircularityList());
-
         vessel.setRadialProjectionPath(Paths.get(vesselSerializable.getPathMultiChannelsRadialProjection()));
-
         vessel.setSliceCroppedRange(vesselSerializable.getSliceCroppedRange().getStart(),vesselSerializable.getSliceCroppedRange().getEnd());
+
         vessel.setUnrollingPath(Paths.get(vesselSerializable.getPathMultiChannelsUnrolling()));
-
-        vessel.setMeanDiameter(vessel.getMeanDiameter());
-        vessel.setSdDiameter(vessel.getSdDiameter());
-        vessel.setMeanCircularity(vessel.getMeanCircularity());
-        vessel.setSdCircularity(vessel.getSdCircularity());
-        vessel.setNoOfBands(vessel.getNoOfBands());
-        vessel.setNoOfGaps(vessel.getNoOfGaps());
-        vessel.setMeanBandWidth(vessel.getMeanBandWidth());
-        vessel.setSdBandWidth(vessel.getSdBandWidth());
-        vessel.setSdGapWidth(vessel.getSdGapWidth());
-        vessel.setMeanGapWidth(vessel.getMeanGapWidth());
-        vessel.setNoOfRandomLineScan(vessel.getNoOfRandomLineScan());
-        vesselSerializable.setLengthOfLineScan(vessel.getLengthOfLineScan());
-
-        vessel.setMeanAnisotropy(vessel.getMeanAnisotropy());
-        vessel.setSdAnisotropy(vessel.getSdAnisotropy());
-        vessel.setMeanBandOrientation(vessel.getMeanBandOrientation());
-        vessel.setSdBandOrientation(vessel.getSdBandOrientation());
+        vessel.setMeanDiameter(vesselSerializable.getMeanDiameter());
+        vessel.setSdDiameter(vesselSerializable.getSdDiameter());
+        vessel.setMeanCircularity(vesselSerializable.getMeanCircularity());
+        vessel.setSdCircularity(vesselSerializable.getSdCircularity());
+//        vessel.setNoOfBands(vesselSerializable.getNoOfBands());
+//        vessel.setNoOfGaps(vesselSerializable.getNoOfGaps());
+//        vessel.setMeanBandWidth(vesselSerializable.getMeanBandWidth());
+//        vessel.setSdBandWidth(vesselSerializable.getSdBandWidth());
+//        vessel.setSdGapWidth(vesselSerializable.getSdGapWidth());
+//        vessel.setMeanGapWidth(vesselSerializable.getMeanGapWidth());
+        vessel.setNoOfRandomLineScan(vesselSerializable.getNoOfRandomLineScan());
+        vessel.setLengthOfLineScan(vesselSerializable.getLengthOfLineScan());
+        vessel.setNoOfRandomBox(vesselSerializable.getNoOfRandomBox());
+        vessel.setRandomBoxWidth(vesselSerializable.getRandomBoxWidth());
+//        vessel.setMeanAnisotropy(vesselSerializable.getMeanAnisotropy());
+//        vessel.setSdAnisotropy(vesselSerializable.getSdAnisotropy());
+//        vessel.setMeanBandOrientation(vesselSerializable.getMeanBandOrientation());
+//        vessel.setSdBandOrientation(vesselSerializable.getSdBandOrientation());
         return vessel;
     }
 
