@@ -36,6 +36,10 @@ public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, V
     private final int windowSizeinMicroMeter;
     private final double  sigmaValueFilter;
     private final double radius;
+    private final  int numberOfLineScan;
+    private final  int lineScanLengthInMicroMeter;
+    private final  int numberOfRandomBoxes;
+    private final  int randomBoxWidth;
 
     private final Context context;
     private ImgPlus<UnsignedShortType> sideViewImgPlus;
@@ -53,6 +57,10 @@ public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, V
         this.context = context;
         this.batchModeModel = batchModeModel;
         this.batchModeGlobalStateModel = batchModeGlobalStateModel;
+        this.numberOfLineScan = batchModeModel.getNumberOfLineScan();
+        this.lineScanLengthInMicroMeter = batchModeModel.getLinescanLength();
+        this.numberOfRandomBoxes = batchModeModel.getNumberOfRandomBoxes();
+        this.randomBoxWidth = batchModeModel.getRandomBoxWidth();
     }
 
     public ImgPlus<UnsignedShortType> getSideViewImgPlus() {
@@ -94,6 +102,10 @@ public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, V
                 ImageData<UnsignedShortType, FloatType> imageData = new ImageData<>();
                 imageData.setXyPixelSize(targetXYpixelSize);
                 imageData.setzPixelSize(targetZpixelSize);
+                imageData.setNoOfRandomLineScan(numberOfLineScan);
+                imageData.setLengthOfLineScan(lineScanLengthInMicroMeter);
+                imageData.setRandomBoxWidth(randomBoxWidth);
+                imageData.setNoOfRandomBox(numberOfRandomBoxes);
                 imageData.setImagePath(filePath);
                 Path outputDirForThisImage = this.createOutputDir(filePath);
                 imageData.setImageOutputPath(outputDirForThisImage);
