@@ -48,6 +48,7 @@ public class VesselSerializable implements Serializable {
     private String pathBandHybrid;
     // anisotropy
     private int noOfRandomBox;
+    private int randomBoxWidth;
     private Double meanAnisotropy;
     private Double sdAnisotropy;
     private Double meanBandOrientation;
@@ -55,11 +56,13 @@ public class VesselSerializable implements Serializable {
 
     public VesselSerializable(int numberOfSliceInStack) {
         this.numberOfSliceInStack = numberOfSliceInStack;
-        vesselSliceDataArrayList = new ArrayList<>(numberOfSliceInStack);
-        centroidArrayList = new ArrayList<>(numberOfSliceInStack) ;
-        perimeterSizeInPixelList = new ArrayList<>(numberOfSliceInStack) ;
-        averageDiameterList = new ArrayList<>(numberOfSliceInStack) ;
-        circularityList = new ArrayList<>(numberOfSliceInStack) ;
+        this.vesselSliceDataArrayList = new ArrayList<>(numberOfSliceInStack);
+        this.centroidArrayList = new ArrayList<>(numberOfSliceInStack) ;
+        this.perimeterSizeInPixelList = new ArrayList<>(numberOfSliceInStack) ;
+        this.averageDiameterList = new ArrayList<>(numberOfSliceInStack) ;
+        this.circularityList = new ArrayList<>(numberOfSliceInStack) ;
+        this.sliceCroppedRange = new SliceCroppedRange(0,numberOfSliceInStack-1);
+
     }
 
     public void serializeObject(){
@@ -284,6 +287,14 @@ public class VesselSerializable implements Serializable {
         this.noOfRandomBox = noOfRandomBox;
     }
 
+    public int getRandomBoxWidth() {
+        return randomBoxWidth;
+    }
+
+    public void setRandomBoxWidth(int randomBoxWidth) {
+        this.randomBoxWidth = randomBoxWidth;
+    }
+
     public Double getMeanAnisotropy() {
         return meanAnisotropy;
     }
@@ -314,6 +325,14 @@ public class VesselSerializable implements Serializable {
 
     public void setSdBandOrientation(Double sdBandOrientation) {
         this.sdBandOrientation = sdBandOrientation;
+    }
+
+    public void setSliceCropRangeStart(int start){
+        this.sliceCroppedRange.setStart(start);
+    }
+
+    public void setSliceCropRangeEnd(int end){
+        this.sliceCroppedRange.setEnd(end);
     }
 
     public static class VesselSliceData implements Serializable {
