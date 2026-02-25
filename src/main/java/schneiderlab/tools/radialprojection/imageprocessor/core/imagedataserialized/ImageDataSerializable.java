@@ -29,12 +29,17 @@ public class ImageDataSerializable implements Serializable {
     private int CelluloseToLigninRatio;
     // file path to side view image
     private String sideViewTempPathWithoutEdgeCentroid;
+    // file path to side view image with EdgeCentroid
+    private String sideViewTempPathEdgeCentroid;
     // user select centroids
-    private List<Point> userSelectedCentroidsList = new ArrayList<>();
-//    private String sideViewLigninPath;
-//    private String sideViewCellulosePath;
-//    private String sideViewHybridPath;
-//    private String sideViewHybridSmoothedPath;
+    private List<Point> userSelectedCentroidsList = new ArrayList<Point>();
+    // List of add vesselSerFilePath
+    private List<String> vesselSerFilePathList = new ArrayList<String>();
+    // analysis input parameters
+    private int noOfRandomLineScan;
+    private double lengthOfLineScan;
+    private int noOfRandomBox;
+    private int RandomBoxWidth;
 
     public ImageDataSerializable() {
     }
@@ -140,6 +145,14 @@ public class ImageDataSerializable implements Serializable {
         this.sideViewTempPathWithoutEdgeCentroid = sideViewTempPathWithoutEdgeCentroid;
     }
 
+    public String getSideViewTempPathEdgeCentroid() {
+        return sideViewTempPathEdgeCentroid;
+    }
+
+    public void setSideViewTempPathEdgeCentroid(String sideViewTempPathEdgeCentroid) {
+        this.sideViewTempPathEdgeCentroid = sideViewTempPathEdgeCentroid;
+    }
+
     public List<Point> getUserSelectedCentroidsList() {
         return userSelectedCentroidsList;
     }
@@ -172,35 +185,47 @@ public class ImageDataSerializable implements Serializable {
         this.hybridStackSmoothedNumberOfSlice = hybridStackSmoothedNumberOfSlice;
     }
 
-    //    public String getSideViewLigninPath() {
-//        return sideViewLigninPath;
-//    }
-//
-//    public void setSideViewLigninPath(String sideViewLigninPath) {
-//        this.sideViewLigninPath = sideViewLigninPath;
-//    }
-//
-//    public String getSideViewCellulosePath() {
-//        return sideViewCellulosePath;
-//    }
-//
-//    public void setSideViewCellulosePath(String sideViewCellulosePath) {
-//        this.sideViewCellulosePath = sideViewCellulosePath;
-//    }
-//
-//    public String getSideViewHybridPath() {
-//        return sideViewHybridPath;
-//    }
-//
-//    public void setSideViewHybridPath(String sideViewHybridPath) {
-//        this.sideViewHybridPath = sideViewHybridPath;
-//    }
-//
-//    public String getSideViewHybridSmoothedPath() {
-//        return sideViewHybridSmoothedPath;
-//    }
-//
-//    public void setSideViewHybridSmoothedPath(String sideViewHybridSmoothedPath) {
-//        this.sideViewHybridSmoothedPath = sideViewHybridSmoothedPath;
-//    }
+    public List<String> getVesselSerFilePathList() {
+        return vesselSerFilePathList;
+    }
+
+    public void setVesselSerFilePath(List<String> vesselSerFilePath) {
+        this.vesselSerFilePathList = vesselSerFilePath;
+    }
+
+    public void addPathToVesselSerFilePathList(String vesselSerFilePath){
+        vesselSerFilePathList.add(vesselSerFilePath);
+    }
+
+    public int getNoOfRandomLineScan() {
+        return noOfRandomLineScan;
+    }
+
+    public void setNoOfRandomLineScan(int noOfRandomLineScan) {
+        this.noOfRandomLineScan = noOfRandomLineScan;
+    }
+
+    public double getLengthOfLineScan() {
+        return lengthOfLineScan;
+    }
+
+    public void setLengthOfLineScan(double lengthOfLineScan) {
+        this.lengthOfLineScan = lengthOfLineScan;
+    }
+
+    public int getNoOfRandomBox() {
+        return noOfRandomBox;
+    }
+
+    public void setNoOfRandomBox(int noOfRandomBox) {
+        this.noOfRandomBox = noOfRandomBox;
+    }
+
+    public int getRandomBoxWidth() {
+        return RandomBoxWidth;
+    }
+
+    public void setRandomBoxWidth(int randomBoxWidth) {
+        RandomBoxWidth = randomBoxWidth;
+    }
 }
