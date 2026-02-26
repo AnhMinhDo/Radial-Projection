@@ -70,6 +70,12 @@ public class ImageData<T extends NumericType<T>,
     private ImagePlus impInByte;
     private HashMap<Integer, List<Point>> centroidHashMap;
     private List<Vessel> vesselList = new ArrayList<>() ; // Vessel objects
+    private List<Path> vesselSerFilePathList = new ArrayList<>();
+    // analysis input parameters
+    private int noOfRandomLineScan;
+    private double lengthOfLineScan;
+    private int noOfRandomBox;
+    private int RandomBoxWidth;
 
     public String getImageName() { return imageName; }
 
@@ -411,5 +417,53 @@ public class ImageData<T extends NumericType<T>,
 
     public void setVesselList(List<Vessel> vesselList) {
         this.vesselList = vesselList;
+    }
+
+    public void addToVesselList(Vessel vessel){
+        this.vesselList.add(vessel);
+    }
+
+    public List<Path> getVesselSerFilePathList() {
+        return vesselSerFilePathList;
+    }
+
+    public void setVesselSerFilePathList(List<Path> vesselSerFilePathList) {
+        this.vesselSerFilePathList = vesselSerFilePathList;
+    }
+
+    public void addPathToVesselSerFilePathList(Path vesselSerFilePath){
+        vesselSerFilePathList.add(vesselSerFilePath);
+    }
+
+    public int getNoOfRandomLineScan() {
+        return noOfRandomLineScan;
+    }
+
+    public void setNoOfRandomLineScan(int noOfRandomLineScan) {
+        this.noOfRandomLineScan = noOfRandomLineScan;
+    }
+
+    public double getLengthOfLineScan() {
+        return lengthOfLineScan;
+    }
+
+    public void setLengthOfLineScan(double lengthOfLineScan) {
+        this.lengthOfLineScan = lengthOfLineScan;
+    }
+
+    public int getNoOfRandomBox() {
+        return noOfRandomBox;
+    }
+
+    public void setNoOfRandomBox(int noOfRandomBox) {
+        this.noOfRandomBox = noOfRandomBox;
+    }
+
+    public int getRandomBoxWidth() {
+        return RandomBoxWidth;
+    }
+
+    public void setRandomBoxWidth(int randomBoxWidth) {
+        RandomBoxWidth = randomBoxWidth;
     }
 }
