@@ -764,7 +764,7 @@ public class MainController {
                 }
             }
         });
-        batchModeModel.addPropertyChangeListener(new PropertyChangeListener() {
+        batchModeGlobalStateModel.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if("totalNumberOfFiles".equals(evt.getPropertyName())) {
@@ -835,7 +835,7 @@ public class MainController {
         });
 
         // Radial projection step
-        batchModeModel.addPropertyChangeListener(new PropertyChangeListener() {
+        batchModeGlobalStateModel.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if("numberOfImageDataInRadialProjectionStep".equals(evt.getPropertyName())){
@@ -843,6 +843,7 @@ public class MainController {
                 }
             }
         });
+
         mainView.getButtonRadialProjectionBatch().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -872,7 +873,20 @@ public class MainController {
         });
 
         // refine vessels
-        batchModeModel.addPropertyChangeListener(new PropertyChangeListener() {
+        batchModeGlobalStateModel.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if("numberOfImageDataInRefineVesselStep".equals(evt.getPropertyName())){
+                    mainView.getLabelRefineVesselCounter().setText(evt.getNewValue().toString());
+                    if((int)evt.getNewValue() > 0){
+                        mainView.getButtonRefineVesselBatch().setEnabled(true);
+                    } else {
+                        mainView.getButtonRefineVesselBatch().setEnabled(false);
+                    }
+                }
+            }
+        });
+        batchModeGlobalStateModel.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if("numberOfImageDataInRefineVesselStep".equals(evt.getPropertyName())){
@@ -884,7 +898,7 @@ public class MainController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // start a worker for selecting the range of the Vessel
-                BatchRefineVesselWorker brvw = new BatchRefineVesselWorker(batchModeModel);
+                BatchRefineVesselWorker brvw = new BatchRefineVesselWorker(batchModeGlobalStateModel,context);
                 brvw.addPropertyChangeListener(new PropertyChangeListener() {
                     @Override
                     public void propertyChange(PropertyChangeEvent evt) {
@@ -905,7 +919,7 @@ public class MainController {
         });
 
         // analysis batch
-        batchModeModel.addPropertyChangeListener(new PropertyChangeListener() {
+        batchModeGlobalStateModel.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if("numberOfImageDataInAnalysisBatchStep".equals(evt.getPropertyName())){
@@ -916,7 +930,7 @@ public class MainController {
         mainView.getButtonAnalysisBatch().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                BatchAnalysisWorker baw = new BatchAnalysisWorker(batchModeModel);
+                BatchAnalysisWorker baw = new BatchAnalysisWorker(batchModeGlobalStateModel,context);
                 baw.execute();
             }
         });
