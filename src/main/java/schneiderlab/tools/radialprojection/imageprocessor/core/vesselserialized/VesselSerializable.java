@@ -1,15 +1,12 @@
 package schneiderlab.tools.radialprojection.imageprocessor.core.vesselserialized;
 
 import ij.IJ;
-import ij.ImagePlus;
-import schneiderlab.tools.radialprojection.imageprocessor.core.Vessel;
 
 import java.awt.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 

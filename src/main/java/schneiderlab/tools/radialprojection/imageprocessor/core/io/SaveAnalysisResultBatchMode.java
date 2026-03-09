@@ -3,7 +3,6 @@ package schneiderlab.tools.radialprojection.imageprocessor.core.io;
 import ij.IJ;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import schneiderlab.tools.radialprojection.imageprocessor.core.Vessel;
 import schneiderlab.tools.radialprojection.imageprocessor.core.imagedataserialized.ImageDataSerializable;
 import schneiderlab.tools.radialprojection.imageprocessor.core.utils.RadialProjectionUtils;
 import schneiderlab.tools.radialprojection.imageprocessor.core.vesselserialized.VesselSerializable;
@@ -14,7 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.List;
 
 public class SaveAnalysisResultBatchMode {
     private ImageDataSerializable imageDataSerializable;
