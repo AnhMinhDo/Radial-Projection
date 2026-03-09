@@ -54,11 +54,11 @@ public class SaveAnalysisResultBatchMode {
                         vessel.getNumberOfSliceInStack(),
                         vessel.getMeanCircularity(),
                         vessel.getSdCircularity(),
-                        vessel.getNoOfRandomLineScan(),// number of random linescan
+                        vessel.getNoOfRandomLineScan(),// number of random line scan
                         vessel.getLengthOfLineScan(),// length of the line scan
                         vessel.getNoOfBands(),// total number of bands
-                        vessel.getMeanBandWidth(),// mean band width
-                        vessel.getSdBandWidth(),// sd band width
+                        vessel.getMeanBandWidth(),// mean bandwidth
+                        vessel.getSdBandWidth(),// sd bandwidth
                         vessel.getNoOfGaps(),// total number of gaps
                         vessel.getMeanGapWidth(),// mean gap width
                         vessel.getSdGapWidth(),// sd gap width
@@ -66,8 +66,8 @@ public class SaveAnalysisResultBatchMode {
                         vessel.getMeanAnisotropy(),// Mean anisotropy
                         vessel.getSdAnisotropy(),// SD anisotropy
                         vessel.getMeanBandOrientation(),// Mean band orientation
-                        vessel.getSdBandOrientation()// SD band orientation
-//                        vessel.getMeanSpacing()// vessel.getMeanSpacing()// Mean spacing
+                        vessel.getSdBandOrientation(),// SD band orientation
+                        vessel.getMeanSpacing()// vessel.getMeanSpacing()// Mean spacing
                 );
 
         }
