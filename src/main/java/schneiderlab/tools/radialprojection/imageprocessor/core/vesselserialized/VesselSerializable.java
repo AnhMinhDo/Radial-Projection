@@ -327,6 +327,10 @@ public class VesselSerializable implements Serializable {
         this.sdBandOrientation = sdBandOrientation;
     }
 
+    public Double getMeanSpacing() {
+        return meanBandWidth+meanGapWidth;
+    }
+
     public void setSliceCropRangeStart(int start){
         this.sliceCroppedRange.setStart(start);
     }
