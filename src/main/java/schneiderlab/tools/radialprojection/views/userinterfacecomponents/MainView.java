@@ -894,6 +894,9 @@ public class MainView extends JFrame {
 					//---- labelPreWatershedSmoothing ----
 					labelPreWatershedSmoothing.setText("<html>Pre-watershed <br>Smoothing</html>");
 					panelParametersVesselSegmentation.add(labelPreWatershedSmoothing, "cell 0 4");
+
+					//---- spinnerPreWatershedSmoothing ----
+					spinnerPreWatershedSmoothing.setModel(new SpinnerNumberModel(1.0, 0.1, null, 0.1));
 					panelParametersVesselSegmentation.add(spinnerPreWatershedSmoothing, "cell 1 4");
 
 					//---- labelInnerVesselRadius ----
