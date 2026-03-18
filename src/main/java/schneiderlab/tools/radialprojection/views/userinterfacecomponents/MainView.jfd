@@ -335,6 +335,11 @@ new FormModel {
 						} )
 						add( new FormComponent( "javax.swing.JSpinner" ) {
 							name: "spinnerInnerVesselRadius"
+							"model": new javax.swing.SpinnerNumberModel {
+								minimum: 0.1
+								stepSize: 0.1
+								value: 0.1
+							}
 						}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 							"value": "cell 1 5"
 						} )

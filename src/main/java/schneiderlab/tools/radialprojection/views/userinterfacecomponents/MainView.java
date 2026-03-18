@@ -902,6 +902,9 @@ public class MainView extends JFrame {
 					//---- labelInnerVesselRadius ----
 					labelInnerVesselRadius.setText("<html>Inner Vessel Radius (\u03bcm)</html>");
 					panelParametersVesselSegmentation.add(labelInnerVesselRadius, "cell 0 5");
+
+					//---- spinnerInnerVesselRadius ----
+					spinnerInnerVesselRadius.setModel(new SpinnerNumberModel(0.1, 0.1, null, 0.1));
 					panelParametersVesselSegmentation.add(spinnerInnerVesselRadius, "cell 1 5");
 
 					//---- labelHybridWeight ----
