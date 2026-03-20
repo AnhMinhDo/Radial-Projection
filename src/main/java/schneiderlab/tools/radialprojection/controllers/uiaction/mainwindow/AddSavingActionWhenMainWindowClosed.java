@@ -37,12 +37,13 @@ public class AddSavingActionWhenMainWindowClosed implements WindowListener {
         Prefs.set("RadialProjection.VesselsSegmentationModel.sliceIndexForTuning", vesselsSegmentationModel.getSliceIndexForTuning());
         Prefs.set("RadialProjection.VesselsSegmentationModel.innerVesselRadius", vesselsSegmentationModel.getInnerVesselRadius());
         Prefs.set("RadialProjection.VesselsSegmentationModel.celluloseToLigninRatio", vesselsSegmentationModel.getCelluloseToLigninRatio());
+        this.vesselsSegmentationModel = null;
+        System.gc();
     }
 
     @Override
     public void windowClosed(WindowEvent e) {
-        this.vesselsSegmentationModel = null;
-        System.gc();
+
     }
 
     @Override
