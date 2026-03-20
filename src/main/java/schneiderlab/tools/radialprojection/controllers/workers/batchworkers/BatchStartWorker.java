@@ -99,7 +99,7 @@ public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, V
                 sideViewImgPlus.setAxis(new DefaultLinearAxis(Axes.Z, "micron", targetZpixelSize * 0.001), 3);
                 sideViewImgPlus.setAxis(new DefaultLinearAxis(Axes.CHANNEL, "", 1.0), 2);
                 // create an ImageData Object correspond to the image
-                ImageData<UnsignedShortType, FloatType> imageData = new ImageData<>();
+                ImageData<UnsignedShortType, UnsignedShortType> imageData = new ImageData<>();
                 imageData.setXyPixelSize(targetXYpixelSize);
                 imageData.setzPixelSize(targetZpixelSize);
                 imageData.setNoOfRandomLineScan(numberOfLineScan);
@@ -145,14 +145,14 @@ public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, V
                         sigmaValueFilter,
                         radius);
 
-                RandomAccessibleInterval<FloatType> hybridStackSmoothed = chs.process();
-                RandomAccessibleInterval<FloatType> hybridStackNonSmoothed = chs.getHybridNonSmoothedStack();
+                RandomAccessibleInterval<UnsignedShortType> hybridStackSmoothed = chs.process();
+                RandomAccessibleInterval<UnsignedShortType> hybridStackNonSmoothed = chs.getHybridNonSmoothedStack();
                 double radius = chs.getRadius();
                 int width = chs.getSmoothedStackWidth();
                 int height = chs.getSmoothedStackHeight();
                 int slicesNumber = chs.getSmoothedStackSlicesNumber();
-                RandomAccessibleInterval<FloatType> cellulose = chs.getCellulose();
-                RandomAccessibleInterval<FloatType> lignin = chs.getLignin();
+                RandomAccessibleInterval<UnsignedShortType> cellulose = chs.getCellulose();
+                RandomAccessibleInterval<UnsignedShortType> lignin = chs.getLignin();
                 // set Field for ImageData object
                 imageData.setHybridStackNonSmoothed(hybridStackNonSmoothed);
                 imageData.setHybridStackSmoothed(hybridStackSmoothed);
@@ -199,7 +199,7 @@ public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, V
         return null;
     }
 
-    public static void saveRandomAccessInterval(RandomAccessibleInterval<FloatType> rai, Path filepath, Context context) throws IOException {
+    public static void saveRandomAccessInterval(RandomAccessibleInterval<UnsignedShortType> rai, Path filepath, Context context) throws IOException {
         DatasetService datasetService = context.getService(DatasetService.class);
         DatasetIOService datasetIOService = context.getService(DatasetIOService.class);
         Dataset dataset = datasetService.create(rai);

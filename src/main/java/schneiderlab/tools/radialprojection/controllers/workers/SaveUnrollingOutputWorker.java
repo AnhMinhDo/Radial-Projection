@@ -16,9 +16,9 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class SaveUnrollingOutputWorker extends SwingWorker<Void, Void> {
-    private ImageData<UnsignedShortType, FloatType> imageData;
+    private ImageData<UnsignedShortType, UnsignedShortType> imageData;
 
-    public SaveUnrollingOutputWorker(ImageData<UnsignedShortType, FloatType> imageData) {
+    public SaveUnrollingOutputWorker(ImageData<UnsignedShortType, UnsignedShortType> imageData) {
         this.imageData = imageData;
     }
 

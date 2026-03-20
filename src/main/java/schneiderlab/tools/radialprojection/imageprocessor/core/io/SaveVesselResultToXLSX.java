@@ -17,15 +17,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SaveVesselResultToXLSX {
-    private List<ImageData<UnsignedShortType, FloatType>> imagesToExport;
+    private List<ImageData<UnsignedShortType, UnsignedShortType>> imagesToExport;
     private boolean combine;
 
-    public SaveVesselResultToXLSX(List<ImageData<UnsignedShortType, FloatType>> imagesToExport) {
+    public SaveVesselResultToXLSX(List<ImageData<UnsignedShortType, UnsignedShortType>> imagesToExport) {
         this(imagesToExport, false);
 //        this.imagesToExport = imagesToExport;
     }
 
-    public SaveVesselResultToXLSX(List<ImageData<UnsignedShortType, FloatType>> imagesToExport, boolean combine) {
+    public SaveVesselResultToXLSX(List<ImageData<UnsignedShortType, UnsignedShortType>> imagesToExport, boolean combine) {
         this.imagesToExport = imagesToExport;
         this.combine = combine;
     }
@@ -33,7 +33,7 @@ public class SaveVesselResultToXLSX {
     public void flush() throws IOException {
         if (!combine){
             // --- INDIVIDUAL MODE: one XLSX per image ---
-            for (ImageData<UnsignedShortType, FloatType> imageData : imagesToExport) {
+            for (ImageData<UnsignedShortType, UnsignedShortType> imageData : imagesToExport) {
                 Path dirOutputPath = imageData.getImageOutputPath();
                 String imageName = RadialProjectionUtils.filenameWithoutExtension(imageData.getImagePath().getFileName().toString());
 //                Path finalDirPath = dirOutputPath.resolve(imageName + "_Out");
@@ -102,7 +102,7 @@ public class SaveVesselResultToXLSX {
                 headerRow.createCell(i).setCellValue(headers[i]);
             }
             int rowNum = 1;
-            for (ImageData<UnsignedShortType, FloatType> imageData : imagesToExport) {
+            for (ImageData<UnsignedShortType, UnsignedShortType> imageData : imagesToExport) {
                 Path dirOutputPath = imageData.getImageOutputPath();
                 String imageName = RadialProjectionUtils.filenameWithoutExtension(
                         imageData.getImagePath().getFileName().toString());

@@ -14,9 +14,9 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class SaveRadialProjectionOutputWorker extends SwingWorker<Void, Void> {
-    private ImageData<UnsignedShortType, FloatType> imageData;
+    private ImageData<UnsignedShortType, UnsignedShortType> imageData;
 
-    public SaveRadialProjectionOutputWorker(ImageData<UnsignedShortType, FloatType> imageData) {
+    public SaveRadialProjectionOutputWorker(ImageData<UnsignedShortType, UnsignedShortType> imageData) {
         this.imageData = imageData;
     }
 

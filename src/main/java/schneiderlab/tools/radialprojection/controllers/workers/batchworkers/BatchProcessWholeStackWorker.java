@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class BatchProcessWholeStackWorker extends SwingWorker<Void, Void> {
-    private List<ImageData<UnsignedShortType, FloatType>> imageDataList;
+    private List<ImageData<UnsignedShortType, UnsignedShortType>> imageDataList;
     private BatchModeModel batchModeModel;
     private BatchModeGlobalStateModel batchModeGlobalStateModel;
     private int singleFileProgress = 0;
@@ -63,9 +63,9 @@ public class BatchProcessWholeStackWorker extends SwingWorker<Void, Void> {
             IJ.log("serialized object path: " + serFile);
             ImageDataSerializable imageDataSerializable = ImageDataSerializableUtils.imageDataDeserializeObject(Paths.get(serFile));
             IJ.log("complete deserialization");
-            ImageData<UnsignedShortType, FloatType> imageData = ImageDataSerializableUtils.convertSerializableToImageData(imageDataSerializable, CurrentImageStage.WatershedAndRadialProjection,context);
+            ImageData<UnsignedShortType, UnsignedShortType> imageData = ImageDataSerializableUtils.convertSerializableToImageData(imageDataSerializable, CurrentImageStage.WatershedAndRadialProjection,context);
             IJ.log("complete conversion to ImageData object");
-            RandomAccessibleInterval<FloatType> hybridStackSmoothed= imageData.getHybridStackSmoothed();
+            RandomAccessibleInterval<UnsignedShortType> hybridStackSmoothed= imageData.getHybridStackSmoothed();
             int hybridStackSmoothedWidth= imageData.getHybridStackSmoothedWidth();
             int hybridStackSmoothedHeight= imageData.getHybridStackSmoothedHeight();
             double vesselRadius= imageData.getInnerVesselRadius();

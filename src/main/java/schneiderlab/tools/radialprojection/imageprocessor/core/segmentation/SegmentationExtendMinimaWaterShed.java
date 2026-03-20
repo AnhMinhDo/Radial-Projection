@@ -11,6 +11,7 @@ import inra.ijpb.watershed.ExtendedMinimaWatershed;
 import inra.ijpb.watershed.Watershed;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.FloatType;
 
 import java.awt.Point;
@@ -20,7 +21,7 @@ import java.util.List;
 import static schneiderlab.tools.radialprojection.imageprocessor.core.utils.RadialProjectionUtils.deepCopyPoints;
 
 public class SegmentationExtendMinimaWaterShed {
-    private final RandomAccessibleInterval<FloatType> inputSlice;
+    private final RandomAccessibleInterval<UnsignedShortType> inputSlice;
     private List<Point> clickCoordinate;
     private final int width;
     private final int height;
@@ -30,7 +31,7 @@ public class SegmentationExtendMinimaWaterShed {
     private ImagePlus inputSliceImagePlus;
 
     public SegmentationExtendMinimaWaterShed( List<Point> clickCoordinate,
-                                              RandomAccessibleInterval<FloatType> inputSlice,
+                                              RandomAccessibleInterval<UnsignedShortType> inputSlice,
                                               int width,
                                               int height,
                                               double radius,

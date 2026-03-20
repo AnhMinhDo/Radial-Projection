@@ -3,6 +3,7 @@ package schneiderlab.tools.radialprojection.controllers.workers;
 import ij.ImagePlus;
 import net.imagej.ops.Ops;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.FloatType;
 import schneiderlab.tools.radialprojection.imageprocessor.core.Vessel;
 import schneiderlab.tools.radialprojection.imageprocessor.core.segmentation.Reconstruction;
@@ -16,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SegmentWholeStackWorker extends SwingWorker<Void, Void> {
-    private RandomAccessibleInterval<FloatType> hybridStackSmoothed;
+    private RandomAccessibleInterval<UnsignedShortType> hybridStackSmoothed;
     private int hybridStackSmoothedWidth;
     private int hybridStackSmoothedHeight;
     private double vesselRadius;
@@ -31,7 +32,7 @@ public class SegmentWholeStackWorker extends SwingWorker<Void, Void> {
     private List<Vessel> vesselArrayList;
 
 
-    public SegmentWholeStackWorker(RandomAccessibleInterval<FloatType> hybridStackSmoothed,
+    public SegmentWholeStackWorker(RandomAccessibleInterval<UnsignedShortType> hybridStackSmoothed,
                                    int hybridStackSmoothedWidth,
                                    int hybridStackSmoothedHeight,
                                    double vesselRadius,

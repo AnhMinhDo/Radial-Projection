@@ -23,10 +23,10 @@ import schneiderlab.tools.radialprojection.models.batch.BatchModeModel;
 import java.nio.file.Path;
 
 public class SavingSideViewTemp {
-    private ImageData<UnsignedShortType, FloatType> imageData;
+    private ImageData<UnsignedShortType, UnsignedShortType> imageData;
     private Context context;
 
-    public SavingSideViewTemp(ImageData<UnsignedShortType, FloatType> imageData, Context context) {
+    public SavingSideViewTemp(ImageData<UnsignedShortType, UnsignedShortType> imageData, Context context) {
         this.imageData = imageData;
         this.context = context;
     }
@@ -36,10 +36,10 @@ public class SavingSideViewTemp {
     }
 
     protected Void doInBackground() throws Exception {
-        RandomAccessibleInterval<FloatType> hybridStackNonSmoothed = imageData.getHybridStackNonSmoothed();
-        RandomAccessibleInterval<FloatType> ligninStackNonSmoothed = imageData.getLignin();
-        RandomAccessibleInterval<FloatType> celluloseStackNonSmoothed = imageData.getCellulose();
-        RandomAccessibleInterval<FloatType> hybrideStackSmoothed = imageData.getHybridStackSmoothed();
+        RandomAccessibleInterval<UnsignedShortType> hybridStackNonSmoothed = imageData.getHybridStackNonSmoothed();
+        RandomAccessibleInterval<UnsignedShortType> ligninStackNonSmoothed = imageData.getLignin();
+        RandomAccessibleInterval<UnsignedShortType> celluloseStackNonSmoothed = imageData.getCellulose();
+        RandomAccessibleInterval<UnsignedShortType> hybrideStackSmoothed = imageData.getHybridStackSmoothed();
         int width = imageData.getHybridStackSmoothedWidth();
         int height = imageData.getHybridStackSmoothedHeight();
         int slices = imageData.getHybridStackSmoothedSlicesNumber();
@@ -103,23 +103,23 @@ public class SavingSideViewTemp {
         return imgPlus;
     }
 
-    public static void copyImgPlusToChannel(RandomAccessibleInterval<FloatType> source, ImgPlus<UnsignedShortType> imgPlus, int channelPosition) {
+    public static void copyImgPlusToChannel(RandomAccessibleInterval<UnsignedShortType> source, ImgPlus<UnsignedShortType> imgPlus, int channelPosition) {
         int channelDim = imgPlus.dimensionIndex(Axes.CHANNEL);
         // Get a view of just the desired channel
         RandomAccessibleInterval<UnsignedShortType> desiredChannel =
                 Views.hyperSlice(imgPlus, channelDim, channelPosition);
         // Calculate min/max from source
-        double[] minMax = getMinMax(source);
+//        double[] minMax = getMinMax(source);
         // Use cursors for efficient iteration
-        Cursor<FloatType> srcCursor = Views.flatIterable(source).cursor();
+        Cursor<UnsignedShortType> srcCursor = Views.flatIterable(source).cursor();
         Cursor<UnsignedShortType> destCursor = Views.flatIterable(desiredChannel).cursor();
         // loop and copy data
         while (srcCursor.hasNext()) {
-            destCursor.next().set(FloatTypeToUnsignedShort(srcCursor.next(),minMax[0],minMax[1]));
+            destCursor.next().set(srcCursor.next());
         }
         // Update display range for channel
-        imgPlus.setChannelMinimum(channelPosition, minMax[0]);
-        imgPlus.setChannelMaximum(channelPosition, minMax[1]);
+//        imgPlus.setChannelMinimum(channelPosition, minMax[0]);
+//        imgPlus.setChannelMaximum(channelPosition, minMax[1]);
     }
 
     public static void copyByteProcessorToChannel(ImageStack source, ImgPlus<UnsignedShortType> imgPlus, int channelPosition) {

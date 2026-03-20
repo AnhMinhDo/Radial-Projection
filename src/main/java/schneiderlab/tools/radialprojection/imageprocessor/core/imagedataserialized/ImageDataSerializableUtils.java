@@ -24,7 +24,7 @@ import java.nio.file.Paths;
 
 public class ImageDataSerializableUtils {
     public static ImageDataSerializable
-    convertImageDataToSerializable(ImageData<UnsignedShortType, FloatType> imageData) {
+    convertImageDataToSerializable(ImageData<UnsignedShortType, UnsignedShortType> imageData) {
         ImageDataSerializable imageDataSerializable = new ImageDataSerializable();
         // path to save the ser file
         Path serPath = imageData.getSerializedObjectPath();
@@ -76,9 +76,9 @@ public class ImageDataSerializableUtils {
         return imageDataSerializable;
     }
 
-    public static ImageData<UnsignedShortType, FloatType>
+    public static ImageData<UnsignedShortType, UnsignedShortType>
     convertSerializableToImageData(ImageDataSerializable imageDataSerializable, CurrentImageStage currentImageStage , Context context) {
-        ImageData<UnsignedShortType, FloatType> imageData = new ImageData<>();
+        ImageData<UnsignedShortType, UnsignedShortType> imageData = new ImageData<>();
         imageData.setImagePath(Paths.get(imageDataSerializable.getImagePath()));
         imageData.setSerializedObjectPath(Paths.get(imageDataSerializable.getSerializedObjectPath()));
 //        imageData.setOutputDirPath(Paths.get(imageDataSerializable.getOutputDirPath()));
@@ -114,13 +114,13 @@ public class ImageDataSerializableUtils {
 //            Dataset hybridSmooth = datasetIOService.open(imageData.getSideViewHybridSmoothedPath().toString());
             IJ.log("dataset objects is imported");
             // get the last channel(index 3) as a RandomAccessibleInterval
-            ImgPlus<FloatType> imgPlus = (ImgPlus<FloatType>) sideViewTempStack.getImgPlus();
+            ImgPlus<UnsignedShortType> imgPlus = (ImgPlus<UnsignedShortType>) sideViewTempStack.getImgPlus();
             int channelDim = imgPlus.dimensionIndex(Axes.CHANNEL);
-            RandomAccessibleInterval<FloatType> hybridSmoothedRAI = ops.convert().float32(Views.hyperSlice(imgPlus,channelDim,3)); // the hybridSmoothed stack has the channel index=3
+            RandomAccessibleInterval<UnsignedShortType> hybridSmoothedRAI = Views.hyperSlice(imgPlus,channelDim,3); // the hybridSmoothed stack has the channel index=3
             if(CurrentImageStage.WatershedAndRadialProjection.equals(currentImageStage)){
-                RandomAccessibleInterval<FloatType> hybridNonSmoothedRAI = ops.convert().float32(Views.hyperSlice(imgPlus,channelDim,2)); // the hybridNonSmoothed stack has the channel index=2
-                RandomAccessibleInterval<FloatType> celluloseRAI = ops.convert().float32(Views.hyperSlice(imgPlus,channelDim,1)); // the hybridNonSmoothed stack has the channel index=2
-                RandomAccessibleInterval<FloatType> ligninRAI = ops.convert().float32(Views.hyperSlice(imgPlus,channelDim,0)); // the hybridNonSmoothed stack has the channel index=2
+                RandomAccessibleInterval<UnsignedShortType> hybridNonSmoothedRAI = Views.hyperSlice(imgPlus,channelDim,2); // the hybridNonSmoothed stack has the channel index=2
+                RandomAccessibleInterval<UnsignedShortType> celluloseRAI = Views.hyperSlice(imgPlus,channelDim,1); // the hybridNonSmoothed stack has the channel index=2
+                RandomAccessibleInterval<UnsignedShortType> ligninRAI = Views.hyperSlice(imgPlus,channelDim,0); // the hybridNonSmoothed stack has the channel index=2
                 imageData.setHybridStackNonSmoothed(hybridNonSmoothedRAI);
                 imageData.setLignin(ligninRAI);
                 imageData.setCellulose(celluloseRAI);

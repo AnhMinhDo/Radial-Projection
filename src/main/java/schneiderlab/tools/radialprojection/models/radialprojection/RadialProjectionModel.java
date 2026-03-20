@@ -16,18 +16,18 @@ public class RadialProjectionModel {
     private ImagePlus hybrid;
     private ImagePlus cellulose;
     private List<Vessel> vesselArrayList;
-    private ImageData<UnsignedShortType, FloatType> imageData;
+    private ImageData<UnsignedShortType, UnsignedShortType> imageData;
     private List<ImageWindowGroupController> vesselRadialProjectionImageWindowGroupList = new ArrayList<>();
     private List<ImageWindowGroupController> vesselUnrollImageWindowGroupList = new ArrayList<>();
 
     public RadialProjectionModel() {
     }
 
-    public ImageData<UnsignedShortType, FloatType> getImageData() {
+    public ImageData<UnsignedShortType, UnsignedShortType> getImageData() {
         return imageData;
     }
 
-    public void setImageData(ImageData<UnsignedShortType, FloatType> imageData) {
+    public void setImageData(ImageData<UnsignedShortType, UnsignedShortType> imageData) {
         this.imageData = imageData;
     }
 

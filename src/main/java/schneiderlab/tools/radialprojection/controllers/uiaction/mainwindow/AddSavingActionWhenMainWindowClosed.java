@@ -8,7 +8,7 @@ import java.awt.event.WindowListener;
 
 public class AddSavingActionWhenMainWindowClosed implements WindowListener {
     private final CziToTifModel cziToTifModel;
-    private final VesselsSegmentationModel vesselsSegmentationModel;
+    private VesselsSegmentationModel vesselsSegmentationModel;
 
     public AddSavingActionWhenMainWindowClosed(CziToTifModel cziToTifModel,
                                                VesselsSegmentationModel vesselsSegmentationModel) {
@@ -41,7 +41,8 @@ public class AddSavingActionWhenMainWindowClosed implements WindowListener {
 
     @Override
     public void windowClosed(WindowEvent e) {
-
+        this.vesselsSegmentationModel = null;
+        System.gc();
     }
 
     @Override

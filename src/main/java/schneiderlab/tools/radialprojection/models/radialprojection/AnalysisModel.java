@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AnalysisModel {
-    private ImageData<UnsignedShortType, FloatType> imageData;
-    private List<ImageData<UnsignedShortType, FloatType>> imageDataList = new ArrayList<>();
+    private ImageData<UnsignedShortType, UnsignedShortType> imageData;
+    private List<ImageData<UnsignedShortType, UnsignedShortType>> imageDataList = new ArrayList<>();
 
     // anisotropy
     private int numberOfRandomBoxes;
@@ -18,16 +18,16 @@ public class AnalysisModel {
     public AnalysisModel() {
     }
 
-    public ImageData<UnsignedShortType, FloatType> getImageData() {
+    public ImageData<UnsignedShortType, UnsignedShortType> getImageData() {
         return imageData;
     }
 
-    public void setImageData(ImageData<UnsignedShortType, FloatType> imageData) {
+    public void setImageData(ImageData<UnsignedShortType, UnsignedShortType> imageData) {
         imageDataList.add(imageData);
         this.imageData = imageData;
     }
 
-    public List<ImageData<UnsignedShortType, FloatType>> getImageDataList() {
+    public List<ImageData<UnsignedShortType, UnsignedShortType>> getImageDataList() {
         return imageDataList;
     }
 

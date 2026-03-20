@@ -171,17 +171,17 @@ public class CreateSideView <T extends RealType<T>>{
             }
 
             if (debugMode) IJ.log("swap axes finished");
-            // convert back to UnsignShortType
-            RandomAccessibleInterval<UnsignedShortType> unint16ResampledPermuted = ops.convert().uint16(resampledPermuted);
+            // convert back to UnsignedShortType
+            RandomAccessibleInterval<UnsignedShortType> uint16ResampledPermuted = ops.convert().uint16(resampledPermuted);
             // add the post process image to array
-            processedChannels.add(unint16ResampledPermuted);
+            processedChannels.add(uint16ResampledPermuted);
             if (debugMode) IJ.log("Processed channel: " + c);
         }
         // show result
 //        for(RandomAccessibleInterval<UnsignedShortType> result : processedChannels){
 //            ImageJFunctions.show(result);
 //        }
-//        IJ.showStatus("saving ouput of: "+filePath.getFileName().toString());
+//        IJ.showStatus("saving output of: "+filePath.getFileName().toString());
         // Generate new output file path
 //        String parentDir = filePath.getParent().toString();
 //        String fileNameWithoutExtension = filePath.getFileName().toString().replaceFirst("[.][^.]+$", "");
@@ -199,6 +199,7 @@ public class CreateSideView <T extends RealType<T>>{
         copyToChannel(rai2,outputImgPlus,1);
 
         setNewProgressValue((int)(8*(100/totalNumberOfSteps))); // update ProgressBar
+
         return outputImgPlus;
     }
 

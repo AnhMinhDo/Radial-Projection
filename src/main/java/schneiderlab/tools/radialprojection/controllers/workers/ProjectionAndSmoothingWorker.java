@@ -3,14 +3,13 @@ package schneiderlab.tools.radialprojection.controllers.workers;
 import net.imagej.ImgPlus;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
-import net.imglib2.type.numeric.real.FloatType;
 import org.scijava.Context;
 import schneiderlab.tools.radialprojection.imageprocessor.core.segmentation.CreateHybridStack;
 
 import javax.swing.*;
 import java.beans.PropertyChangeListener;
 
-public class ProjectionAndSmoothingWorker extends SwingWorker<RandomAccessibleInterval<FloatType>, Void> {
+public class ProjectionAndSmoothingWorker extends SwingWorker<RandomAccessibleInterval<UnsignedShortType>, Void> {
     private final ImgPlus<UnsignedShortType> sideView;
     private final int ligninToCelluloseWeight;
     private final int windowSizeinMicroMeter;
@@ -18,10 +17,10 @@ public class ProjectionAndSmoothingWorker extends SwingWorker<RandomAccessibleIn
     private final double sigmaValueFilter;
     private double radius;
     private final  Context context;
-    private RandomAccessibleInterval<FloatType> hybridStackNonSmoothed;
-    private RandomAccessibleInterval<FloatType> hybridStackSmoothed;
-    private RandomAccessibleInterval<FloatType> lignin;
-    private RandomAccessibleInterval<FloatType> cellulose;
+    private RandomAccessibleInterval<UnsignedShortType> hybridStackNonSmoothed;
+    private RandomAccessibleInterval<UnsignedShortType> hybridStackSmoothed;
+    private RandomAccessibleInterval<UnsignedShortType> lignin;
+    private RandomAccessibleInterval<UnsignedShortType> cellulose;
     private int width;
     private int height;
     private int slicesNumber;
@@ -40,11 +39,11 @@ public class ProjectionAndSmoothingWorker extends SwingWorker<RandomAccessibleIn
         this.context = context;
     }
 
-    public RandomAccessibleInterval<FloatType> getHybridStackNonSmoothed() {
+    public RandomAccessibleInterval<UnsignedShortType> getHybridStackNonSmoothed() {
         return hybridStackNonSmoothed;
     }
 
-    public RandomAccessibleInterval<FloatType> getHybridStackSmoothed() {
+    public RandomAccessibleInterval<UnsignedShortType> getHybridStackSmoothed() {
         return hybridStackSmoothed;
     }
 
@@ -58,12 +57,12 @@ public class ProjectionAndSmoothingWorker extends SwingWorker<RandomAccessibleIn
 
     public int getSlicesNumber() { return slicesNumber; }
 
-    public RandomAccessibleInterval<FloatType> getLignin() {return lignin;}
+    public RandomAccessibleInterval<UnsignedShortType> getLignin() {return lignin;}
 
-    public RandomAccessibleInterval<FloatType> getCellulose() {return cellulose;}
+    public RandomAccessibleInterval<UnsignedShortType> getCellulose() {return cellulose;}
 
     @Override
-    protected RandomAccessibleInterval<FloatType> doInBackground() throws Exception {
+    protected RandomAccessibleInterval<UnsignedShortType> doInBackground() throws Exception {
         windowSizeinSlideNumber = Math.round(windowSizeinMicroMeter/0.2f); //TODO: replace 0.2 f with a user-defined number
         CreateHybridStack chs = new CreateHybridStack(context,
                 sideView,

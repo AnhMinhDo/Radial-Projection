@@ -9,6 +9,7 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
@@ -384,22 +385,22 @@ public class MainController {
                 mainView.getButtonWatershed().setEnabled(false);
                 mainView.getButtonProcessWholeStack().setEnabled(false);
                 mainView.getButtonMoveToRadialProjection().setEnabled(false);
-                RandomAccessibleInterval<FloatType>	smoothedStack = vesselsSegmentationModel.getImageData().getHybridStackSmoothed();
+                RandomAccessibleInterval<UnsignedShortType>	smoothedStack = vesselsSegmentationModel.getImageData().getHybridStackSmoothed();
                 int slideForTuning = (int)vesselsSegmentationModel.getSliceIndexForTuning();
-                RandomAccessibleInterval<FloatType> just1Slide = Views.hyperSlice(smoothedStack,2,slideForTuning);
-                // Copy the view to a new Img<FloatType>
+                RandomAccessibleInterval<UnsignedShortType> just1Slide = Views.hyperSlice(smoothedStack,2,slideForTuning);
+                // Copy the view to a new Img<UnsignedShortType>
                 // Create copy using cursors
-                Img<FloatType> copy = ArrayImgs.floats(Intervals.dimensionsAsLongArray(just1Slide));
-                net.imglib2.Cursor<FloatType> srcCursor = Views.flatIterable(just1Slide).cursor();
-                net.imglib2.Cursor<FloatType> dstCursor = copy.cursor();
+                Img<UnsignedShortType> copy = ArrayImgs.unsignedShorts(Intervals.dimensionsAsLongArray(just1Slide));
+                net.imglib2.Cursor<UnsignedShortType> srcCursor = Views.flatIterable(just1Slide).cursor();
+                net.imglib2.Cursor<UnsignedShortType> dstCursor = copy.cursor();
                 while (srcCursor.hasNext()) {
                     dstCursor.next().set(srcCursor.next());
                 }
                 // Convert to ImagePlus
-                ImagePlus impFloat = ImageJFunctions.wrap(copy, "smoothed Side View");
-                impFloat.resetDisplayRange();
-                vesselsSegmentationModel.setImpInByte(new ImagePlus("1st slice", impFloat.getProcessor().convertToByte(true)));
-                impFloat.resetDisplayRange();
+                ImagePlus impUnsignedInterger = ImageJFunctions.wrapUnsignedShort(copy, "smoothed Side View");
+                impUnsignedInterger.resetDisplayRange();
+                vesselsSegmentationModel.setImpInByte(new ImagePlus("1st slice", impUnsignedInterger.getProcessor().convertToByte(true)));
+                impUnsignedInterger.resetDisplayRange();
                 vesselsSegmentationModel.getImpInByte().show();
                 // Create a new PointRoi to collect points
                 PointRoi pointRoi = new PointRoi();

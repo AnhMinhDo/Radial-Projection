@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class BatchRadialProjectionWorker extends SwingWorker<Void, Void> {
-    private List<ImageData<UnsignedShortType, FloatType>> imageDataList;
+    private List<ImageData<UnsignedShortType, UnsignedShortType>> imageDataList;
     private BatchModeModel batchModeModel;
     private Context context;
     private int singleFileProgress = 0;
@@ -39,7 +39,7 @@ public class BatchRadialProjectionWorker extends SwingWorker<Void, Void> {
     protected Void doInBackground() throws Exception {
         AtomicInteger counter = new AtomicInteger(); // because multiple threads access the same counter variable, use this to ensure thread-safe modification
         IJ.log("number of files in radial projection queue: " + batchModeModel.getRadialProjectionList().size());
-        for (ImageData<UnsignedShortType, FloatType> imageData : imageDataList) {
+        for (ImageData<UnsignedShortType, UnsignedShortType> imageData : imageDataList) {
             IJ.log("Processing file: " + imageData.getImagePath().getFileName().toString());
             // Create copy of hybrid using cursors
             ImagePlus hybridNonSmoothed = RadialProjectionUtils.copyAndConvertRandomAccessIntervalToImagePlus(

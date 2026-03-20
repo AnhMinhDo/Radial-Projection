@@ -13,6 +13,7 @@ import inra.ijpb.measure.region2d.Centroid;
 import inra.ijpb.morphology.Morphology;
 import inra.ijpb.morphology.Strel;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
 import schneiderlab.tools.radialprojection.imageprocessor.core.Vessel;
@@ -30,7 +31,7 @@ public class Reconstruction {
     private final int width;
     private final int height;
     private final double radius;
-    private final RandomAccessibleInterval<FloatType> smoothedStack;
+    private final RandomAccessibleInterval<UnsignedShortType> smoothedStack;
     private final Point pointForBackground;
     private final int slideForTuning;
     private HashMap<Integer, List<Point>> centroidHashMap;
@@ -40,7 +41,7 @@ public class Reconstruction {
     private List<Vessel> vesselsArray;
     private ImagePlus rawSegmentation;
 
-    public Reconstruction(RandomAccessibleInterval<FloatType> smoothedStack,
+    public Reconstruction(RandomAccessibleInterval<UnsignedShortType> smoothedStack,
                           int width,
                           int height,
                           double radius,
@@ -112,7 +113,7 @@ public class Reconstruction {
 
     public Overlay process1Slide() {
         // extract 1 slice and convert to Imagej1 Format
-        RandomAccessibleInterval<FloatType> slice2D = Views.hyperSlice(smoothedStack, 2, slideForTuning); // dimension 2 is Z
+        RandomAccessibleInterval<UnsignedShortType> slice2D = Views.hyperSlice(smoothedStack, 2, slideForTuning); // dimension 2 is Z
         SegmentationExtendMinimaWaterShed semws = new SegmentationExtendMinimaWaterShed(coordinatesOutside,
                 slice2D,
                 width,
@@ -168,7 +169,7 @@ public class Reconstruction {
                                                                 startingClick,
                                                                 pointForBackground);
             // perform segmentation
-            RandomAccessibleInterval<FloatType> slice2D = Views.hyperSlice(smoothedStack, 2, currentSlice); // dimension 2 is Z
+            RandomAccessibleInterval<UnsignedShortType> slice2D = Views.hyperSlice(smoothedStack, 2, currentSlice); // dimension 2 is Z
             SegmentationExtendMinimaWaterShed semws = new SegmentationExtendMinimaWaterShed(currentClick,
                     slice2D,
                     width,

@@ -31,10 +31,10 @@ public class SaveImageSideViewEdgeCentroid extends SwingWorker<Void, Void> {
 
     @Override
     protected Void doInBackground() throws Exception {
-        for(ImageData<UnsignedShortType, FloatType> imageData : batchModeModel.getCentroidelectionList()){
-            RandomAccessibleInterval<FloatType> hybridStackNonSmoothed = imageData.getHybridStackNonSmoothed();
-            RandomAccessibleInterval<FloatType> ligninStackNonSmoothed = imageData.getLignin();
-            RandomAccessibleInterval<FloatType> celluloseStackNonSmoothed = imageData.getCellulose();
+        for(ImageData<UnsignedShortType, UnsignedShortType> imageData : batchModeModel.getCentroidelectionList()){
+            RandomAccessibleInterval<UnsignedShortType> hybridStackNonSmoothed = imageData.getHybridStackNonSmoothed();
+            RandomAccessibleInterval<UnsignedShortType> ligninStackNonSmoothed = imageData.getLignin();
+            RandomAccessibleInterval<UnsignedShortType> celluloseStackNonSmoothed = imageData.getCellulose();
             ImageStack edgeAndCentroidMaskStack = imageData.getEdgeCentroidMaskImagePlus().getImageStack();
             int width = imageData.getHybridStackSmoothedWidth();
             int height = imageData.getHybridStackSmoothedHeight();
@@ -99,23 +99,23 @@ public class SaveImageSideViewEdgeCentroid extends SwingWorker<Void, Void> {
         return imgPlus;
     }
 
-    public static void copyImgPlusToChannel(RandomAccessibleInterval<FloatType> source, ImgPlus<UnsignedShortType> imgPlus, int channelPosition) {
+    public static void copyImgPlusToChannel(RandomAccessibleInterval<UnsignedShortType> source, ImgPlus<UnsignedShortType> imgPlus, int channelPosition) {
         int channelDim = imgPlus.dimensionIndex(Axes.CHANNEL);
         // Get a view of just the desired channel
         RandomAccessibleInterval<UnsignedShortType> desiredChannel =
                 Views.hyperSlice(imgPlus, channelDim, channelPosition);
         // Calculate min/max from source
-        double[] minMax = getMinMax(source);
+//        double[] minMax = getMinMax(source);
         // Use cursors for efficient iteration
-        Cursor<FloatType> srcCursor = Views.flatIterable(source).cursor();
+        Cursor<UnsignedShortType> srcCursor = Views.flatIterable(source).cursor();
         Cursor<UnsignedShortType> destCursor = Views.flatIterable(desiredChannel).cursor();
         // loop and copy data
         while (srcCursor.hasNext()) {
-            destCursor.next().set(FloatTypeToUnsignedShort(srcCursor.next(),minMax[0],minMax[1]));
+            destCursor.next().set(srcCursor.next());
         }
         // Update display range for channel
-        imgPlus.setChannelMinimum(channelPosition, minMax[0]);
-        imgPlus.setChannelMaximum(channelPosition, minMax[1]);
+//        imgPlus.setChannelMinimum(channelPosition, minMax[0]);
+//        imgPlus.setChannelMaximum(channelPosition, minMax[1]);
     }
 
     public static void copyByteProcessorToChannel(ImageStack source, ImgPlus<UnsignedShortType> imgPlus, int channelPosition) {

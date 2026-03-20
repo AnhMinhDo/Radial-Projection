@@ -51,9 +51,9 @@ public class SaveImageSegmentationWorker extends SwingWorker<Void, Void> {
     @Override
     protected Void doInBackground() throws Exception {
 
-        RandomAccessibleInterval<FloatType> hybridStackNonSmoothed = vesselsSegmentationModel.getImageData().getHybridStackNonSmoothed();
-        RandomAccessibleInterval<FloatType> ligninStackNonSmoothed = vesselsSegmentationModel.getImageData().getLignin();
-        RandomAccessibleInterval<FloatType> celluloseStackNonSmoothed = vesselsSegmentationModel.getImageData().getCellulose();
+        RandomAccessibleInterval<UnsignedShortType> hybridStackNonSmoothed = vesselsSegmentationModel.getImageData().getHybridStackNonSmoothed();
+        RandomAccessibleInterval<UnsignedShortType> ligninStackNonSmoothed = vesselsSegmentationModel.getImageData().getLignin();
+        RandomAccessibleInterval<UnsignedShortType> celluloseStackNonSmoothed = vesselsSegmentationModel.getImageData().getCellulose();
         ImageStack edgeAndCentroidMaskStack = vesselsSegmentationModel.getImageData().getEdgeCentroidMaskImagePlus().getImageStack();
         int width = vesselsSegmentationModel.getImageData().getHybridStackSmoothedWidth();
         int height = vesselsSegmentationModel.getImageData().getHybridStackSmoothedHeight();
@@ -133,19 +133,19 @@ public class SaveImageSegmentationWorker extends SwingWorker<Void, Void> {
         return imgPlus;
     }
 
-    public static void copyImgPlusToChannel(RandomAccessibleInterval<FloatType> source, ImgPlus<UnsignedShortType> imgPlus, int channelPosition) {
+    public static void copyImgPlusToChannel(RandomAccessibleInterval<UnsignedShortType> source, ImgPlus<UnsignedShortType> imgPlus, int channelPosition) {
         int channelDim = imgPlus.dimensionIndex(Axes.CHANNEL);
         // Get a view of just the desired channel
         RandomAccessibleInterval<UnsignedShortType> desiredChannel =
                 Views.hyperSlice(imgPlus, channelDim, channelPosition);
         // Calculate min/max from source
-        double[] minMax = getMinMax(source);
+//        double[] minMax = getMinMax(source);
         // Use cursors for efficient iteration
-        Cursor<FloatType> srcCursor = Views.flatIterable(source).cursor();
+        Cursor<UnsignedShortType> srcCursor = Views.flatIterable(source).cursor();
         Cursor<UnsignedShortType> destCursor = Views.flatIterable(desiredChannel).cursor();
         // loop and copy data
         while (srcCursor.hasNext()) {
-            destCursor.next().set(FloatTypeToUnsignedShort(srcCursor.next(),minMax[0],minMax[1]));
+            destCursor.next().set(srcCursor.next());
         }
         // Update display range for channel
         imgPlus.setChannelMinimum(channelPosition, 0);

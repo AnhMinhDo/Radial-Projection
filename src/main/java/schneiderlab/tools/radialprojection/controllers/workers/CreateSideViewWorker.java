@@ -78,7 +78,9 @@ public class CreateSideViewWorker <T extends RealType<T>> extends SwingWorker<Vo
             sideViewImgPlus.setAxis(new DefaultLinearAxis(Axes.Y, "micron", targetXYpixelSize * 0.001), 1);
             sideViewImgPlus.setAxis(new DefaultLinearAxis(Axes.Z, "micron", targetZpixelSize * 0.001), 3);
             sideViewImgPlus.setAxis(new DefaultLinearAxis(Axes.CHANNEL, "", 1.0), 2);
-
+            // remove the original image from the memory
+            genericImgPlus = null;
+            System.gc();
         } catch (IOException e){
             System.err.println("fail to import image file");
             logService.error("IO error; fail to import image file");

@@ -4,7 +4,6 @@ import ij.IJ;
 import ij.ImagePlus;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
-import net.imglib2.type.numeric.real.FloatType;
 import org.scijava.Context;
 import org.scijava.log.LogService;
 import schneiderlab.tools.radialprojection.controllers.workers.CreateSideViewWorker;
@@ -52,7 +51,7 @@ public class CreateSideViewButtonAction implements ActionListener {
                 .getValueAt(0, 0);
         vesselsSegmentationModel.setFilePath(Paths.get(fileToProcess));
         IJ.log("processing file: "+ fileToProcess);
-        ImageData<UnsignedShortType, FloatType> imageData = new ImageData<>();
+        ImageData<UnsignedShortType, UnsignedShortType> imageData = new ImageData<>();
         vesselsSegmentationModel.setImageData(imageData);
         vesselsSegmentationModel.getImageData().setImagePath(vesselsSegmentationModel.getFilePath());
         logService.info("Load image at: " + vesselsSegmentationModel.getImageData().getImagePath().toAbsolutePath().toString());

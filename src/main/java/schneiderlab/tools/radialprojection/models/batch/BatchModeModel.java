@@ -15,7 +15,7 @@ public class BatchModeModel {
     private List<Path> filePathList = new ArrayList<>();
     private int numberOfUnprocessedFilePath = 0;
     private int totalNumberOfFiles = 0;
-    private List<ImageData<UnsignedShortType, FloatType>> imageDataList = new ArrayList<>();
+    private List<ImageData<UnsignedShortType, UnsignedShortType>> imageDataList = new ArrayList<>();
     // Queue in each step
 
     // vessel segmentation
@@ -25,23 +25,23 @@ public class BatchModeModel {
     private double smoothingSigma=1;
     private double innerVesselRadius=1;
     private int CelluloseToLigninRatio=25;
-    private List<ImageData<UnsignedShortType,FloatType>> centroidSelectionList = new ArrayList<>();
+    private List<ImageData<UnsignedShortType,UnsignedShortType>> centroidSelectionList = new ArrayList<>();
     private int numberOfImageDataInCentroidSelectionStep = 0;
 
     // perform watershed
-    private List<ImageData<UnsignedShortType,FloatType>> watershedList = new ArrayList<>();
+    private List<ImageData<UnsignedShortType,UnsignedShortType>> watershedList = new ArrayList<>();
     private int numberOfImageDataInWatershedStep = 0;
 
     // Radial Projection
-    private List<ImageData<UnsignedShortType,FloatType>> radialProjectionList = new ArrayList<>();
+    private List<ImageData<UnsignedShortType,UnsignedShortType>> radialProjectionList = new ArrayList<>();
     private int numberOfImageDataInRadialProjectionStep = 0;
 
     // refine Vessel
-    private List<ImageData<UnsignedShortType,FloatType>> refineVesselList = new ArrayList<>();
+    private List<ImageData<UnsignedShortType,UnsignedShortType>> refineVesselList = new ArrayList<>();
     private int numberOfImageDataInRefineVesselStep = 0;
 
     // analysis
-    private List<ImageData<UnsignedShortType,FloatType>> analysisBatchList = new ArrayList<>();
+    private List<ImageData<UnsignedShortType,UnsignedShortType>> analysisBatchList = new ArrayList<>();
     private int numberOfImageDataInAnalysisBatchStep = 0;
 
     // anisotropy
@@ -52,7 +52,7 @@ public class BatchModeModel {
     private int linescanLength=25;
 
     // Complete
-    private List<ImageData<UnsignedShortType,FloatType>> completeBatchList = new ArrayList<>();
+    private List<ImageData<UnsignedShortType,UnsignedShortType>> completeBatchList = new ArrayList<>();
     private int numberOfImageDataInCompleteBatchStep = 0;
 
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
@@ -117,7 +117,7 @@ public class BatchModeModel {
 
     // centroid Selection list
 
-    public List<ImageData<UnsignedShortType,FloatType>> getCentroidelectionList(){
+    public List<ImageData<UnsignedShortType,UnsignedShortType>> getCentroidelectionList(){
         return this.centroidSelectionList;
     }
 
@@ -125,7 +125,7 @@ public class BatchModeModel {
         return centroidSelectionList.size();
     }
 
-    public void addCentroidSelectionList(ImageData<UnsignedShortType,FloatType> imageData){
+    public void addCentroidSelectionList(ImageData<UnsignedShortType,UnsignedShortType> imageData){
         centroidSelectionList.add(imageData);
         numberOfImageDataInCentroidSelectionStep = centroidSelectionList.size();
         support.firePropertyChange("numberOfImageDataInCentroidSelectionStep",numberOfImageDataInCentroidSelectionStep-1, numberOfImageDataInCentroidSelectionStep);
@@ -137,7 +137,7 @@ public class BatchModeModel {
         support.firePropertyChange("numberOfImageDataInCentroidSelectionStep",oldValue,numberOfImageDataInCentroidSelectionStep);
     }
 
-    //    public ImageData<UnsignedShortType, FloatType> getFirstCentroidSelectionQueue(){
+    //    public ImageData<UnsignedShortType, UnsignedShortType> getFirstCentroidSelectionQueue(){
 //        return centroidSelectionQueue.getFirst();
 //    }
 
@@ -147,11 +147,11 @@ public class BatchModeModel {
 
     // Watershed step
 
-    public List<ImageData<UnsignedShortType, FloatType>> getWatershedList() {
+    public List<ImageData<UnsignedShortType, UnsignedShortType>> getWatershedList() {
         return watershedList;
     }
 
-    public void addImageDataToWatershedList(ImageData<UnsignedShortType, FloatType> imageData) {
+    public void addImageDataToWatershedList(ImageData<UnsignedShortType, UnsignedShortType> imageData) {
         this.watershedList.add(imageData);
         setNumberOfImageDataInWatershedStep(getNumberOfImageDataInWatershedStep()+1);
     }
@@ -168,11 +168,11 @@ public class BatchModeModel {
 
     // Radial Projection batch
 
-    public List<ImageData<UnsignedShortType, FloatType>> getRadialProjectionList() {
+    public List<ImageData<UnsignedShortType, UnsignedShortType>> getRadialProjectionList() {
         return radialProjectionList;
     }
 
-    public void addImageDataToRadialProjectionList(ImageData<UnsignedShortType, FloatType> imageData) {
+    public void addImageDataToRadialProjectionList(ImageData<UnsignedShortType, UnsignedShortType> imageData) {
         this.radialProjectionList.add(imageData);
         setNumberOfImageDataInRadialProjectionStep(getNumberOfImageDataInRadialProjectionStep()+1);
     }
@@ -188,11 +188,11 @@ public class BatchModeModel {
     }
     // refine Vessel
 
-    public List<ImageData<UnsignedShortType, FloatType>> getRefineVesselList() {
+    public List<ImageData<UnsignedShortType, UnsignedShortType>> getRefineVesselList() {
         return refineVesselList;
     }
 
-    public void addImageDataToRefineVesselList(ImageData<UnsignedShortType, FloatType> imageData) {
+    public void addImageDataToRefineVesselList(ImageData<UnsignedShortType, UnsignedShortType> imageData) {
         this.refineVesselList.add(imageData);
         setNumberOfImageDataInRefineVesselStep(getNumberOfImageDataInRefineVesselStep()+1);
     }
@@ -209,11 +209,11 @@ public class BatchModeModel {
 
     // analysis batch
 
-    public List<ImageData<UnsignedShortType, FloatType>> getAnalysisBatchList() {
+    public List<ImageData<UnsignedShortType, UnsignedShortType>> getAnalysisBatchList() {
         return analysisBatchList;
     }
 
-    public void addImageDataToAnalysisBatchList(ImageData<UnsignedShortType, FloatType> imageData) {
+    public void addImageDataToAnalysisBatchList(ImageData<UnsignedShortType, UnsignedShortType> imageData) {
         this.analysisBatchList.add(imageData);
         setNumberOfImageDataInAnalysisBatchStep(getNumberOfImageDataInAnalysisBatchStep()+1);
     }
@@ -229,11 +229,11 @@ public class BatchModeModel {
     }
 
     // complete
-    public List<ImageData<UnsignedShortType, FloatType>> getCompleteBatchList() {
+    public List<ImageData<UnsignedShortType, UnsignedShortType>> getCompleteBatchList() {
         return completeBatchList;
     }
 
-    public void addImageDataToCompleteBatchList(ImageData<UnsignedShortType, FloatType> imageData) {
+    public void addImageDataToCompleteBatchList(ImageData<UnsignedShortType, UnsignedShortType> imageData) {
         this.completeBatchList.add(imageData);
         setNumberOfImageDataInCompleteBatchStep(getNumberOfImageDataInCompleteBatchStep()+1);
     }

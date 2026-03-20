@@ -21,15 +21,15 @@ public class SaveVesselResultToCSV {
     // define the header
     // method to get the info from each vessel object and add to the csvPrinter using printRecord, Arrays.asList and flush
 
-    private List<ImageData<UnsignedShortType, FloatType>> imagesToExport;
+    private List<ImageData<UnsignedShortType, UnsignedShortType>> imagesToExport;
 //    private List<Vessel> allVesselList = new ArrayList<>();
     private boolean combine;
 
-    public SaveVesselResultToCSV(List<ImageData<UnsignedShortType, FloatType>> imagesToExport) {
+    public SaveVesselResultToCSV(List<ImageData<UnsignedShortType, UnsignedShortType>> imagesToExport) {
         this(imagesToExport, false);
     }
 
-    public SaveVesselResultToCSV(List<ImageData<UnsignedShortType, FloatType>> imagesToExport, boolean combine) {
+    public SaveVesselResultToCSV(List<ImageData<UnsignedShortType, UnsignedShortType>> imagesToExport, boolean combine) {
         this.imagesToExport = imagesToExport;
         this.combine = combine;
     }
@@ -38,7 +38,7 @@ public class SaveVesselResultToCSV {
         if (!combine){
             // --- INDIVIDUAL MODE: one CSV file per image ---
             // loop through all ImageData Object and save the analysis Info
-            for (ImageData<UnsignedShortType, FloatType> imageData : imagesToExport) {
+            for (ImageData<UnsignedShortType, UnsignedShortType> imageData : imagesToExport) {
                 Path dirOutputPath = imageData.getImageOutputPath();
                 String imageName = RadialProjectionUtils.filenameWithoutExtension(imageData.getImagePath().getFileName().toString());
 //                Path finalDirPath = dirOutputPath.resolve(imageName + "_Out");
@@ -95,7 +95,7 @@ public class SaveVesselResultToCSV {
                                     .map(CsvHeader::get)
                                     .toArray(String[]::new)))
             ) {
-                for (ImageData<UnsignedShortType, FloatType> imageData : imagesToExport) {
+                for (ImageData<UnsignedShortType, UnsignedShortType> imageData : imagesToExport) {
                     Path dirOutputPath = imageData.getImageOutputPath().getParent();
                     String imageName = RadialProjectionUtils.filenameWithoutExtension(
                             imageData.getImagePath().getFileName().toString());

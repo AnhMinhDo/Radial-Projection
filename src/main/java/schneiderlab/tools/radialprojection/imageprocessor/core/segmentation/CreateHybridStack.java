@@ -5,8 +5,9 @@ import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
 import net.imagej.ops.OpService;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.loops.LoopBuilder;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
-import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
@@ -20,21 +21,21 @@ import java.util.ArrayList;
 import static ij.IJ.debugMode;
 
 public class CreateHybridStack {
-    private final ImgPlus<UnsignedShortType> imgPlus;
+    private ImgPlus<UnsignedShortType> imgPlus;
     private final int weightLignin;
     private final int weightCellulose;
     private final Context context;
     private final int windowSize;
     private final double sigmaValueForGaussianFilter;
     private final double radius;
-    private RandomAccessibleInterval<FloatType> hybridNonSmoothedStack;
-    private RandomAccessibleInterval<FloatType> hybridSmoothedStack;
+    private RandomAccessibleInterval<UnsignedShortType> hybridNonSmoothedStack;
+    private RandomAccessibleInterval<UnsignedShortType> hybridSmoothedStack;
     private int smoothedStackWidth;
     private int smoothedStackHeight;
     private int smoothedStackSlicesNumber;
     private int currentProgress;
-    private RandomAccessibleInterval<FloatType> lignin;
-    RandomAccessibleInterval<FloatType> cellulose;
+    private RandomAccessibleInterval<UnsignedShortType> lignin;
+    RandomAccessibleInterval<UnsignedShortType> cellulose;
 
     @Parameter
     private final OpService ops;
@@ -73,24 +74,24 @@ public class CreateHybridStack {
         this.pcs.firePropertyChange("progress", previousProgress, currentProgress);
     }
 
-    public RandomAccessibleInterval<FloatType> getHybridNonSmoothedStack() {
+    public RandomAccessibleInterval<UnsignedShortType> getHybridNonSmoothedStack() {
         return hybridNonSmoothedStack;
     }
 
     public double getRadius() { return radius; }
 
-    public RandomAccessibleInterval<FloatType> getSmoothedStack() {return hybridSmoothedStack;}
+    public RandomAccessibleInterval<UnsignedShortType> getSmoothedStack() {return hybridSmoothedStack;}
 
     public int getSmoothedStackWidth() {return smoothedStackWidth;}
 
     public int getSmoothedStackHeight() {return smoothedStackHeight;}
     public int getSmoothedStackSlicesNumber() {return smoothedStackSlicesNumber;}
 
-    public RandomAccessibleInterval<FloatType> getLignin() { return lignin;}
+    public RandomAccessibleInterval<UnsignedShortType> getLignin() { return lignin;}
 
-    public RandomAccessibleInterval<FloatType> getCellulose() {return cellulose;}
+    public RandomAccessibleInterval<UnsignedShortType> getCellulose() {return cellulose;}
 
-    public RandomAccessibleInterval<FloatType> process() throws IOException {
+    public RandomAccessibleInterval<UnsignedShortType> process() throws IOException {
 //        // get the status Service
 //        StatusService statusService = context.getService(StatusService.class);
 //        //
@@ -111,7 +112,7 @@ public class CreateHybridStack {
         boolean hasChannels = (channelDimIdx >= 0);
         long numChannels = hasChannels ? imgPlus.dimension(channelDimIdx) : 1;
         // container for post-processed channels
-        ArrayList<RandomAccessibleInterval<UnsignedShortType>> processedChannels = new ArrayList<>();
+//        ArrayList<RandomAccessibleInterval<UnsignedShortType>> processedChannels = new ArrayList<>();
         // debugging
         if (debugMode){
             for (int d = 0; d < imgPlus.numDimensions(); d++) {
@@ -139,24 +140,27 @@ public class CreateHybridStack {
         // ratio for each channel
         double weightCelluloseRatio = (double) weightCellulose /100;
         double weightLigninRatio = (double) weightLignin /100;
-        // convert weight from double to FloatType
-        FloatType weightCelluloseRatioFloatType = new FloatType((float)weightCelluloseRatio);
-        FloatType weightLigninRatioFloatType = new FloatType((float)weightLigninRatio);
         // split the channels
-        this.cellulose = ops.convert().float32(Views.hyperSlice(imgPlus, channelDimIdx, 0));
-        this.lignin = ops.convert().float32(Views.hyperSlice(imgPlus, channelDimIdx, 1));
-        RandomAccessibleInterval<FloatType> hybrid = ops.convert().float32(Views.hyperSlice(imgPlus, channelDimIdx, 1));
-        // Containers for result
-        RandomAccessibleInterval<FloatType> celluloseMultiplied = ops.create().img(cellulose);
-        RandomAccessibleInterval<FloatType> ligninMultiplied = ops.create().img(lignin);
-        RandomAccessibleInterval<FloatType> projectedStack = ops.create().img(lignin);
-        RandomAccessibleInterval<FloatType> smoothedStack = ops.create().img(lignin);
-        // multiply with weight
-        ops.math().multiply(celluloseMultiplied, cellulose, weightCelluloseRatioFloatType);
-        ops.math().multiply(ligninMultiplied, lignin, weightLigninRatioFloatType);
-        ops.math().add(hybrid,celluloseMultiplied,ligninMultiplied);
+        this.cellulose = Views.hyperSlice(imgPlus, channelDimIdx, 0);
+        this.lignin = Views.hyperSlice(imgPlus, channelDimIdx, 1);
+//        RandomAccessibleInterval<FloatType> cellulose32 = ops.convert().float32(Views.hyperSlice(imgPlus, channelDimIdx, 0));
+//        RandomAccessibleInterval<FloatType> lignin32 = ops.convert().float32(Views.hyperSlice(imgPlus, channelDimIdx, 1));
+//        RandomAccessibleInterval<FloatType> hybrid = ops.convert().float32(Views.hyperSlice(imgPlus, channelDimIdx, 1));
+        RandomAccessibleInterval<UnsignedShortType> hybrid = ops.create().img(lignin); // store the result for hybrid
+//        // Containers for result
+////        RandomAccessibleInterval<FloatType> celluloseMultiplied = ops.create().img(cellulose);
+//        RandomAccessibleInterval<FloatType> ligninMultiplied = ops.create().img(lignin);
+        RandomAccessibleInterval<UnsignedShortType> projectedStack = ops.create().img(lignin);
+        RandomAccessibleInterval<UnsignedShortType> smoothedStack = ops.create().img(lignin);
+//        // multiply with weight
+//        ops.math().multiply(hybrid, cellulose, weightCelluloseRatioFloatType);
+//        ops.math().multiply(ligninMultiplied, lignin, weightLigninRatioFloatType);
+//        ops.math().add(hybrid,celluloseMultiplied,ligninMultiplied);
+        LoopBuilder.setImages(cellulose,lignin,hybrid)
+                .multiThreaded()
+                .forEachPixel((c, l, h)->
+                        h.setReal(c.get() * weightCelluloseRatio + l.get()*weightLigninRatio));
         hybridNonSmoothedStack = hybrid;
-//        ImageJFunctions.show(hybrid,"Hybrid image");
         // perform window sliding Projection, each new slide is the average projection of all the slide in the window
         WindowSlidingProjection wsp = new WindowSlidingProjection();
         PropertyChangeListener slideProgressListener = new PropertyChangeListener() {

@@ -45,18 +45,18 @@ public class CentroidSelectionWorker extends SwingWorker<Void, Void> {
             IJ.log("serialized object path: " + serFile);
             ImageDataSerializable imageDataSerializable = ImageDataSerializableUtils.imageDataDeserializeObject(Paths.get(serFile));
             IJ.log("complete deserialization");
-            ImageData<UnsignedShortType, FloatType> imageData = ImageDataSerializableUtils.convertSerializableToImageData(imageDataSerializable, CurrentImageStage.CentroidSelection, context);
+            ImageData<UnsignedShortType, UnsignedShortType> imageData = ImageDataSerializableUtils.convertSerializableToImageData(imageDataSerializable, CurrentImageStage.CentroidSelection, context);
             IJ.log("complete conversion to ImageData object");
 //            imageData = imageDataRetrieved;
-            RandomAccessibleInterval<FloatType> smoothedStack  = imageData.getHybridStackSmoothed();
+            RandomAccessibleInterval<UnsignedShortType> smoothedStack  = imageData.getHybridStackSmoothed();
             int slideForTuning = 0;
             // get the firstSlide
-            RandomAccessibleInterval<FloatType> just1Slide = Views.hyperSlice(smoothedStack,2,slideForTuning);
+            RandomAccessibleInterval<UnsignedShortType> just1Slide = Views.hyperSlice(smoothedStack,2,slideForTuning);
             // Copy the view to a new Img<FloatType>
             // Create copy using cursors
-            Img<FloatType> copy = ArrayImgs.floats(Intervals.dimensionsAsLongArray(just1Slide));
-            net.imglib2.Cursor<FloatType> srcCursor = Views.flatIterable(just1Slide).cursor();
-            net.imglib2.Cursor<FloatType> dstCursor = copy.cursor();
+            Img<UnsignedShortType> copy = ArrayImgs.unsignedShorts(Intervals.dimensionsAsLongArray(just1Slide));
+            net.imglib2.Cursor<UnsignedShortType> srcCursor = Views.flatIterable(just1Slide).cursor();
+            net.imglib2.Cursor<UnsignedShortType> dstCursor = copy.cursor();
             while (srcCursor.hasNext()) {
                 dstCursor.next().set(srcCursor.next());
             }

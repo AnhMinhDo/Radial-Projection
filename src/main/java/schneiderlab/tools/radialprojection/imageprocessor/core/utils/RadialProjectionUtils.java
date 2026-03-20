@@ -5,6 +5,7 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
@@ -23,18 +24,18 @@ public class RadialProjectionUtils {
         return copy;
     }
 
-    public static ImagePlus copyAndConvertRandomAccessIntervalToImagePlus(RandomAccessibleInterval<FloatType> input, String name){
+    public static ImagePlus copyAndConvertRandomAccessIntervalToImagePlus(RandomAccessibleInterval<UnsignedShortType> input, String name){
         // Create copy using cursors
-        Img<FloatType> copy = ArrayImgs.floats(Intervals.dimensionsAsLongArray(input));
-        net.imglib2.Cursor<FloatType> srcCursor = Views.flatIterable(input).cursor();
-        net.imglib2.Cursor<FloatType> dstCursor = copy.cursor();
+        Img<UnsignedShortType> copy = ArrayImgs.unsignedShorts(Intervals.dimensionsAsLongArray(input));
+        net.imglib2.Cursor<UnsignedShortType> srcCursor = Views.flatIterable(input).cursor();
+        net.imglib2.Cursor<UnsignedShortType> dstCursor = copy.cursor();
         while (srcCursor.hasNext()) {
             dstCursor.next().set(srcCursor.next());
         }
         // Convert to ImagePlus
-        ImagePlus impFloat = ImageJFunctions.wrap(copy, name);
-        impFloat.resetDisplayRange();
-        return impFloat;
+        ImagePlus impUnsignedShort = ImageJFunctions.wrapUnsignedShort(copy, name);
+        impUnsignedShort.resetDisplayRange();
+        return impUnsignedShort;
     }
 
     public static String filenameWithoutExtension(String filenameWithExtension){

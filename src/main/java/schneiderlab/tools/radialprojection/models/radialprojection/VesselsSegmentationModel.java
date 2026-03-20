@@ -21,7 +21,7 @@ import java.util.Properties;
 
 public class VesselsSegmentationModel {
     // Current Image with its object
-    private ImageData<UnsignedShortType,FloatType> imageData;
+    private ImageData<UnsignedShortType,UnsignedShortType> imageData;
     // overall Info of the file
     private Path filePath;
     private Path directoryPath;
@@ -38,14 +38,14 @@ public class VesselsSegmentationModel {
     // output-create side view
     private ImgPlus<UnsignedShortType> sideView;
     private ImagePlus sideViewDisplay;
-    private RandomAccessibleInterval<FloatType> lignin;
+    private RandomAccessibleInterval<UnsignedShortType> lignin;
     private ImagePlus ligninImagePlus;
-    private RandomAccessibleInterval<FloatType> cellulose;
+    private RandomAccessibleInterval<UnsignedShortType> cellulose;
     private ImagePlus celluloseImagePlus;
-    private RandomAccessibleInterval<FloatType> hybridStackNonSmoothed;
+    private RandomAccessibleInterval<UnsignedShortType> hybridStackNonSmoothed;
     private ImagePlus hybridStackNonSmoothedImagePlus;
     // output-projection and smoothing
-    private RandomAccessibleInterval<FloatType> hybridStackSmoothed;
+    private RandomAccessibleInterval<UnsignedShortType> hybridStackSmoothed;
     private ImagePlus hybridStackSmoothedImagePlus;
     private ImagePlus hybridStackSmoothedDisplay;
     private ImagePlus hybridStackNonSmoothedDisplay;
@@ -96,11 +96,11 @@ public class VesselsSegmentationModel {
         }
     }
 
-    public ImageData<UnsignedShortType, FloatType> getImageData() {
+    public ImageData<UnsignedShortType, UnsignedShortType> getImageData() {
         return imageData;
     }
 
-    public void setImageData(ImageData<UnsignedShortType, FloatType> imageData) {
+    public void setImageData(ImageData<UnsignedShortType, UnsignedShortType> imageData) {
         this.imageData = imageData;
     }
 
@@ -132,7 +132,7 @@ public class VesselsSegmentationModel {
         this.sideViewDisplay = sideViewDisplay;
     }
 
-    public RandomAccessibleInterval<FloatType> getHybridStackNonSmoothed() {
+    public RandomAccessibleInterval<UnsignedShortType> getHybridStackNonSmoothed() {
         return hybridStackNonSmoothed;
     }
 
@@ -145,15 +145,15 @@ public class VesselsSegmentationModel {
             return hybridStackNonSmoothedImagePlus;
         }
     }
-    public void setHybridStackNonSmoothed(RandomAccessibleInterval<FloatType> hybridStackNonSmoothed) {
+    public void setHybridStackNonSmoothed(RandomAccessibleInterval<UnsignedShortType> hybridStackNonSmoothed) {
         this.hybridStackNonSmoothed = hybridStackNonSmoothed;
     }
 
-    public RandomAccessibleInterval<FloatType> getHybridStackSmoothed() {
+    public RandomAccessibleInterval<UnsignedShortType> getHybridStackSmoothed() {
         return hybridStackSmoothed;
     }
 
-    public void setHybridStackSmoothed(RandomAccessibleInterval<FloatType> hybridStackSmoothed) {
+    public void setHybridStackSmoothed(RandomAccessibleInterval<UnsignedShortType> hybridStackSmoothed) {
         this.hybridStackSmoothed = hybridStackSmoothed;
     }
 
@@ -219,7 +219,7 @@ public class VesselsSegmentationModel {
         EdgeCentroidMaskImagePlus = edgeCentroidMaskImagePlus;
     }
 
-    public RandomAccessibleInterval<FloatType> getLignin() {
+    public RandomAccessibleInterval<UnsignedShortType> getLignin() {
         return lignin;
     }
 
@@ -233,11 +233,11 @@ public class VesselsSegmentationModel {
         }
     }
 
-    public void setLignin(RandomAccessibleInterval<FloatType> lignin) {
+    public void setLignin(RandomAccessibleInterval<UnsignedShortType> lignin) {
         this.lignin = lignin;
     }
 
-    public RandomAccessibleInterval<FloatType> getCellulose() {
+    public RandomAccessibleInterval<UnsignedShortType> getCellulose() {
         return cellulose;
     }
 
@@ -251,7 +251,7 @@ public class VesselsSegmentationModel {
         }
     }
 
-    public void setCellulose(RandomAccessibleInterval<FloatType> cellulose) {
+    public void setCellulose(RandomAccessibleInterval<UnsignedShortType> cellulose) {
         this.cellulose = cellulose;
     }
 
