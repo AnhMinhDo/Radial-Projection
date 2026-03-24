@@ -6,6 +6,8 @@ import schneiderlab.tools.radialprojection.imageprocessor.core.Vessel;
 
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.Point;
@@ -56,6 +58,9 @@ public class ImageWindowGroupController {
                 0,
                 imageWindowPositionList
         ));
+        imageWindow.addWindowListener(new CloseWindowAdapter(
+                imageWindow,
+                imageWindowList));
     }
 
     public void closeAllWindowInGroup(){
@@ -125,6 +130,23 @@ public class ImageWindowGroupController {
 
             public int getOffsetY() {
                 return offsetY;
+            }
+        }
+    }
+
+    class CloseWindowAdapter extends WindowAdapter {
+        private final ImageWindow imageWindowSelf;
+        private final List<ImageWindow> imageWindowList ;
+
+        CloseWindowAdapter(ImageWindow imageWindowSelf, List<ImageWindow> imageWindowList) {
+            this.imageWindowSelf = imageWindowSelf;
+            this.imageWindowList = imageWindowList;
+        }
+
+        @Override
+        public void windowClosed(WindowEvent e){
+            for (int i = 1; i < imageWindowList.size(); i++) {
+                imageWindowList.get(i).close();
             }
         }
     }
