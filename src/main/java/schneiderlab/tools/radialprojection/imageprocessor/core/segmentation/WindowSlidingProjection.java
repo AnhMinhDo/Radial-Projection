@@ -4,7 +4,6 @@ import java.util.Arrays;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
-import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
 
 import java.beans.PropertyChangeListener;
