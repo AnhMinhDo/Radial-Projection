@@ -53,9 +53,9 @@ public class PolarProjection {
     // process function here
     public ImagePlus process(){
         performPolarProjection();
-        ContrastEnhancer contrastEnhancer = new ContrastEnhancer();
+//        ContrastEnhancer contrastEnhancer = new ContrastEnhancer();
         ImagePlus result = new ImagePlus("polar projected Vessel", hybridWallProcessor);
-        contrastEnhancer.stretchHistogram(result,0.35);
+//        contrastEnhancer.stretchHistogram(result,0.35);
         return result;
     }
 
