@@ -1,6 +1,8 @@
 package schneiderlab.tools.radialprojection.controllers.workers;
 
 import ij.IJ;
+import ij.ImagePlus;
+import ij.io.Opener;
 import io.scif.services.DatasetIOService;
 import net.imagej.Dataset;
 import net.imagej.ImgPlus;
@@ -53,6 +55,9 @@ public class CreateSideViewWorker <T extends RealType<T>> extends SwingWorker<Vo
         // Get DatasetService and UIService from context
         try {
             // load the image
+//            ImagePlus rawInputStack = IJ.openImage(filePath.toString());
+//            // perform MIP on stack
+
             logService.info("importing image to create side view ....");
             Dataset img = ioService.open(filePath.toString());
             logService.info("image is imported successfully");
