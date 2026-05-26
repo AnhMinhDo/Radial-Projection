@@ -4,7 +4,6 @@ import ij.IJ;
 
 import java.awt.*;
 import java.io.*;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +14,7 @@ public class ImageDataSerializable implements Serializable {
     private String tempDir;
 //    private String imageOutputPath; // Path to output dir of Segmentation and Radial Projection
     private String outputDirPath; // Path to the Directory of output file
+    private String hybridFirstSlicePath;
 //    private int numberOfChannels;
     private int hybridStackSmoothedWidth;
     private int hybridStackSmoothedHeight;
@@ -85,8 +85,14 @@ public class ImageDataSerializable implements Serializable {
         return outputDirPath;
     }
 
-    public void setOutputDirPath(String outputDirPath) {
-        this.outputDirPath = outputDirPath;
+    public void setOutputDirPath(String outputDirPath) {this.outputDirPath = outputDirPath;}
+
+    public String getHybridFirstSlicePath() {
+        return hybridFirstSlicePath;
+    }
+
+    public void setHybridFirstSlicePath(String hybridFirstSlicePath) {
+        this.hybridFirstSlicePath = hybridFirstSlicePath;
     }
 
     public int getXyPixelSize() {

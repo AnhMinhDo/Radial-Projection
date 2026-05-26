@@ -18,7 +18,6 @@ import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
 import org.scijava.Context;
 import schneiderlab.tools.radialprojection.imageprocessor.core.ImageData;
-import schneiderlab.tools.radialprojection.models.batch.BatchModeModel;
 
 import java.nio.file.Path;
 
