@@ -1,15 +1,22 @@
 package schneiderlab.tools.radialprojection.models.batch;
 
+import ij.IJ;
 import ij.Prefs;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
 
-public class BatchModeGlobalStateModel {
+public class BatchModeGlobalStateModel implements Serializable {
     // init when start plugin
     // fetch data from the Fiji global state
     private ArrayDeque<String> startQueue = new ArrayDeque<>();
@@ -17,9 +24,36 @@ public class BatchModeGlobalStateModel {
     private ArrayDeque<String> watershedAndRadialProjectionQueue = new ArrayDeque<>();
     private ArrayDeque<String> refineVesselQueue = new ArrayDeque<>();
     private ArrayDeque<String> analysisQueue = new ArrayDeque<>();
-    private final PropertyChangeSupport support = new PropertyChangeSupport(this);
+    private String serializedObjectPath;
+    private String suffix = "_progress.ser";
+    private transient PropertyChangeSupport support = new PropertyChangeSupport(this);
 
     public BatchModeGlobalStateModel() {
+    }
+
+    public void serializeObject(){
+        try{
+            Path path = Paths.get(serializedObjectPath);
+            String dirname = path.getFileName().toString();
+            String progressFilename = dirname + this.suffix;
+            Path savePath = path.resolve(progressFilename);
+            FileOutputStream file = new FileOutputStream(savePath.toAbsolutePath().toString());
+            ObjectOutputStream out = new ObjectOutputStream(file);
+            out.writeObject(this);
+            out.close();
+            file.close();
+        } catch (IOException e){
+            IJ.log("IO error while saving the Progress Object to Storage");
+            e.printStackTrace();
+        }
+    }
+
+    public String getSerializedObjectPath() {
+        return serializedObjectPath;
+    }
+
+    public void setSerializedObjectPath(String serializedObjectPath) {
+        this.serializedObjectPath = serializedObjectPath;
     }
 
     // load from Fiji Prefs
@@ -92,14 +126,24 @@ public class BatchModeGlobalStateModel {
     }
     public void addLastStartQueue(String filePath){
         startQueue.addLast(filePath);
+        int newValue = startQueue.size();
+        support.firePropertyChange("numberOfImageDataInStartStep", newValue-1,newValue);
     }
 
     public void removeFirstStartQueue(){
         startQueue.removeFirst();
+        int newValue = startQueue.size();
+        support.firePropertyChange("numberOfImageDataInStartStep", newValue+1,newValue);
     }
 
     public String getFirstStartQueue(){
         return startQueue.getFirst();
+    }
+
+    public void clearStartQueue(){
+        int oldValue = startQueue.size();
+        startQueue.clear();
+        support.firePropertyChange("numberOfImageDataInStartStep",oldValue, 0);
     }
 
     // centroid selection queue
@@ -124,6 +168,12 @@ public class BatchModeGlobalStateModel {
         return centroidSelectionQueue.getFirst();
     }
 
+    public void clearCentroidSelectionQueue(){
+        int oldValue = centroidSelectionQueue.size();
+        centroidSelectionQueue.clear();
+        support.firePropertyChange("numberOfImageDataInCentroidSelectionStep",oldValue, 0);
+    }
+
     // watershed and radial projection
 
     public ArrayDeque<String> getWatershedAndRadialProjectionQueue() {
@@ -144,6 +194,12 @@ public class BatchModeGlobalStateModel {
 
     public String getFirstWatershedAndRadialProjectionQueue(){
         return watershedAndRadialProjectionQueue.getFirst();
+    }
+
+    public void clearWatershedAndRadialProjectionQueue() {
+        int oldValue = watershedAndRadialProjectionQueue.size();
+        watershedAndRadialProjectionQueue.clear();
+        support.firePropertyChange("numberOfImageDataInWatershedStep",oldValue, 0);
     }
 
     // refine vessel
@@ -167,6 +223,13 @@ public class BatchModeGlobalStateModel {
         return refineVesselQueue.getFirst();
     }
 
+    public void clearRefineVesselQueue() {
+        int oldValue = refineVesselQueue.size();
+        refineVesselQueue.clear();
+        support.firePropertyChange("numberOfImageDataInRefineVesselStep",oldValue, 0);
+
+    }
+
     // Analysis
 
     public ArrayDeque<String> getAnalysisQueue() {
@@ -187,6 +250,13 @@ public class BatchModeGlobalStateModel {
 
     public String getFirstAnalysisQueue(){
         return analysisQueue.getFirst();
+    }
+
+    public void clearAnalysisQueue() {
+        int oldValue = analysisQueue.size();
+        analysisQueue.clear();
+        support.firePropertyChange("numberOfImageDataInAnalysisBatchStep",oldValue, 0);
+
     }
 
 }
