@@ -294,6 +294,9 @@ public class MainView extends JFrame {
 		return panelBatch;
 	}
 
+	public JCheckBox getCheckBoxSelectTifFiles(){return checkBoxSelectTifFiles;}
+	public JCheckBox getCheckBoxSelectCziFiles(){return checkBoxSelectCziFiles;}
+
 	public JButton getButtonStartBatch() {
 		return buttonStartBatch;
 	}
@@ -310,8 +313,8 @@ public class MainView extends JFrame {
 		return label2RightArrow;
 	}
 
-	public JButton getButtonWaterShedBatch() {
-		return buttonWaterShedBatch;
+	public JButton getButtonWatershedBatch() {
+		return buttonWatershedBatch;
 	}
 
 
@@ -469,6 +472,9 @@ public class MainView extends JFrame {
 
 	public JSpinner getSpinnerNumberRandomBoxes(){return spinnerNumberRandomBoxesBatch;}
 
+	public JButton getButtonSaveProgress(){return buttonSaveProgress;}
+
+	public JButton getButtonLoadProgress(){return buttonLoadProgress;}
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
@@ -581,11 +587,13 @@ public class MainView extends JFrame {
 		panelBatch = new JPanel();
 		buttonSelectionDirPathBatch = new JButton();
 		textFieldDirPathBatch = new JTextField();
+		checkBoxSelectTifFiles = new JCheckBox();
+		checkBoxSelectCziFiles = new JCheckBox();
 		buttonStartBatch = new JButton();
 		label1RightArrow = new JLabel();
 		buttonCentroidSelectionBatch = new JButton();
 		label2RightArrow = new JLabel();
-		buttonWaterShedBatch = new JButton();
+		buttonWatershedBatch = new JButton();
 		labelStartQueueCounter = new JLabel();
 		labelCentroidSelectionCounter = new JLabel();
 		labelWatershedCounter = new JLabel();
@@ -622,10 +630,12 @@ public class MainView extends JFrame {
 		spinnerNumberLinescanBatch = new JSpinner();
 		label24 = new JLabel();
 		spinnerLinescanLengthBatch = new JSpinner();
+		buttonSaveProgress = new JButton();
 		label25 = new JLabel();
 		spinnerNumberRandomBoxesBatch = new JSpinner();
 		label26 = new JLabel();
 		spinnerRandomBoxWidthBatch = new JSpinner();
+		buttonLoadProgress = new JButton();
 
 		//======== this ========
 		Container contentPane = getContentPane();
@@ -1207,6 +1217,7 @@ public class MainView extends JFrame {
 					"[]" +
 					"[]" +
 					"[]" +
+					"[]" +
 					"[]"));
 
 				//---- buttonSelectionDirPathBatch ----
@@ -1215,55 +1226,70 @@ public class MainView extends JFrame {
 
 				//---- textFieldDirPathBatch ----
 				textFieldDirPathBatch.setEditable(false);
-				panelBatch.add(textFieldDirPathBatch, "cell 1 0 4 1");
+				panelBatch.add(textFieldDirPathBatch, "cell 1 0 4 1,width 400:400:400");
+
+				//---- checkBoxSelectTifFiles ----
+				checkBoxSelectTifFiles.setText("tif files");
+				checkBoxSelectTifFiles.setSelected(true);
+				panelBatch.add(checkBoxSelectTifFiles, "cell 0 1");
+
+				//---- checkBoxSelectCziFiles ----
+				checkBoxSelectCziFiles.setText("czi files");
+				panelBatch.add(checkBoxSelectCziFiles, "cell 1 1");
 
 				//---- buttonStartBatch ----
 				buttonStartBatch.setText("Start");
 				buttonStartBatch.setEnabled(false);
-				panelBatch.add(buttonStartBatch, "cell 0 1,alignx center,grow 0 100");
-				panelBatch.add(label1RightArrow, "cell 1 1,alignx center,growx 0");
+				panelBatch.add(buttonStartBatch, "cell 0 2,alignx center,grow 0 100");
+				panelBatch.add(label1RightArrow, "cell 1 2,alignx center,growx 0");
 
 				//---- buttonCentroidSelectionBatch ----
 				buttonCentroidSelectionBatch.setText("<html>Centroid  <br> Selection<html/>");
 				buttonCentroidSelectionBatch.setEnabled(false);
-				panelBatch.add(buttonCentroidSelectionBatch, "cell 2 1,alignx center,grow 0 100");
-				panelBatch.add(label2RightArrow, "cell 3 1,alignx center,growx 0");
+				panelBatch.add(buttonCentroidSelectionBatch, "cell 2 2,alignx center,grow 0 100");
+				panelBatch.add(label2RightArrow, "cell 3 2,alignx center,growx 0");
 
-				//---- buttonWaterShedBatch ----
-				buttonWaterShedBatch.setText("<html>Watershed &<br>Radial Projection<html/>");
-				buttonWaterShedBatch.setEnabled(false);
-				panelBatch.add(buttonWaterShedBatch, "cell 4 1,alignx center,grow 0 100");
+				//---- buttonWatershedBatch ----
+				buttonWatershedBatch.setText("<html>Segmentation &<br>Radial Projection<html/>");
+				buttonWatershedBatch.setEnabled(false);
+				panelBatch.add(buttonWatershedBatch, "cell 4 2,alignx center,grow 0 100");
 
 				//---- labelStartQueueCounter ----
-				labelStartQueueCounter.setText("0/0");
+				labelStartQueueCounter.setText("0");
 				labelStartQueueCounter.setHorizontalAlignment(SwingConstants.CENTER);
-				panelBatch.add(labelStartQueueCounter, "cell 0 2");
+				panelBatch.add(labelStartQueueCounter, "cell 0 3");
 
 				//---- labelCentroidSelectionCounter ----
 				labelCentroidSelectionCounter.setText("0");
 				labelCentroidSelectionCounter.setHorizontalAlignment(SwingConstants.CENTER);
-				panelBatch.add(labelCentroidSelectionCounter, "cell 2 2");
+				panelBatch.add(labelCentroidSelectionCounter, "cell 2 3");
 
 				//---- labelWatershedCounter ----
 				labelWatershedCounter.setText("0");
 				labelWatershedCounter.setHorizontalAlignment(SwingConstants.CENTER);
-				panelBatch.add(labelWatershedCounter, "cell 4 2");
+				panelBatch.add(labelWatershedCounter, "cell 4 3");
+
+				//---- progressBarStartButtonBatch ----
+				progressBarStartButtonBatch.setVisible(false);
 				panelBatch.add(progressBarStartButtonBatch, "cell 0 3");
+
+				//---- progressBarCentroidSelectionBatch ----
+				progressBarCentroidSelectionBatch.setVisible(false);
 				panelBatch.add(progressBarCentroidSelectionBatch, "cell 2 3");
-				panelBatch.add(progressBarWatershedBatch, "cell 4 3");
-				panelBatch.add(label1DownArrow, "cell 4 4,alignx center,growx 0");
+				panelBatch.add(progressBarWatershedBatch, "cell 4 4");
+				panelBatch.add(label1DownArrow, "cell 4 5,alignx center,growx 0");
 
 				//---- buttonAnalysisBatch ----
 				buttonAnalysisBatch.setText("<html>Analysis<html/>");
 				buttonAnalysisBatch.setEnabled(false);
-				panelBatch.add(buttonAnalysisBatch, "cell 0 5,alignx center,grow 0 100");
-				panelBatch.add(label1LeftArrow, "cell 1 5,alignx center,growx 0");
+				panelBatch.add(buttonAnalysisBatch, "cell 0 6,alignx center,grow 0 100");
+				panelBatch.add(label1LeftArrow, "cell 1 6,alignx center,growx 0");
 
 				//---- buttonRefineVesselBatch ----
 				buttonRefineVesselBatch.setText("<html> Refine <br> Vessel<html/>");
 				buttonRefineVesselBatch.setEnabled(false);
-				panelBatch.add(buttonRefineVesselBatch, "cell 2 5,alignx center,grow 0 100");
-				panelBatch.add(label2LeftArrow, "cell 3 5,alignx center,growx 0");
+				panelBatch.add(buttonRefineVesselBatch, "cell 2 6,alignx center,grow 0 100");
+				panelBatch.add(label2LeftArrow, "cell 3 6,alignx center,growx 0");
 
 				//---- buttonRadialProjectionBatch ----
 				buttonRadialProjectionBatch.setText("<html>Radial <br> Projection<html/>");
@@ -1274,19 +1300,25 @@ public class MainView extends JFrame {
 				//---- labelAnalysisCounter ----
 				labelAnalysisCounter.setText("0");
 				labelAnalysisCounter.setHorizontalAlignment(SwingConstants.CENTER);
-				panelBatch.add(labelAnalysisCounter, "cell 0 6");
+				panelBatch.add(labelAnalysisCounter, "cell 0 7");
 
 				//---- labelRefineVesselCounter ----
 				labelRefineVesselCounter.setText("0");
 				labelRefineVesselCounter.setHorizontalAlignment(SwingConstants.CENTER);
-				panelBatch.add(labelRefineVesselCounter, "cell 2 6");
+				panelBatch.add(labelRefineVesselCounter, "cell 2 7");
 
 				//---- labelRadialProjectionCounter ----
 				labelRadialProjectionCounter.setText("0");
 				labelRadialProjectionCounter.setHorizontalAlignment(SwingConstants.CENTER);
 				labelRadialProjectionCounter.setVisible(false);
 				panelBatch.add(labelRadialProjectionCounter, "cell 4 6");
+
+				//---- progressBarAnalysisBatch ----
+				progressBarAnalysisBatch.setVisible(false);
 				panelBatch.add(progressBarAnalysisBatch, "cell 0 7");
+
+				//---- progressBarRefineVesselBatch ----
+				progressBarRefineVesselBatch.setVisible(false);
 				panelBatch.add(progressBarRefineVesselBatch, "cell 2 7");
 
 				//---- progressBarRadialProjectionBatch ----
@@ -1295,93 +1327,101 @@ public class MainView extends JFrame {
 
 				//---- labelXYbatch ----
 				labelXYbatch.setText("xy pixel size(nm)");
-				panelBatch.add(labelXYbatch, "cell 0 9,alignx right,growx 0");
+				panelBatch.add(labelXYbatch, "cell 0 10,alignx right,growx 0");
 
 				//---- spinnerXYBatch ----
 				spinnerXYBatch.setModel(new SpinnerNumberModel(200, 1, null, 1));
-				panelBatch.add(spinnerXYBatch, "cell 1 9");
+				panelBatch.add(spinnerXYBatch, "cell 1 10");
 
 				//---- labelZbatch ----
 				labelZbatch.setText("z pixel size(nm)");
-				panelBatch.add(labelZbatch, "cell 2 9,alignx right,growx 0");
+				panelBatch.add(labelZbatch, "cell 2 10,alignx right,growx 0");
 
 				//---- spinnerZbatch ----
 				spinnerZbatch.setModel(new SpinnerNumberModel(200, 1, null, 1));
-				panelBatch.add(spinnerZbatch, "cell 3 9");
+				panelBatch.add(spinnerZbatch, "cell 3 10");
 
 				//---- labelAnalysisWindowBatch ----
 				labelAnalysisWindowBatch.setText("<html>Analysis<br>window(\u00b5m)</html>");
-				panelBatch.add(labelAnalysisWindowBatch, "cell 0 10,alignx right,growx 0");
+				panelBatch.add(labelAnalysisWindowBatch, "cell 0 11,alignx right,growx 0");
 
 				//---- spinnerAnalysisWindowBatch ----
 				spinnerAnalysisWindowBatch.setModel(new SpinnerNumberModel(15, 1, null, 1));
-				panelBatch.add(spinnerAnalysisWindowBatch, "cell 1 10");
+				panelBatch.add(spinnerAnalysisWindowBatch, "cell 1 11");
 
 				//---- labelSmoothingBatch ----
 				labelSmoothingBatch.setText("<html>Pre-watershed<br>Smoothing</html>");
-				panelBatch.add(labelSmoothingBatch, "cell 2 10,alignx right,growx 0");
+				panelBatch.add(labelSmoothingBatch, "cell 2 11,alignx right,growx 0");
 
 				//---- spinnerSmoothingBatch ----
 				spinnerSmoothingBatch.setModel(new SpinnerNumberModel(2.0, 0.0, null, 0.1));
-				panelBatch.add(spinnerSmoothingBatch, "cell 3 10");
+				panelBatch.add(spinnerSmoothingBatch, "cell 3 11");
 
 				//---- labelInnerVesselRadiusBatch ----
 				labelInnerVesselRadiusBatch.setText("<html>Inner Vessel<br>Radius (\u00b5m)</html>");
-				panelBatch.add(labelInnerVesselRadiusBatch, "cell 4 10,alignx right,growx 0");
+				panelBatch.add(labelInnerVesselRadiusBatch, "cell 4 11,alignx right,growx 0");
 
 				//---- spinnerInnerVesselRadiusBatch ----
 				spinnerInnerVesselRadiusBatch.setModel(new SpinnerNumberModel(1.0, 0.1, null, 0.05));
-				panelBatch.add(spinnerInnerVesselRadiusBatch, "cell 5 10");
+				panelBatch.add(spinnerInnerVesselRadiusBatch, "cell 5 11");
 
 				//---- label21 ----
 				label21.setText("<html>Hybrid-weighting of<br>lignin-to-cellulose(%)</html>");
-				panelBatch.add(label21, "cell 0 11,alignx right,growx 0");
+				panelBatch.add(label21, "cell 0 12,alignx right,growx 0");
 
 				//---- labelLigninPercentageBatch ----
 				labelLigninPercentageBatch.setText("Lignin 75%");
-				panelBatch.add(labelLigninPercentageBatch, "cell 1 11,alignx right,growx 0");
+				panelBatch.add(labelLigninPercentageBatch, "cell 1 12,alignx right,growx 0");
 
 				//---- sliderLigninCelluoseBatch ----
 				sliderLigninCelluoseBatch.setPaintTicks(true);
 				sliderLigninCelluoseBatch.setMajorTickSpacing(25);
 				sliderLigninCelluoseBatch.setValue(25);
-				panelBatch.add(sliderLigninCelluoseBatch, "cell 2 11 3 1");
+				panelBatch.add(sliderLigninCelluoseBatch, "cell 2 12 3 1");
 
 				//---- labelCellulosePercentageBatch ----
 				labelCellulosePercentageBatch.setText("Cellulose 25%");
-				panelBatch.add(labelCellulosePercentageBatch, "cell 5 11,alignx left,growx 0");
+				panelBatch.add(labelCellulosePercentageBatch, "cell 5 12,alignx left,growx 0");
 
 				//---- label23 ----
 				label23.setText("Number of line scan");
-				panelBatch.add(label23, "cell 0 12,alignx right,growx 0");
+				panelBatch.add(label23, "cell 0 13,alignx right,growx 0");
 
 				//---- spinnerNumberLinescanBatch ----
 				spinnerNumberLinescanBatch.setModel(new SpinnerNumberModel(100, 1, null, 1));
-				panelBatch.add(spinnerNumberLinescanBatch, "cell 1 12");
+				panelBatch.add(spinnerNumberLinescanBatch, "cell 1 13");
 
 				//---- label24 ----
 				label24.setText("Linescan length(\u00b5m)");
-				panelBatch.add(label24, "cell 2 12,alignx right,growx 0");
+				panelBatch.add(label24, "cell 2 13,alignx right,growx 0");
 
 				//---- spinnerLinescanLengthBatch ----
 				spinnerLinescanLengthBatch.setModel(new SpinnerNumberModel(25, 0, null, 1));
-				panelBatch.add(spinnerLinescanLengthBatch, "cell 3 12");
+				panelBatch.add(spinnerLinescanLengthBatch, "cell 3 13");
+
+				//---- buttonSaveProgress ----
+				buttonSaveProgress.setText("Save Progress");
+				panelBatch.add(buttonSaveProgress, "cell 4 13");
 
 				//---- label25 ----
 				label25.setText("<html>Number of<br>random boxes</html>");
-				panelBatch.add(label25, "cell 0 13,alignx right,growx 0");
+				panelBatch.add(label25, "cell 0 14,alignx right,growx 0");
 
 				//---- spinnerNumberRandomBoxesBatch ----
 				spinnerNumberRandomBoxesBatch.setModel(new SpinnerNumberModel(100, 1, null, 1));
-				panelBatch.add(spinnerNumberRandomBoxesBatch, "cell 1 13");
+				panelBatch.add(spinnerNumberRandomBoxesBatch, "cell 1 14");
 
 				//---- label26 ----
 				label26.setText("Random box width");
-				panelBatch.add(label26, "cell 2 13,alignx right,growx 0");
+				panelBatch.add(label26, "cell 2 14,alignx right,growx 0");
 
 				//---- spinnerRandomBoxWidthBatch ----
 				spinnerRandomBoxWidthBatch.setModel(new SpinnerNumberModel(70, 1, null, 1));
-				panelBatch.add(spinnerRandomBoxWidthBatch, "cell 3 13");
+				panelBatch.add(spinnerRandomBoxWidthBatch, "cell 3 14");
+
+				//---- buttonLoadProgress ----
+				buttonLoadProgress.setText("Load Progress");
+				panelBatch.add(buttonLoadProgress, "cell 4 14");
 			}
 			panelMainRight.add(panelBatch, "card5");
 		}
@@ -1501,11 +1541,13 @@ public class MainView extends JFrame {
 	private JPanel panelBatch;
 	private JButton buttonSelectionDirPathBatch;
 	private JTextField textFieldDirPathBatch;
+	private JCheckBox checkBoxSelectTifFiles;
+	private JCheckBox checkBoxSelectCziFiles;
 	private JButton buttonStartBatch;
 	private JLabel label1RightArrow;
 	private JButton buttonCentroidSelectionBatch;
 	private JLabel label2RightArrow;
-	private JButton buttonWaterShedBatch;
+	private JButton buttonWatershedBatch;
 	private JLabel labelStartQueueCounter;
 	private JLabel labelCentroidSelectionCounter;
 	private JLabel labelWatershedCounter;
@@ -1542,9 +1584,11 @@ public class MainView extends JFrame {
 	private JSpinner spinnerNumberLinescanBatch;
 	private JLabel label24;
 	private JSpinner spinnerLinescanLengthBatch;
+	private JButton buttonSaveProgress;
 	private JLabel label25;
 	private JSpinner spinnerNumberRandomBoxesBatch;
 	private JLabel label26;
 	private JSpinner spinnerRandomBoxWidthBatch;
+	private JButton buttonLoadProgress;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
 }
