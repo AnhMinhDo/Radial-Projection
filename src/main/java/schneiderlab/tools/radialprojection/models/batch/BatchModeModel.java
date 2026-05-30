@@ -1,7 +1,6 @@
 package schneiderlab.tools.radialprojection.models.batch;
 
 import net.imglib2.type.numeric.integer.UnsignedShortType;
-import net.imglib2.type.numeric.real.FloatType;
 import schneiderlab.tools.radialprojection.imageprocessor.core.ImageData;
 
 import java.beans.PropertyChangeListener;
@@ -16,7 +15,12 @@ public class BatchModeModel {
     private int numberOfUnprocessedFilePath = 0;
     private int totalNumberOfFiles = 0;
     private List<ImageData<UnsignedShortType, UnsignedShortType>> imageDataList = new ArrayList<>();
-    // Queue in each step
+    // Worker state in each Step
+    boolean startWorkerExist = false;
+    boolean centroidSelectionWorkerExist = false;
+    boolean segmentationAndRadialProjectionWorkerExist = false;
+    boolean refinementWorkerExist = false;
+    boolean AnalysisWorkerExist = false;
 
     // vessel segmentation
     private int xyPixelSize=200;
@@ -328,5 +332,47 @@ public class BatchModeModel {
 
     public void setLinescanLength(int linescanLength) {
         this.linescanLength = linescanLength;
+    }
+
+    // batch worker states
+
+    public boolean isStartWorkerExist() {
+        return startWorkerExist;
+    }
+
+    public void setStartWorkerExist(boolean startWorkerExist) {
+        this.startWorkerExist = startWorkerExist;
+    }
+
+    public boolean isCentroidSelectionWorkerExist() {
+        return centroidSelectionWorkerExist;
+    }
+
+    public void setCentroidSelectionWorkerExist(boolean centroidSelectionWorkerExist) {
+        this.centroidSelectionWorkerExist = centroidSelectionWorkerExist;
+    }
+
+    public boolean isSegmentationAndRadialProjectionWorkerExist() {
+        return segmentationAndRadialProjectionWorkerExist;
+    }
+
+    public void setSegmentationAndRadialProjectionWorkerExist(boolean segmentationAndRadialProjectionWorkerExist) {
+        this.segmentationAndRadialProjectionWorkerExist = segmentationAndRadialProjectionWorkerExist;
+    }
+
+    public boolean isRefinementWorkerExist() {
+        return refinementWorkerExist;
+    }
+
+    public void setRefinementWorkerExist(boolean refinementWorkerExist) {
+        this.refinementWorkerExist = refinementWorkerExist;
+    }
+
+    public boolean isAnalysisWorkerExist() {
+        return AnalysisWorkerExist;
+    }
+
+    public void setAnalysisWorkerExist(boolean analysisWorkerExist) {
+        AnalysisWorkerExist = analysisWorkerExist;
     }
 }
