@@ -56,11 +56,12 @@ public class BatchRefineVesselWorker extends SwingWorker<Void, Void> {
                 // using window adapter to listen to window close to countdown latch
                 iwrvmcip.addWindowListener(new WindowAdapter() {
                     public void windowClosed(WindowEvent e) {
-                        vesselSerializable.serializeObject();
+                        IJ.log("Stack Window is closed");
                         latch.countDown();
                     }
                 });
                 latch.await();
+                vesselSerializable.serializeObject();
             }
             // push the file name to the next queue
             batchModeGlobalStateModel.addLastAnalysisQueue(serFile);
