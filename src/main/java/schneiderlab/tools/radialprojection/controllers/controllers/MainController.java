@@ -30,8 +30,10 @@ import schneiderlab.tools.radialprojection.imageprocessor.core.convertczitotif.R
 import schneiderlab.tools.radialprojection.imageprocessor.core.io.SaveVesselResultToCSV;
 import schneiderlab.tools.radialprojection.imageprocessor.core.io.SaveVesselResultToXLSX;
 import schneiderlab.tools.radialprojection.imageprocessor.core.segmentation.Reconstruction;
+import schneiderlab.tools.radialprojection.imageprocessor.core.vesselserialized.VesselSerializable;
 import schneiderlab.tools.radialprojection.models.batch.BatchModeGlobalStateModel;
 import schneiderlab.tools.radialprojection.models.batch.BatchModeModel;
+import schneiderlab.tools.radialprojection.models.batch.BatchModeModelUtils;
 import schneiderlab.tools.radialprojection.models.czitotifmodel.CziToTifModel;
 import schneiderlab.tools.radialprojection.models.radialprojection.AnalysisModel;
 import schneiderlab.tools.radialprojection.models.radialprojection.RadialProjectionModel;
@@ -43,14 +45,18 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainController {
@@ -681,23 +687,45 @@ public class MainController {
 //                if(isDirPathFromCziToTifStepValid){
 //                    chooser.setCurrentDirectory(dirPathFromCziToTifStep);
 //                }
+                String tifExtension = ".tif";
+                String cziExtension = ".czi";
+                boolean tifSelect = mainView.getCheckBoxSelectTifFiles().isSelected();
+                boolean cziSelect = mainView.getCheckBoxSelectCziFiles().isSelected();
                 chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 int returnVal = chooser.showOpenDialog(mainView.getParent());
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File dir = chooser.getSelectedFile();
-                    File[] files = dir.listFiles((d, name) -> name.toLowerCase().endsWith(".tif"));
-                    if (files != null) {
-                        batchModeModel.removeAllFilePathList(); // clear before new path objects
-                        for (File file : files) {
-                            batchModeModel.addPathToPathList(file.toPath());
-                        }
-//                        Collections.reverse(batchModeModel.getFilePathList());
+                    List<String> extensionList = new ArrayList<>();
+                    if(tifSelect){
+                        extensionList.add(tifExtension);
                     }
-                    mainView.getTextFieldDirPathBatch().setText(dir.getPath());
-                    OpenDialog.setDefaultDirectory(dir.getAbsolutePath());
-                    IJ.log("selected files: ");
-                    for(Path path:batchModeModel.getFilePathList()){
-                        IJ.log(path.toString());
+                    if(cziSelect){
+                        extensionList.add(cziExtension);
+                    }
+                    File dir = chooser.getSelectedFile();
+                    if(!extensionList.isEmpty()){
+                        List<File> fileList = new ArrayList<>();
+                        for (String ext : extensionList){
+                            File[] files = dir.listFiles((d, name) -> name.toLowerCase().endsWith(ext));
+                            if(files != null){
+                                for (File file : files) {
+                                    fileList.add(file);
+                                }
+                            }
+                        }
+                        if(!fileList.isEmpty()){
+                            batchModeGlobalStateModel.getStartQueue().clear();
+                            for(File file: fileList){
+                                batchModeGlobalStateModel.addLastStartQueue(file.getAbsolutePath());
+                            }
+                            mainView.getTextFieldDirPathBatch().setText(dir.getName());
+                            mainView.getTextFieldDirPathBatch().setToolTipText(dir.getPath());
+                            OpenDialog.setDefaultDirectory(dir.getAbsolutePath());
+                            batchModeGlobalStateModel.setSerializedObjectPath(dir.getAbsolutePath());
+                            IJ.log("selected files: ");
+                            for(File file :fileList){
+                                IJ.log(file.getName());
+                            }
+                        }
                     }
                 }
             }
@@ -718,30 +746,22 @@ public class MainController {
                         if("state".equals(evt.getPropertyName()) &&
                                 evt.getNewValue() == SwingWorker.StateValue.DONE){
                             mainView.getLabelStartQueueCounter().setIcon(null);
+                            batchModeModel.setStartWorkerExist(false);
                         }
                     }
                 });
+                mainView.getButtonStartBatch().setEnabled(false);
                 batchStartWorker.execute();
+                batchModeModel.setStartWorkerExist(true);
             }
         });
         // update the startQueue label
-        batchModeModel.addPropertyChangeListener(new PropertyChangeListener() {
+        batchModeGlobalStateModel.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                if("totalNumberOfFiles".equals(evt.getPropertyName())){
-                    int total = batchModeModel.getTotalNumberOfFiles();
-                    int unprocessedFiles = batchModeModel.getNumberOfUnprocessedFilePath();
-                    mainView.getLabelStartQueueCounter().setText(total + " / " + unprocessedFiles);
-                    if(unprocessedFiles > 0 ){
-                        mainView.getButtonStartBatch().setEnabled(true);
-                    }
-                }
-                if("numberOfUnprocessedFilePath".equals(evt.getPropertyName())){
-                    int total = batchModeModel.getTotalNumberOfFiles();
-                    int unprocessedFiles = batchModeModel.getNumberOfUnprocessedFilePath();
-                    mainView.getLabelStartQueueCounter().setText(total + " / " + unprocessedFiles);
-                    mainView.getProgressBarStartButtonBatch().setValue(100-(unprocessedFiles*100/total));
-                    if(unprocessedFiles > 0 ){
+                if("numberOfImageDataInStartStep".equals(evt.getPropertyName())){
+                    mainView.getLabelStartQueueCounter().setText(evt.getNewValue().toString());
+                    if((int)evt.getNewValue() > 0 && !batchModeModel.isAnalysisWorkerExist()){
                         mainView.getButtonStartBatch().setEnabled(true);
                     } else {
                         mainView.getButtonStartBatch().setEnabled(false);
@@ -749,6 +769,30 @@ public class MainController {
                 }
             }
         });
+//        batchModeModel.addPropertyChangeListener(new PropertyChangeListener() {
+//            @Override
+//            public void propertyChange(PropertyChangeEvent evt) {
+//                if("totalNumberOfFiles".equals(evt.getPropertyName())){
+//                    int total = batchModeModel.getTotalNumberOfFiles();
+//                    int unprocessedFiles = batchModeModel.getNumberOfUnprocessedFilePath();
+//                    mainView.getLabelStartQueueCounter().setText(total + " / " + unprocessedFiles);
+//                    if(unprocessedFiles > 0 ){
+//                        mainView.getButtonStartBatch().setEnabled(true);
+//                    }
+//                }
+//                if("numberOfUnprocessedFilePath".equals(evt.getPropertyName())){
+//                    int total = batchModeModel.getTotalNumberOfFiles();
+//                    int unprocessedFiles = batchModeModel.getNumberOfUnprocessedFilePath();
+//                    mainView.getLabelStartQueueCounter().setText(total + " / " + unprocessedFiles);
+//                    mainView.getProgressBarStartButtonBatch().setValue(100-(unprocessedFiles*100/total));
+//                    if(unprocessedFiles > 0 ){
+//                        mainView.getButtonStartBatch().setEnabled(true);
+//                    } else {
+//                        mainView.getButtonStartBatch().setEnabled(false);
+//                    }
+//                }
+//            }
+//        });
 
         // centroid Selection
         batchModeGlobalStateModel.addPropertyChangeListener(new PropertyChangeListener() {
@@ -756,7 +800,7 @@ public class MainController {
             public void propertyChange(PropertyChangeEvent evt) {
                 if("numberOfImageDataInCentroidSelectionStep".equals(evt.getPropertyName())){
                     mainView.getLabelCentroidSelectionCounter().setText(evt.getNewValue().toString());
-                    if((int)evt.getNewValue() > 0){
+                    if((int)evt.getNewValue() > 0 && !batchModeModel.isCentroidSelectionWorkerExist()){
                         mainView.getButtonCentroidSelectionBatch().setEnabled(true);
                     } else {
                         mainView.getButtonCentroidSelectionBatch().setEnabled(false);
@@ -783,16 +827,18 @@ public class MainController {
                     public void propertyChange(PropertyChangeEvent evt) {
                         if("progress".equals(evt.getPropertyName())){
                             mainView.getLabelCentroidSelectionCounter().setText(String.valueOf((int)evt.getNewValue()));
-                            mainView.getProgressBarCentroidSelectionBatch().setValue(100-(100/batchModeModel.getTotalNumberOfFiles()*(int)evt.getNewValue()));
                         }
                         else if ("state".equals(evt.getPropertyName()) &&
                                                         evt.getNewValue() == SwingWorker.StateValue.DONE){
                             mainView.getLabelCentroidSelectionCounter().setIcon(null);
-                            mainView.getButtonWaterShedBatch().setEnabled(true);
+                            mainView.getButtonWatershedBatch().setEnabled(true);
+                            batchModeModel.setCentroidSelectionWorkerExist(false);
                         }
                     }
                 });
+                mainView.getButtonCentroidSelectionBatch().setEnabled(false);
                 centroidSelectionWorker.execute();
+                batchModeModel.setCentroidSelectionWorkerExist(true);
             }
         });
 
@@ -802,10 +848,15 @@ public class MainController {
             public void propertyChange(PropertyChangeEvent evt) {
                 if("numberOfImageDataInWatershedStep".equals(evt.getPropertyName())){
                     mainView.getLabelWatershedCounter().setText(String.valueOf((int)evt.getNewValue()));
+                    if((int)evt.getNewValue() > 0 && !batchModeModel.isSegmentationAndRadialProjectionWorkerExist()) {
+                        mainView.getButtonWatershedBatch().setEnabled(true);
+                    } else {
+                        mainView.getButtonWatershedBatch().setEnabled(false);
+                    }
                 }
             }
         });
-        mainView.getButtonWaterShedBatch().addActionListener(new ActionListener() {
+        mainView.getButtonWatershedBatch().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 mainView.getLabelWatershedCounter().setIcon(loadingGIFIcon);
@@ -827,10 +878,13 @@ public class MainController {
                             mainView.getLabelWatershedCounter().setIcon(null);
                             mainView.getButtonRadialProjectionBatch().setEnabled(true);
                             mainView.getButtonRefineVesselBatch().setEnabled(true);
+                            batchModeModel.setSegmentationAndRadialProjectionWorkerExist(false);
                         }
                     }
                 });
+                mainView.getButtonWatershedBatch().setEnabled(false);
                 bpwsw.execute();
+                batchModeModel.setSegmentationAndRadialProjectionWorkerExist(true);
             }
         });
 
@@ -868,6 +922,7 @@ public class MainController {
                         }
                     }
                 });
+                mainView.getButtonRadialProjectionBatch().setEnabled(false);
                 brpw.execute();
             }
         });
@@ -878,7 +933,7 @@ public class MainController {
             public void propertyChange(PropertyChangeEvent evt) {
                 if("numberOfImageDataInRefineVesselStep".equals(evt.getPropertyName())){
                     mainView.getLabelRefineVesselCounter().setText(evt.getNewValue().toString());
-                    if((int)evt.getNewValue() > 0){
+                    if((int)evt.getNewValue() > 0 && !batchModeModel.isRefinementWorkerExist()){
                         mainView.getButtonRefineVesselBatch().setEnabled(true);
                     } else {
                         mainView.getButtonRefineVesselBatch().setEnabled(false);
@@ -911,10 +966,13 @@ public class MainController {
                         else if("state".equals(evt.getPropertyName()) &&
                                                         evt.getNewValue() == SwingWorker.StateValue.DONE){
                             mainView.getButtonAnalysisBatch().setEnabled(true);
+                            batchModeModel.setRefinementWorkerExist(false);
                         }
                     }
                 });
+                mainView.getButtonRefineVesselBatch().setEnabled(false);
                 brvw.execute();
+                batchModeModel.setRefinementWorkerExist(true);
             }
         });
 
@@ -924,6 +982,12 @@ public class MainController {
             public void propertyChange(PropertyChangeEvent evt) {
                 if("numberOfImageDataInAnalysisBatchStep".equals(evt.getPropertyName())){
                     mainView.getLabelAnalysisCounter().setText(String.valueOf((int)evt.getNewValue()));
+
+                    if((int)evt.getNewValue() > 0 && !batchModeModel.isAnalysisWorkerExist()){
+                        mainView.getButtonAnalysisBatch().setEnabled(true);
+                    } else {
+                        mainView.getButtonAnalysisBatch().setEnabled(false);
+                    }
                 }
             }
         });
@@ -931,7 +995,18 @@ public class MainController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 BatchAnalysisWorker baw = new BatchAnalysisWorker(batchModeGlobalStateModel,context);
+                baw.addPropertyChangeListener(new PropertyChangeListener() {
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        if("state".equals(evt.getPropertyName()) &&
+                                evt.getNewValue() == SwingWorker.StateValue.DONE){
+                            batchModeModel.setAnalysisWorkerExist(false);
+                        }
+                    }
+                });
                 baw.execute();
+                mainView.getButtonAnalysisBatch().setEnabled(false);
+                batchModeModel.setAnalysisWorkerExist(true);
             }
         });
 
@@ -963,7 +1038,6 @@ public class MainController {
                 mainView.getLabelCellulosePercentageBatch().setText("Cellulose " + currentValue + "%");
                 batchModeModel.setCelluloseToLigninRatio(currentValue);
 //                vesselsSegmentationModel.setCelluloseToLigninRatio(currentValue);
-                IJ.log("slider lignin cellulose ratio update: " + batchModeModel.getCelluloseToLigninRatio());
             }
         });
 
@@ -1034,6 +1108,44 @@ public class MainController {
                 int currentValue = (int) mainView.getSpinnerLinescanLengthBatch().getValue();
                 batchModeModel.setLinescanLength(currentValue);
                 IJ.log("line scan length update: " + batchModeModel.getLinescanLength());
+            }
+        });
+
+        // Save Progress
+        mainView.getButtonSaveProgress().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                batchModeGlobalStateModel.serializeObject();
+                IJ.log("successfully save the progress");
+            }
+        });
+
+        // Load Progress
+        mainView.getButtonLoadProgress().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // open dialog to choose
+                JFileChooser chooser = new JFileChooser(IJ.getDirectory("current"));
+                chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                chooser.setAcceptAllFileFilterUsed(false);
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("Serialized Files (*.ser)", "ser");
+                chooser.setFileFilter(filter);
+                int returnVal = chooser.showOpenDialog(mainView.getParent());
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File serializedObjectFile = chooser.getSelectedFile();
+                    try {
+                        FileInputStream file = new FileInputStream(serializedObjectFile.getAbsolutePath());
+                        ObjectInputStream in = new ObjectInputStream(file);
+                        BatchModeGlobalStateModel progressObject = (BatchModeGlobalStateModel) in.readObject();
+                        in.close();
+                        file.close();
+                        BatchModeModelUtils.loadProgressToBatchModeGlobalStateModel(batchModeGlobalStateModel,progressObject);
+                        IJ.log("successfully load the progress");
+                    } catch (IOException | ClassNotFoundException IOerror) {
+                        IJ.log("fail to load the progress from the given file");
+                    }
+                }
+
             }
         });
 
