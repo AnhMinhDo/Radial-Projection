@@ -2,24 +2,17 @@ package schneiderlab.tools.radialprojection.imageprocessor.core.vesselserialized
 
 import ij.IJ;
 
-import java.awt.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class VesselSerializable implements Serializable {
     private String serializedObjectPath;
+    private String serializableObjectOnlySliceInfoPath;
     private String fileName;
     private String directoryPath;
     private int numberOfSliceInStack;
-    private  List<VesselSliceData> vesselSliceDataArrayList;
-    private  List<Point> centroidArrayList ;
-    private  List<Double> perimeterSizeInPixelList ;
-    private  List<Double> averageDiameterList;
-    private  List<Double> circularityList;
     // radial Projection
     private String pathMultiChannelsRadialProjection;
     // cropped radial Projection
@@ -53,20 +46,16 @@ public class VesselSerializable implements Serializable {
 
     public VesselSerializable(int numberOfSliceInStack) {
         this.numberOfSliceInStack = numberOfSliceInStack;
-        this.vesselSliceDataArrayList = new ArrayList<>(numberOfSliceInStack);
-        this.centroidArrayList = new ArrayList<>(numberOfSliceInStack) ;
-        this.perimeterSizeInPixelList = new ArrayList<>(numberOfSliceInStack) ;
-        this.averageDiameterList = new ArrayList<>(numberOfSliceInStack) ;
-        this.circularityList = new ArrayList<>(numberOfSliceInStack) ;
         this.sliceCroppedRange = new SliceCroppedRange(0,numberOfSliceInStack-1);
-
     }
 
     public void serializeObject(){
         try{
+            IJ.log("Start Vessel Serialization");
             FileOutputStream file = new FileOutputStream(serializedObjectPath);
             ObjectOutputStream out = new ObjectOutputStream(file);
             out.writeObject(this);
+            out.flush();
             out.close();
             file.close();
             IJ.log("Successfully save the Vessel object to storage");
@@ -82,6 +71,14 @@ public class VesselSerializable implements Serializable {
 
     public void setSerializedObjectPath(String serializedObjectPath) {
         this.serializedObjectPath = serializedObjectPath;
+    }
+
+    public String getSerializableObjectOnlySliceInfoPath() {
+        return serializableObjectOnlySliceInfoPath;
+    }
+
+    public void setSerializableObjectOnlySliceInfoPath(String serializableObjectOnlySliceInfoPath) {
+        this.serializableObjectOnlySliceInfoPath = serializableObjectOnlySliceInfoPath;
     }
 
     public String getFileName() {
@@ -101,47 +98,7 @@ public class VesselSerializable implements Serializable {
     }
 
     public int getNumberOfSliceInStack() {
-        return this.getCentroidArrayList().size();
-    }
-
-    public List<VesselSliceData> getVesselSliceDataArrayList() {
-        return vesselSliceDataArrayList;
-    }
-
-    public void setVesselSliceDataArrayList(List<VesselSliceData> vesselSliceDataArrayList) {
-        this.vesselSliceDataArrayList = vesselSliceDataArrayList;
-    }
-
-    public List<Point> getCentroidArrayList() {
-        return centroidArrayList;
-    }
-
-    public void setCentroidArrayList(List<Point> centroidArrayList) {
-        this.centroidArrayList = centroidArrayList;
-    }
-
-    public List<Double> getPerimeterSizeInPixelList() {
-        return perimeterSizeInPixelList;
-    }
-
-    public void setPerimeterSizeInPixelList(List<Double> perimeterSizeInPixelList) {
-        this.perimeterSizeInPixelList = perimeterSizeInPixelList;
-    }
-
-    public List<Double> getAverageDiameterList() {
-        return averageDiameterList;
-    }
-
-    public void setAverageDiameterList(List<Double> averageDiameterList) {
-        this.averageDiameterList = averageDiameterList;
-    }
-
-    public List<Double> getCircularityList() {
-        return circularityList;
-    }
-
-    public void setCircularityList(List<Double> circularityList) {
-        this.circularityList = circularityList;
+        return numberOfSliceInStack;
     }
 
     public String getPathMultiChannelsRadialProjection() {
@@ -334,57 +291,5 @@ public class VesselSerializable implements Serializable {
 
     public void setSliceCropRangeEnd(int end){
         this.sliceCroppedRange.setEnd(end);
-    }
-
-    public static class VesselSliceData implements Serializable {
-        private final Point centroid;
-        private final Point clickPoint;
-        private final int trueSliceIndex;
-        private final int trueLabel;
-
-        public VesselSliceData(Point centroid, Point clickPoint, int sliceIndex, int label) {
-            this.centroid = centroid;
-            this.clickPoint = clickPoint;
-            this.trueSliceIndex = sliceIndex;
-            this.trueLabel = label;
-        }
-        public Point getCentroid() {
-            return centroid;
-        }
-        public Point getClickPoint() {
-            return clickPoint;
-        }
-        public int getTrueSliceIndex() {
-            return trueSliceIndex;
-        }
-        public int getTrueLabel() {
-            return trueLabel;
-        }
-    }
-
-    public static class SliceCroppedRange implements Serializable{
-        private int start;
-        private int end;
-
-        public SliceCroppedRange(int start, int end) {
-            this.start = start;
-            this.end = end;
-        }
-
-        public void setStart(int start) {
-            this.start = start;
-        }
-
-        public int getStart() {
-            return start;
-        }
-
-        public void setEnd(int end) {
-            this.end = end;
-        }
-
-        public int getEnd() {
-            return end;
-        }
     }
 }

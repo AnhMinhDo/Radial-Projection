@@ -8,10 +8,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import schneiderlab.tools.radialprojection.imageprocessor.core.vesselserialized.VesselSliceData;
+import schneiderlab.tools.radialprojection.imageprocessor.core.vesselserialized.SliceCroppedRange;
+
 public class Vessel {
     private String fileName;
     private Path directoryPath;
     private Path serializableObjectPath;
+    private Path serializableObjectOnlySliceInfoPath;
     private Path radialProjectionsTempPath;
     private Path radialProjectionPath;
     private Path unrollingTempPath;
@@ -80,8 +84,12 @@ public class Vessel {
     public void addVesselSliceData(Point clickPoint, Point centroid, int trueSliceIndex, int trueLabel){
         vesselSliceDataArrayList.add(new VesselSliceData(centroid,clickPoint, trueSliceIndex,trueLabel));
     }
-    public List<Vessel.VesselSliceData> getVesselSliceDataArrayList(){
+    public List<VesselSliceData> getVesselSliceDataArrayList(){
         return this.vesselSliceDataArrayList;
+    }
+
+    public void setVesselSliceDataArrayList(List<VesselSliceData> vesselSliceDataArrayList) {
+        this.vesselSliceDataArrayList = vesselSliceDataArrayList;
     }
 
     public String getFileName(){
@@ -102,6 +110,14 @@ public class Vessel {
 
     public void setSerializableObjectPath(Path serializableObjectPath) {
         this.serializableObjectPath = serializableObjectPath;
+    }
+
+    public Path getSerializableObjectOnlySliceInfoPath() {
+        return serializableObjectOnlySliceInfoPath;
+    }
+
+    public void setSerializableObjectOnlySliceInfoPath(Path serializableObjectOnlySliceInfoPath) {
+        this.serializableObjectOnlySliceInfoPath = serializableObjectOnlySliceInfoPath;
     }
 
     public int getNumberOfSliceInStack() {
@@ -145,7 +161,7 @@ public class Vessel {
     }
 
     public int getNoOfSlice(){
-        return Math.abs(this.sliceCroppedRange.start-this.sliceCroppedRange.end+1);
+        return Math.abs(this.sliceCroppedRange.getStart()-this.sliceCroppedRange.getEnd()+1);
 //        return vesselSliceDataArrayList.size();
     }
 
@@ -529,58 +545,4 @@ public class Vessel {
         croppedImage.setTitle(imp.getTitle());
         return croppedImage;
     }
-
-
-    public static class VesselSliceData{
-        private final Point centroid;
-        private final Point clickPoint;
-        private final int trueSliceIndex;
-        private final int trueLabel;
-
-        public VesselSliceData(Point centroid, Point clickPoint, int sliceIndex, int label) {
-            this.centroid = centroid;
-            this.clickPoint = clickPoint;
-            this.trueSliceIndex = sliceIndex;
-            this.trueLabel = label;
-        }
-        public Point getCentroid() {
-            return centroid;
-        }
-        public Point getClickPoint() {
-            return clickPoint;
-        }
-        public int getTrueSliceIndex() {
-            return trueSliceIndex;
-        }
-        public int getTrueLabel() {
-            return trueLabel;
-        }
-    }
-
-    public static class SliceCroppedRange {
-        private int start;
-        private int end;
-
-        public SliceCroppedRange(int start, int end) {
-            this.start = start;
-            this.end = end;
-        }
-
-        public void setStart(int start) {
-            this.start = start;
-        }
-
-        public int getStart() {
-            return start;
-        }
-
-        public void setEnd(int end) {
-            this.end = end;
-        }
-
-        public int getEnd() {
-            return end;
-        }
-    }
-
 }
