@@ -27,6 +27,7 @@ public class ImageData<T extends NumericType<T>,
     private Path serializedObjectPath; // path to the serialized ImageData object
     private Path sideViewPathWithoutEdgeCentroid;
     private Path sideViewTempPathWithoutEdgeCentroid;
+    private Path hybridFirstSlicePath;
     // parameters
     private int numberOfChannels;
     private int originalWidth;
@@ -62,6 +63,8 @@ public class ImageData<T extends NumericType<T>,
     private int hybridStackSmoothedWidth;
     private int hybridStackSmoothedHeight;
     private int hybridStackSmoothedSlicesNumber;
+    // only 1 slice for user to select the centroid
+    ImagePlus hybridFirstSlice;
     // output-process whole stack
     private ImagePlus RawSegmentation;
     private ImagePlus edgeBinaryMaskImagePlus;
@@ -130,6 +133,14 @@ public class ImageData<T extends NumericType<T>,
 
     public void setSideViewTempPathWithoutEdgeCentroid(Path sideViewTempPathWithoutEdgeCentroid) {
         this.sideViewTempPathWithoutEdgeCentroid = sideViewTempPathWithoutEdgeCentroid;
+    }
+
+    public Path getHybridFirstSlicePath() {
+        return hybridFirstSlicePath;
+    }
+
+    public void setHybridFirstSlicePath(Path hybridFirstSlicePath) {
+        this.hybridFirstSlicePath = hybridFirstSlicePath;
     }
 
     public void setUserSelectedCentroidsList(List<Point> userSelectedCentroidsList) {
@@ -273,7 +284,15 @@ public class ImageData<T extends NumericType<T>,
         this.hybridStackNonSmoothed = hybridStackNonSmoothed;
     }
 
-//    public Path getSideViewHybridPath() {
+    public ImagePlus getHybridFirstSlice() {
+        return hybridFirstSlice;
+    }
+
+    public void setHybridFirstSlice(ImagePlus hybridFirstSlice) {
+        this.hybridFirstSlice = hybridFirstSlice;
+    }
+
+    //    public Path getSideViewHybridPath() {
 //        return sideViewHybridPath;
 //    }
 //

@@ -28,6 +28,7 @@ import javax.swing.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, Void> {
     private final int targetXYpixelSize;
@@ -73,10 +74,11 @@ public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, V
 //        StatusService statusService = context.getService(StatusService.class);
         DatasetIOService ioService = context.getService(DatasetIOService.class);
         LogService logService = context.getService(LogService.class);
-        UIService uiService = context.getService(UIService.class);
-        int total = batchModeModel.getTotalNumberOfFiles();
-        for(Path filePath: batchModeModel.getFilePathList()) {
+//        UIService uiService = context.getService(UIService.class);
+//        int total = batchModeModel.getTotalNumberOfFiles();
+        while(!batchModeGlobalStateModel.getStartQueue().isEmpty()) {
             try {
+                Path filePath = Paths.get(batchModeGlobalStateModel.getFirstStartQueue());
                 IJ.log("loading file: " + filePath.getFileName().toString());
                 // load the image
                 IJ.log("importing image to create side view ....");
@@ -84,8 +86,6 @@ public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, V
                 IJ.log("image is imported successfully");
                 ImgPlus<T> genericImgPlus = (ImgPlus<T>) img.getImgPlus();
                 IJ.log("Creating side view...");
-                // add the file to the batch global state model
-                batchModeGlobalStateModel.addLastStartQueue(filePath.toString());
                 IJ.log("add file path to the global state model");
                 CreateSideView createSideView = new CreateSideView(context,
                         genericImgPlus,
@@ -129,6 +129,10 @@ public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, V
                 // temp side view result path
                 Path sideViewTempPathWithoutEdgeCentroid = tempPath.resolve(outputFileNameXylemWaterView);
                 imageData.setSideViewTempPathWithoutEdgeCentroid(sideViewTempPathWithoutEdgeCentroid);
+                // temp hybrid first Slice path
+                String hybridFirstSliceName="hybridFirstSlice.tif";
+                Path hybridFirstSlicePath = tempPath.resolve(hybridFirstSliceName);
+                imageData.setHybridFirstSlicePath(hybridFirstSlicePath);
                 // get the file name of the image
                 String fileNameWithExtension = imageData.getImagePath().getFileName().toString();
                 int extDotIndex = fileNameWithExtension.lastIndexOf(".");
@@ -181,8 +185,8 @@ public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, V
                 } catch (IOException ex) {
                     IJ.log("IO error in creating and saving temp files: " + imageData.getImageName());
                 }
-                batchModeModel.addCentroidSelectionList(imageData);
-                batchModeModel.setNumberOfUnprocessedFilePath(batchModeModel.getNumberOfUnprocessedFilePath()-1);
+//                batchModeModel.addCentroidSelectionList(imageData);
+//                batchModeModel.setNumberOfUnprocessedFilePath(batchModeModel.getNumberOfUnprocessedFilePath()-1);
                 // worker to save the output in this step
                 SaveImageSideViewWithoutEdgeCentroid sisvwdc = new SaveImageSideViewWithoutEdgeCentroid(imageData, context);
                 IJ.log("Saving the side view result  ");
@@ -190,7 +194,10 @@ public class BatchStartWorker<T extends RealType<T>> extends SwingWorker<Void, V
                 SavingSideViewTemp savingSideViewTemp = new SavingSideViewTemp(imageData,context);
                 IJ.log("Saving side view to temp dir");
                 savingSideViewTemp.execute();
+                SaveFirstSlice saveFirstSlice = new SaveFirstSlice(imageData.getHybridStackSmoothed(),imageData.getTempDirPath(), imageData.getHybridFirstSlicePath());
+                saveFirstSlice.saveFirstSlice();
                 batchModeGlobalStateModel.addLastCentroidSelectionQueue(imageData.getSerializedObjectPath().toString());
+                batchModeGlobalStateModel.removeFirstStartQueue();
             } catch (IOException e) {
                 logService.error("Input Output error");
             }

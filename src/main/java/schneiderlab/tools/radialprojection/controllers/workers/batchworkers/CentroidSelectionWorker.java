@@ -48,23 +48,25 @@ public class CentroidSelectionWorker extends SwingWorker<Void, Void> {
             ImageData<UnsignedShortType, UnsignedShortType> imageData = ImageDataSerializableUtils.convertSerializableToImageData(imageDataSerializable, CurrentImageStage.CentroidSelection, context);
             IJ.log("complete conversion to ImageData object");
 //            imageData = imageDataRetrieved;
-            RandomAccessibleInterval<UnsignedShortType> smoothedStack  = imageData.getHybridStackSmoothed();
-            int slideForTuning = 0;
-            // get the firstSlide
-            RandomAccessibleInterval<UnsignedShortType> just1Slide = Views.hyperSlice(smoothedStack,2,slideForTuning);
-            // Copy the view to a new Img<FloatType>
-            // Create copy using cursors
-            Img<UnsignedShortType> copy = ArrayImgs.unsignedShorts(Intervals.dimensionsAsLongArray(just1Slide));
-            net.imglib2.Cursor<UnsignedShortType> srcCursor = Views.flatIterable(just1Slide).cursor();
-            net.imglib2.Cursor<UnsignedShortType> dstCursor = copy.cursor();
-            while (srcCursor.hasNext()) {
-                dstCursor.next().set(srcCursor.next());
-            }
-            // Convert to ImagePlus
-            ImagePlus impFloat = ImageJFunctions.wrap(copy, "smoothed Side View");
-            impFloat.resetDisplayRange();
-            ImagePlus impByte = new ImagePlus(impFloat.getTitle(),impFloat.getProcessor().convertToByte(true));
-            impByte.resetDisplayRange();
+//            RandomAccessibleInterval<UnsignedShortType> smoothedStack  = imageData.getHybridStackSmoothed();
+//            int slideForTuning = 0;
+//            // get the firstSlide
+//            RandomAccessibleInterval<UnsignedShortType> just1Slide = Views.hyperSlice(smoothedStack,2,slideForTuning);
+//            // Copy the view to a new Img<FloatType>
+//            // Create copy using cursors
+//            Img<UnsignedShortType> copy = ArrayImgs.unsignedShorts(Intervals.dimensionsAsLongArray(just1Slide));
+//            net.imglib2.Cursor<UnsignedShortType> srcCursor = Views.flatIterable(just1Slide).cursor();
+//            net.imglib2.Cursor<UnsignedShortType> dstCursor = copy.cursor();
+//            while (srcCursor.hasNext()) {
+//                dstCursor.next().set(srcCursor.next());
+//            }
+//            // Convert to ImagePlus
+//            ImagePlus impFloat = ImageJFunctions.wrap(copy, "smoothed Side View");
+//            impFloat.resetDisplayRange();
+//            ImagePlus impByte = new ImagePlus(impFloat.getTitle(),impFloat.getProcessor().convertToByte(true));
+//            impByte.resetDisplayRange();
+               ImagePlus impByte = imageData.getHybridFirstSlice();
+               impByte.resetDisplayRange();
             ImageWindowCentroidSelection iwcs = new ImageWindowCentroidSelection(impByte,imageData);
             CountDownLatch latch = new CountDownLatch(1);
             iwcs.addWindowListener(new WindowAdapter() {
