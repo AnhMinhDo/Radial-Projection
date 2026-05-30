@@ -4,7 +4,6 @@ import ij.IJ;
 import org.scijava.Context;
 import schneiderlab.tools.radialprojection.imageprocessor.core.Vessel;
 import schneiderlab.tools.radialprojection.imageprocessor.core.imagedataserialized.CurrentImageStage;
-import schneiderlab.tools.radialprojection.imageprocessor.core.imagedataserialized.ImageDataSerializable;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -20,18 +19,7 @@ public class VesselSerializableUtils {
         vesselSerializable.setFileName(vessel.getFileName());
         vesselSerializable.setDirectoryPath(vessel.getDirectoryPath().toString());
         vesselSerializable.setSerializedObjectPath(vessel.getSerializableObjectPath().toString());
-        // transfer the VesselSliceData from Vessel object to vesselSerializable object
-        List<VesselSerializable.VesselSliceData> vesselSliceDataList = vesselSerializable.getVesselSliceDataArrayList();
-        for (Vessel.VesselSliceData vesselSliceData : vessel.getVesselSliceDataArrayList()){
-            vesselSliceDataList.add(new VesselSerializable.VesselSliceData(vesselSliceData.getCentroid(),
-                    vesselSliceData.getClickPoint(),
-                    vesselSliceData.getTrueSliceIndex(),
-                    vesselSliceData.getTrueLabel()));
-        }
-        vesselSerializable.setCentroidArrayList(vessel.getCentroidArrayListWithoutCropping());
-        vesselSerializable.setPerimeterSizeInPixelList(vessel.getPerimeterSizeInPixelList());
-        vesselSerializable.setAverageDiameterList(vessel.getAverageDiameterList());
-        vesselSerializable.setCircularityList(vessel.getCircularityList());
+        vesselSerializable.setSerializableObjectOnlySliceInfoPath(vessel.getSerializableObjectOnlySliceInfoPath().toString());
 
         vesselSerializable.setPathMultiChannelsRadialProjection(vessel.getRadialProjectionsTempPath().toString());
 
@@ -59,6 +47,18 @@ public class VesselSerializableUtils {
         return vesselSerializable;
     }
 
+    public static VesselSerializableOnlySliceInfo convertVesselToVesselSerializableOnlySliceInfo(Vessel vessel){
+        VesselSerializableOnlySliceInfo vsosi = new VesselSerializableOnlySliceInfo(vessel.getNumberOfSliceInStack());
+        vsosi.setSerializableObjectOnlySliceInfoPath(vessel.getSerializableObjectOnlySliceInfoPath().toString());
+        // transfer the VesselSliceData from Vessel object to vesselSerializable object
+        vsosi.setVesselSliceDataArrayList(vessel.getVesselSliceDataArrayList());
+        vsosi.setCentroidArrayList(vessel.getCentroidArrayListWithoutCropping());
+        vsosi.setPerimeterSizeInPixelList(vessel.getPerimeterSizeInPixelList());
+        vsosi.setAverageDiameterList(vessel.getAverageDiameterList());
+        vsosi.setCircularityList(vessel.getCircularityList());
+        return vsosi;
+    }
+
     public static Vessel convertSerializableToVessel(VesselSerializable vesselSerializable,
                                                      CurrentImageStage currentImageStage,
                                                      Context context){
@@ -66,17 +66,16 @@ public class VesselSerializableUtils {
         vessel.setFileName(vesselSerializable.getFileName());
         vessel.setDirectoryPath(Paths.get(vesselSerializable.getDirectoryPath()));
         // transfer the VesselSliceData from serializable object to vessel object
-        List<VesselSerializable.VesselSliceData> vesselSliceDataList = vesselSerializable.getVesselSliceDataArrayList();
-        for (Vessel.VesselSliceData vesselSliceData : vessel.getVesselSliceDataArrayList()){
-            vesselSliceDataList.add(new VesselSerializable.VesselSliceData(vesselSliceData.getCentroid(),
-                    vesselSliceData.getClickPoint(),
-                    vesselSliceData.getTrueSliceIndex(),
-                    vesselSliceData.getTrueLabel()));
+        if(currentImageStage ==CurrentImageStage.Analysis){
+            // deserialized VesselSerializableSliceInfo
+            VesselSerializableOnlySliceInfo vesselSerializableOnlySliceInfo = VesselSerializableUtils.vesselSliceInfoDeserializeObject(Paths.get(vesselSerializable.getSerializableObjectOnlySliceInfoPath()));
+            vessel.setVesselSliceDataArrayList(vesselSerializableOnlySliceInfo.getVesselSliceDataArrayList());
+            vessel.setCentroidArrayList(vesselSerializableOnlySliceInfo.getCentroidArrayList());
+            vessel.setPerimeterSizeInPixelList(vesselSerializableOnlySliceInfo.getPerimeterSizeInPixelList());
+            vessel.setAverageDiameterList(vesselSerializableOnlySliceInfo.getAverageDiameterList());
+            vessel.setCircularityList(vesselSerializableOnlySliceInfo.getCircularityList());
         }
-        vessel.setCentroidArrayList(vesselSerializable.getCentroidArrayList());
-        vessel.setPerimeterSizeInPixelList(vesselSerializable.getPerimeterSizeInPixelList());
-        vessel.setAverageDiameterList(vesselSerializable.getAverageDiameterList());
-        vessel.setCircularityList(vesselSerializable.getCircularityList());
+
         vessel.setRadialProjectionPath(Paths.get(vesselSerializable.getPathMultiChannelsRadialProjection()));
         vessel.setSliceCroppedRange(vesselSerializable.getSliceCroppedRange().getStart(),vesselSerializable.getSliceCroppedRange().getEnd());
 
@@ -114,6 +113,19 @@ public class VesselSerializableUtils {
             IJ.log("fail to create the vessel serializeObject");
             return null;
         }
+    }
 
+    public static VesselSerializableOnlySliceInfo vesselSliceInfoDeserializeObject(Path serializedObjectPath){
+        try {
+            FileInputStream file = new FileInputStream(serializedObjectPath.toString());
+            ObjectInputStream in = new ObjectInputStream(file);
+            VesselSerializableOnlySliceInfo vesselSerializableOnlySliceInfo = (VesselSerializableOnlySliceInfo) in.readObject();
+            in.close();
+            file.close();
+            return vesselSerializableOnlySliceInfo;
+        } catch (IOException | ClassNotFoundException e) {
+            IJ.log("fail to create the vessel serializeObject");
+            return null;
+        }
     }
 }
