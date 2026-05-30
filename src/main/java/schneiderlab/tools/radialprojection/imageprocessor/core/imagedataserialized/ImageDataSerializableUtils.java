@@ -1,14 +1,17 @@
 package schneiderlab.tools.radialprojection.imageprocessor.core.imagedataserialized;
 
 import ij.IJ;
+import ij.ImagePlus;
+import ij.plugin.Duplicator;
+import ij.process.ImageStatistics;
+import ij.process.LUT;
+import java.awt.Color;
 import io.scif.services.DatasetIOService;
 import net.imagej.Dataset;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
-import net.imagej.ops.OpService;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
-import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
 import org.scijava.Context;
 import schneiderlab.tools.radialprojection.imageprocessor.core.ImageData;
@@ -37,6 +40,8 @@ public class ImageDataSerializableUtils {
         imageDataSerializable.setOutputDirPath(imageData.getImageOutputPath().toAbsolutePath().toString());
 
         imageDataSerializable.setTempDir(imageData.getTempDirPath().toAbsolutePath().toString());
+
+        imageDataSerializable.setHybridFirstSlicePath(imageData.getHybridFirstSlicePath().toAbsolutePath().toString());
 
         imageDataSerializable.setHybridStackSmoothedWidth(imageData.getHybridStackSmoothedWidth());
 
@@ -84,6 +89,7 @@ public class ImageDataSerializableUtils {
 //        imageData.setOutputDirPath(Paths.get(imageDataSerializable.getOutputDirPath()));
         imageData.setImageOutputPath(Paths.get(imageDataSerializable.getOutputDirPath()));
         imageData.setTempDirPath(Paths.get(imageDataSerializable.getTempDir()));
+        imageData.setHybridFirstSlicePath(Paths.get(imageDataSerializable.getHybridFirstSlicePath()));
         imageData.setXyPixelSize(imageDataSerializable.getXyPixelSize());
         imageData.setzPixelSize(imageDataSerializable.getzPixelSize());
         imageData.setAnalysisWindow(imageDataSerializable.getAnalysisWindow());
@@ -98,56 +104,53 @@ public class ImageDataSerializableUtils {
         imageData.setRandomBoxWidth(imageDataSerializable.getRandomBoxWidth());
         imageData.setLengthOfLineScan(imageDataSerializable.getLengthOfLineScan());
         imageData.setNoOfRandomLineScan(imageDataSerializable.getNoOfRandomLineScan());
-//        imageData.setSideViewLigninPath(Paths.get(imageDataSerializable.getSideViewLigninPath()));
-//        imageData.setSideViewCellulosePath(Paths.get(imageDataSerializable.getSideViewCellulosePath()));
-//        imageData.setSideViewHybridPath(Paths.get(imageDataSerializable.getSideViewHybridPath()));
-//        imageData.setSideViewHybridSmoothedPath(Paths.get(imageDataSerializable.getSideViewHybridSmoothedPath()));
-        //TODO: read the sideView image from paths, add it back to imageData
         DatasetIOService datasetIOService = context.getService(DatasetIOService.class);
-        OpService ops = context.service(OpService.class);
-        try {
-            IJ.log("start importing the image to dataset");
-            Dataset sideViewTempStack = datasetIOService.open(imageData.getSideViewTempPathWithoutEdgeCentroid().toString());
-//            Dataset lignin = datasetIOService.open(imageData.getSideViewLigninPath().toString());
-//            Dataset cellulose = datasetIOService.open(imageData.getSideViewCellulosePath().toString());
-//            Dataset hybrid = datasetIOService.open(imageData.getSideViewHybridPath().toString());
-//            Dataset hybridSmooth = datasetIOService.open(imageData.getSideViewHybridSmoothedPath().toString());
-            IJ.log("dataset objects is imported");
-            // get the last channel(index 3) as a RandomAccessibleInterval
-            ImgPlus<UnsignedShortType> imgPlus = (ImgPlus<UnsignedShortType>) sideViewTempStack.getImgPlus();
-            int channelDim = imgPlus.dimensionIndex(Axes.CHANNEL);
-            RandomAccessibleInterval<UnsignedShortType> hybridSmoothedRAI = Views.hyperSlice(imgPlus,channelDim,3); // the hybridSmoothed stack has the channel index=3
-            if(CurrentImageStage.WatershedAndRadialProjection.equals(currentImageStage)){
+        if(CurrentImageStage.CentroidSelection.equals(currentImageStage)){
+            ImagePlus hybridFirstSlice = IJ.openImage(imageData.getHybridFirstSlicePath().toAbsolutePath().toString());
+            hybridFirstSlice.setLut(LUT.createLutFromColor(Color.WHITE));
+            ImageStatistics stats = hybridFirstSlice.getStatistics();
+            hybridFirstSlice.setDisplayRange(stats.min, stats.max);
+            imageData.setHybridFirstSlice(hybridFirstSlice);
+        }
+        if(CurrentImageStage.WatershedAndRadialProjection.equals(currentImageStage)){
+            try {
+                IJ.log("start importing the image to dataset");
+                Dataset sideViewTempStack = datasetIOService.open(imageData.getSideViewTempPathWithoutEdgeCentroid().toString());
+                IJ.log("dataset objects is imported");
+                // get the last channel(index 3) as a RandomAccessibleInterval
+                ImgPlus<UnsignedShortType> imgPlus = (ImgPlus<UnsignedShortType>) sideViewTempStack.getImgPlus();
+                int channelDim = imgPlus.dimensionIndex(Axes.CHANNEL);
+                RandomAccessibleInterval<UnsignedShortType> hybridSmoothedRAI = Views.hyperSlice(imgPlus,channelDim,3); // the hybridSmoothed stack has the channel index=3
                 RandomAccessibleInterval<UnsignedShortType> hybridNonSmoothedRAI = Views.hyperSlice(imgPlus,channelDim,2); // the hybridNonSmoothed stack has the channel index=2
                 RandomAccessibleInterval<UnsignedShortType> celluloseRAI = Views.hyperSlice(imgPlus,channelDim,1); // the hybridNonSmoothed stack has the channel index=2
                 RandomAccessibleInterval<UnsignedShortType> ligninRAI = Views.hyperSlice(imgPlus,channelDim,0); // the hybridNonSmoothed stack has the channel index=2
                 imageData.setHybridStackNonSmoothed(hybridNonSmoothedRAI);
                 imageData.setLignin(ligninRAI);
                 imageData.setCellulose(celluloseRAI);
+                imageData.setHybridStackSmoothed(hybridSmoothedRAI);
+            } catch (IOException e) {
+                IJ.log("fail to read the channels of side view");
             }
-            if(CurrentImageStage.RefineVessel.equals(currentImageStage)){
-                // reload the vessel ser file path list and perform vessel deserialization
-                for(String vesselSerFilePath : imageDataSerializable.getVesselSerFilePathList()){
-                    imageData.addPathToVesselSerFilePathList(Paths.get(vesselSerFilePath));
-                }
-                for (Path vesselSerFilePath : imageData.getVesselSerFilePathList()){
-                    // deserialize the vessel object
-                    VesselSerializable vesselSerializable = VesselSerializableUtils.vesselDeserializeObject(vesselSerFilePath);
-                    Vessel vessel = VesselSerializableUtils.convertSerializableToVessel(vesselSerializable,CurrentImageStage.RefineVessel,context);
-                    imageData.addToVesselList(vessel);
-                }
-            }
-            if(CurrentImageStage.Analysis.equals(currentImageStage)){
-                //TODO
-            }
-            imageData.setHybridStackSmoothed(hybridSmoothedRAI);
-            IJ.log("complete ImageData object creation");
-            return imageData;
-        } catch (IOException e) {
-            IJ.log("fail to read the channels of side view");
         }
+        if(CurrentImageStage.RefineVessel.equals(currentImageStage)){
+            // reload the vessel ser file path list and perform vessel deserialization
+            for(String vesselSerFilePath : imageDataSerializable.getVesselSerFilePathList()){
+                imageData.addPathToVesselSerFilePathList(Paths.get(vesselSerFilePath));
+            }
+            for (Path vesselSerFilePath : imageData.getVesselSerFilePathList()){
+                // deserialize the vessel object
+                VesselSerializable vesselSerializable = VesselSerializableUtils.vesselDeserializeObject(vesselSerFilePath);
+                Vessel vessel = VesselSerializableUtils.convertSerializableToVessel(vesselSerializable,CurrentImageStage.RefineVessel,context);
+                imageData.addToVesselList(vessel);
+            }
+        }
+        if(CurrentImageStage.Analysis.equals(currentImageStage)){
+            //TODO
+        }
+        IJ.log("complete ImageData object creation");
         return imageData;
-    }
+        }
+
 
     public static ImageDataSerializable imageDataDeserializeObject(Path serializedObjectPath){
         try {
