@@ -26,6 +26,8 @@ import schneiderlab.tools.radialprojection.imageprocessor.core.vesselserialized.
 import schneiderlab.tools.radialprojection.imageprocessor.core.vesselserialized.VesselSerializableUtils;
 import schneiderlab.tools.radialprojection.models.batch.BatchModeGlobalStateModel;
 import schneiderlab.tools.radialprojection.models.batch.BatchModeModel;
+import schneiderlab.tools.radialprojection.imageprocessor.core.vesselserialized.SliceCroppedRange;
+import schneiderlab.tools.radialprojection.imageprocessor.core.vesselserialized.VesselSliceData;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,6 +35,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -78,7 +81,7 @@ public class BatchAnalysisWorker extends SwingWorker<Void, Void> {
                 ImageStack imageStack = radialProjectionMultipleChannels.getImageStack();
                 ShortProcessor hybridProcessor = (ShortProcessor) imageStack.getProcessor(3).duplicate();
                 // crop hybridProcessor
-                VesselSerializable.SliceCroppedRange sliceCroppedRange = vesselSerializable.getSliceCroppedRange();
+                SliceCroppedRange sliceCroppedRange = vesselSerializable.getSliceCroppedRange();
                 Roi roi = new Roi(sliceCroppedRange.getStart(), 0, sliceCroppedRange.getEnd() - sliceCroppedRange.getStart(), hybridProcessor.getHeight());
                 ImagePlus hybridImp = new ImagePlus("hybrid", hybridProcessor);
                 hybridImp.setRoi(roi);
@@ -164,6 +167,8 @@ public class BatchAnalysisWorker extends SwingWorker<Void, Void> {
                 sarbm.flush();
             }
             batchModeGlobalStateModel.removeFirstAnalysisQueue();
+            // delete the temp folder
+            deleteFolderRecursive(Paths.get(serFile).getParent());
             }
         return null;
     }
@@ -179,5 +184,20 @@ public class BatchAnalysisWorker extends SwingWorker<Void, Void> {
         int height = input.getHeight(); // crop height
         input.setRoi(new Rectangle(x, y, width, height));
         return input.crop();
+    }
+
+    public static void deleteFolderRecursive(Path folderPath) throws IOException {
+        if (!Files.exists(folderPath)) {
+            return;
+        }
+        Files.walk(folderPath)
+                .sorted(Comparator.reverseOrder())
+                .forEach(path -> {
+                    try {
+                        Files.delete(path);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 }
