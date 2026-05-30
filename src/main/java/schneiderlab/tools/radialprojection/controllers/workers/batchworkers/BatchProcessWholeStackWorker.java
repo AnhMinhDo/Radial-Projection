@@ -20,6 +20,7 @@ import schneiderlab.tools.radialprojection.imageprocessor.core.unrolling.Contour
 import schneiderlab.tools.radialprojection.imageprocessor.core.unrolling.UnrollSingleVessel;
 import schneiderlab.tools.radialprojection.imageprocessor.core.utils.RadialProjectionUtils;
 import schneiderlab.tools.radialprojection.imageprocessor.core.vesselserialized.VesselSerializable;
+import schneiderlab.tools.radialprojection.imageprocessor.core.vesselserialized.VesselSerializableOnlySliceInfo;
 import schneiderlab.tools.radialprojection.imageprocessor.core.vesselserialized.VesselSerializableUtils;
 import schneiderlab.tools.radialprojection.models.batch.BatchModeGlobalStateModel;
 import schneiderlab.tools.radialprojection.models.batch.BatchModeModel;
@@ -247,17 +248,21 @@ public class BatchProcessWholeStackWorker extends SwingWorker<Void, Void> {
                 // create the path for the serializable vessel object
                 // temp folder, with name as vessel_i, i is the index of the vessel
                 Path vesselSerPath = tempDirPath.resolve("vessel_"+(i+1)+".ser");
+                Path vesselSliceInfoSerPath = tempDirPath.resolve("vessel_"+(i+1)+ "_slice_info" + ".ser");
                 vesselArrayList.get(i).setDirectoryPath(tempDirPath);
                 vesselArrayList.get(i).setSerializableObjectPath(vesselSerPath);
+                vesselArrayList.get(i).setSerializableObjectOnlySliceInfoPath(vesselSliceInfoSerPath);
                 // Create serializable from the vessel object
-                IJ.log("creating the serializable object");
+                IJ.log("creating vessel-serializable objects");
                 VesselSerializable vesselSerializable = VesselSerializableUtils.convertVesselToSerializable(vesselArrayList.get(i));
-                IJ.log("complete creating the serializable object");
+                VesselSerializableOnlySliceInfo vesselSerializableOnlySliceInfo = VesselSerializableUtils.convertVesselToVesselSerializableOnlySliceInfo(vesselArrayList.get(i));
+                IJ.log("complete creating vessel-serializable objects");
                 // add vessel ser file Path to the imageData
                 imageData.addPathToVesselSerFilePathList(vesselSerPath);
                 // save the Vessel ser files
-                IJ.log("perform serialization");
+                IJ.log("performing serialization");
                 vesselSerializable.serializeObject();
+                vesselSerializableOnlySliceInfo.serializeObject();
                 IJ.log("serialization completed");
                 // Save the radial projection to temp folder and output folder
                 radialProjectionSaver.saveAsTiff(radialProjectionPath.toString());
