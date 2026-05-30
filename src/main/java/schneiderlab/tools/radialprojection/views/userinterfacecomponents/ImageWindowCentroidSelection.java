@@ -4,7 +4,6 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.*;
 import schneiderlab.tools.radialprojection.imageprocessor.core.ImageData;
-import schneiderlab.tools.radialprojection.models.batch.BatchModeModel;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -60,6 +59,7 @@ public class ImageWindowCentroidSelection extends ImageWindow {
                 if(imagePlus.getRoi() instanceof PointRoi){
                     PointRoi pointRoi = (PointRoi) imagePlus.getRoi();
                     Point[] pointArray = pointRoi.getContainedPoints();
+                    imageData.getUserSelectedCentroidsList().clear();
                     for(Point p : pointArray) {
                         imageData.getUserSelectedCentroidsList().add(p);
                     }
