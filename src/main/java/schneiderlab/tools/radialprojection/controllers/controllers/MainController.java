@@ -139,13 +139,14 @@ public class MainController {
         Icon topToRightArrow = new ImageIcon(getClass().getResource("/icons/top_to_right_arrow.png"));
         Icon downArrow2 = new ImageIcon(getClass().getResource("/icons/down_arrow.png"));
         Icon loadingGIFIcon = new ImageIcon(getClass().getResource("/icons/loading-animation-24px.gif"));
+        Icon topDownLeftArrow = new ImageIcon(getClass().getResource("/icons/top_down_left_arrow.png"));
         mainView.getLabelIconArrow1().setIcon(downArrow);
         mainView.getLabelIconArrow2().setIcon(downArrow);
         mainView.getLabel1RightArrow().setIcon(rightArrow);
         mainView.getLabel2RightArrow().setIcon(rightArrow);
         mainView.getLabel1LeftArrow().setIcon(leftArrow);
-        mainView.getLabel2LeftArrow().setIcon(leftArrow);
-        mainView.getLabel1DownArrow().setIcon(downArrow2);
+//        mainView.getLabel2LeftArrow().setIcon(leftArrow);
+        mainView.getLabel1DownArrow().setIcon(topDownLeftArrow);
         //-----------0.CZI to TIF converting Steps-------------------------------
 
         // get initial values from properties file

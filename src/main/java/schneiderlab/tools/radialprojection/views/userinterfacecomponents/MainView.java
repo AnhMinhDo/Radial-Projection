@@ -1277,7 +1277,7 @@ public class MainView extends JFrame {
 				progressBarCentroidSelectionBatch.setVisible(false);
 				panelBatch.add(progressBarCentroidSelectionBatch, "cell 2 3");
 				panelBatch.add(progressBarWatershedBatch, "cell 4 4");
-				panelBatch.add(label1DownArrow, "cell 4 5,alignx center,growx 0");
+				panelBatch.add(label1DownArrow, "cell 4 5 1 2,alignx center,growx 0");
 
 				//---- buttonAnalysisBatch ----
 				buttonAnalysisBatch.setText("<html>Analysis<html/>");
