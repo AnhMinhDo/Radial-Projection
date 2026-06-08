@@ -672,7 +672,7 @@ public class MainView extends JFrame {
 				//---- label1 ----
 				label1.setText("<html>Process File<br>Sequentially</html>");
 				label1.setHorizontalAlignment(SwingConstants.CENTER);
-				label1.setFont(new Font("sansserif", Font.BOLD, 24));
+				label1.setFont(new Font("sansserif", Font.BOLD, 16));
 				panelGroupButtonTab.add(label1, "cell 0 2");
 
 				//---- buttonTabVesselSegmentation ----
