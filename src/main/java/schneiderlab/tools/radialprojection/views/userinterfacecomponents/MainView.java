@@ -704,8 +704,7 @@ public class MainView extends JFrame {
 				//---- label2 ----
 				label2.setText("Batch Processing");
 				label2.setHorizontalAlignment(SwingConstants.CENTER);
-				label2.setFont(new Font("sansserif", Font.BOLD, 24));
-				label2.setVisible(false);
+				label2.setFont(new Font("sansserif", Font.BOLD, 16));
 				panelGroupButtonTab.add(label2, "cell 0 9");
 
 				//---- buttonTabBatchMode ----

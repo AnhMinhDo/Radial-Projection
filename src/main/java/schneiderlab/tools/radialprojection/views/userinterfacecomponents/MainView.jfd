@@ -78,8 +78,7 @@ new FormModel {
 						name: "label2"
 						"text": "Batch Processing"
 						"horizontalAlignment": 0
-						"font": new java.awt.Font( "sansserif", 1, 24 )
-						"visible": false
+						"font": new java.awt.Font( "sansserif", 1, 16 )
 					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 						"value": "cell 0 9"
 					} )
