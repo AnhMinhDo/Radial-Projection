@@ -182,6 +182,14 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <filters>
+                                <filter>
+                                    <artifact>fr.inra.ijpb:MorphoLibJ_</artifact>
+                                    <excludes>
+                                        <exclude>plugins.config</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>
