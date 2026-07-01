@@ -770,30 +770,6 @@ public class MainController {
                 }
             }
         });
-//        batchModeModel.addPropertyChangeListener(new PropertyChangeListener() {
-//            @Override
-//            public void propertyChange(PropertyChangeEvent evt) {
-//                if("totalNumberOfFiles".equals(evt.getPropertyName())){
-//                    int total = batchModeModel.getTotalNumberOfFiles();
-//                    int unprocessedFiles = batchModeModel.getNumberOfUnprocessedFilePath();
-//                    mainView.getLabelStartQueueCounter().setText(total + " / " + unprocessedFiles);
-//                    if(unprocessedFiles > 0 ){
-//                        mainView.getButtonStartBatch().setEnabled(true);
-//                    }
-//                }
-//                if("numberOfUnprocessedFilePath".equals(evt.getPropertyName())){
-//                    int total = batchModeModel.getTotalNumberOfFiles();
-//                    int unprocessedFiles = batchModeModel.getNumberOfUnprocessedFilePath();
-//                    mainView.getLabelStartQueueCounter().setText(total + " / " + unprocessedFiles);
-//                    mainView.getProgressBarStartButtonBatch().setValue(100-(unprocessedFiles*100/total));
-//                    if(unprocessedFiles > 0 ){
-//                        mainView.getButtonStartBatch().setEnabled(true);
-//                    } else {
-//                        mainView.getButtonStartBatch().setEnabled(false);
-//                    }
-//                }
-//            }
-//        });
 
         // centroid Selection
         batchModeGlobalStateModel.addPropertyChangeListener(new PropertyChangeListener() {
