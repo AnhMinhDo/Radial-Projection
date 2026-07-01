@@ -278,6 +278,7 @@ public class MainController {
         mainView.getTableAddedFileVesselSegmentation().addMouseMotionListener(new ShowFullStringOfCellinTable(mainView.getTableAddedFileVesselSegmentation()));
         // button add folder for segmentation step
         mainView.getButtonAddFolder().addActionListener(new AddFilePathFromDirToTableVesselSegmentation(mainView.getTableAddedFileVesselSegmentation(), mainView, mainView));
+        mainView.getButtonAddFolder().setTransferHandler(new DropFolderTransferHandler(mainView.getTableAddedFileVesselSegmentation(), mainView, mainView));
         // button clear all in table for segmentation step
         mainView.getButtonClear().addActionListener(new ActionListener() {
             @Override
