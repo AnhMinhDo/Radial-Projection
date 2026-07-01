@@ -271,6 +271,7 @@ public class MainController {
         // Action for ADD button in segmentation step
         mainView.getButtonAddFile().addActionListener(new AddFilePathToTableVesselSegmentation(
                 mainView.getTableAddedFileVesselSegmentation(),mainView));
+        mainView.getButtonAddFile().setTransferHandler(new DropFileTransferHandler(mainView.getTableAddedFileVesselSegmentation(),mainView));
         // Action for REMOVE Button in segmentation step
         mainView.getButtonRemove().addActionListener(new RemoveFilePathFromTable(mainView.getTableAddedFileVesselSegmentation()));
 
